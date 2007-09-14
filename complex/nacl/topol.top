@@ -1,0 +1,17 @@
+#include "ffgmx.itp"
+
+[ moleculetype ]
+salt	1
+
+[ atoms ]
+; id	at type	res nr 	residu name	at name		cg nr	charge
+1	CL	1	SALT		CL		1	-1.0
+2	NA	1	SALT		NA		2	 1.0
+3	NA	1	SALT		NA		4	 1.0
+4	CL	1	SALT		CL		3	-1.0
+
+[ system ]
+Salt
+
+[ molecules ]
+Salt	144

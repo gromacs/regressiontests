@@ -1,0 +1,22 @@
+#define _FF_GROMACS
+#define _FF_GROMACS1
+
+[ defaults ]
+; nbfunc	comb-rule	gen-pairs	fudgeLJ	fudgeQQ
+  1		1		no		1.0	1.0
+
+[ atomtypes ]
+;name        mass      charge   ptype            c6           c12
+   OW    15.99940       0.000       A   0.26171E-02   0.26331E-05 1 2 3
+   HW     1.00800       0.000       A   0.00000E+00   0.00000E+00 4 5 6
+
+#include "spc.itp"
+
+[ system ]
+; The name of the system to be simulated
+Water
+
+[ molecules ]
+; Molname  	Number
+SOL		216
+

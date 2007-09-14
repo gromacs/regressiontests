@@ -1,0 +1,608 @@
+* Polygen 150
+! Polygen Corporation: Table file
+! Source File: .ccf
+* File format version number
+91.0929
+* File update version number
+92.0911
+! 
+* TABLE 136 1
+[name         ] ccf
+[height       ] 0.250 
+[width        ] 1.000 
+[lbl_width    ] 0.500 
+[lbl_height   ] 0.250 
+[format       ] float
+[decimal      ] 2
+[family       ] helvetica
+[style        ] bold
+[size         ] 10
+[hor_align    ] general
+[ver_align    ] middle
+[cur_row      ] 136
+[cur_col      ] 1
+[show_title   ] 1
+[show_grid    ] 1
+[show_horsb   ] 1
+[show_versb   ] 1
+[show_rlbls   ] 1
+[show_clbls   ] 1
+[show_cunits  ] 1
+[show_rnums   ] 1
+[show_cnums   ] 1
+[grid_type    ] full_grid
+[grid_style   ] 0
+[grid_weight  ] 1
+* COL 1
+[type         ] generic
+[name         ] CHARMm setup data
+[fcolor       ] 12
+* V 1 1
+[type         ] integer
+[value        ] -2
+[name         ] Init: BOMB
+[comments     ] Severity level at which CHARMm terminates
+* V 2 1
+[type         ] integer
+[value        ] 0
+[name         ] Init: WARN
+[comments     ] CHARMm warning severity level
+* V 3 1
+[type         ] integer
+[value        ] 5
+[name         ] Init: PRTLEV
+[comments     ] CHARMm print level
+* V 4 1
+[type         ] integer
+[value        ] 2
+[name         ] Init: Log code
+[comments     ] CHARMm log goes to: 1=Textport, 2=CHARMM.LOG, 3=Named file
+* V 5 1
+[type         ] char
+[value        ] 
+[name         ] Init: Log filename
+[comments     ] File for CHARMm log output when log code = 3
+* V 6 1
+[type         ] char
+[value        ] $CHM_DATA/AMINO.BIN
+[name         ] Init: RTF file #1
+[comments     ] Name of RTF file for CHARMm in RTF mode
+* V 7 1
+[type         ] integer
+[value        ] 0
+[name         ] Init: RTF Mode parameter file option
+[comments     ] 0=Use existing file, 2=Use QUANTA-generated file
+* V 8 1
+[type         ] char
+[value        ] $CHM_DATA/PARM.BIN
+[name         ] Init: Param file
+[comments     ] Name of parameter file for CHARMm in RTF mode
+* V 9 1
+[type         ] char
+[value        ] 
+[name         ] Init: Startup script
+[comments     ] Name of user-supplied CHARMm startup script
+* V 10 1
+[type         ] integer
+[value        ] 0
+[name         ] Param: Missing param option
+[comments     ] 0->Edit missing params; 1->automatically supply values
+* V 11 1
+[type         ] integer
+[value        ] 0
+[name         ] Param: Generate report
+[comments     ] 0->Do not generate report; 1->Generate report
+* V 12 1
+[type         ] integer
+[value        ] 1
+[name         ] Param: Send relevant/all params
+[comments     ] 0->Send all parameters; 1->Send only relevant parameters
+* V 13 1
+[type         ] char
+[value        ] /usr/people/msi/quanta3.3/data/PARM.PRM
+[name         ] Param: Param file #1
+[comments     ] Name of parameter file for QUANTA to read
+* V 14 1
+[type         ] integer
+[value        ] 1
+[name         ] PSF: Include bond terms
+[comments     ] 1->Include; 0->Suppress
+* V 15 1
+[type         ] integer
+[value        ] 1
+[name         ] PSF: Include angle terms
+[comments     ] 1->Include; 0->Suppress
+* V 16 1
+[type         ] integer
+[value        ] 1
+[name         ] PSF: Include dihedral terms
+[comments     ] 1->Include; 0->Suppress
+* V 17 1
+[type         ] integer
+[value        ] 1
+[name         ] PSF: Include improper terms
+[comments     ] 1->Include; 0->Suppress
+* V 18 1
+[type         ] integer
+[value        ] 1
+[name         ] PSF: Include acceptor/donor terms
+[comments     ] 1->Include; 0->Suppress
+* V 19 1
+[type         ] integer
+[value        ] 1
+[name         ] PSF: Include Jorgensen water bonds
+[comments     ] 1->Include; 0->Suppress
+* V 20 1
+[type         ] integer
+[value        ] 0
+[name         ] Upd: image type
+* V 21 1
+[type         ] integer
+[value        ] 0
+[name         ] Upd: FAST
+* V 22 1
+[type         ] integer
+[value        ] -1
+[name         ] Upd: INBFrq
+[comments     ] Nonbond update frequency; -1 -> automatic
+* V 23 1
+[type         ] float
+[value        ] 15
+[name         ] Upd: CUTNB
+* V 24 1
+[type         ] float
+[value        ] 11
+[name         ] Upd: CTONNB
+* V 25 1
+[type         ] float
+[value        ] 14
+[name         ] Upd: CTOFNB
+* V 26 1
+[type         ] integer
+[value        ] 1
+[name         ] Upd: VDW
+* V 27 1
+[type         ] integer
+[value        ] 1
+[name         ] Upd: ELEC
+* V 28 1
+[type         ] integer
+[value        ] 2
+[name         ] Upd: DIEL
+* V 29 1
+[type         ] float
+[value        ] 1
+[name         ] Upd: CDIE
+* V 30 1
+[type         ] integer
+[value        ] 0
+[name         ] Upd: IHBFrq
+* V 31 1
+[type         ] float
+[value        ] 0.5
+[name         ] Upd: CUTHB
+* V 32 1
+[type         ] float
+[value        ] 90
+[name         ] Upd: CUTHA
+* V 33 1
+[type         ] float
+[value        ] 4
+[name         ] Upd: CTONHB
+* V 34 1
+[type         ] float
+[value        ] 90
+[name         ] Upd: CTONHA
+* V 35 1
+[type         ] float
+[value        ] 5
+[name         ] Upd: CTOFHB
+* V 36 1
+[type         ] float
+[value        ] 90
+[name         ] Upd: CTOFHA
+* V 37 1
+[type         ] integer
+[value        ] 20
+[name         ] Upd: IMGFrq
+* V 38 1
+[type         ] float
+[value        ] 15
+[name         ] Upd: CUTIM
+* V 39 1
+[type         ] integer
+[value        ] 100
+[name         ] Upd: IXTFRQ
+[comments     ] Crystal Update Frequency
+* V 40 1
+[type         ] integer
+[value        ] 0
+[name         ] Upd: EWALD
+* V 41 1
+[type         ] float
+[value        ] 0
+[name         ] Upd: kappa
+* V 42 1
+[type         ] integer
+[value        ] 0
+[name         ] Upd: NVEC
+* V 43 1
+[type         ] float
+[value        ] 0
+[name         ] Upd: length
+* V 44 1
+[type         ] integer
+[value        ] 1
+[name         ] Ene: clump
+* V 45 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: BOND
+* V 46 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: ANGLE
+* V 47 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: DIHE
+* V 48 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: IMPR
+* V 49 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: VDW
+* V 50 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: ELEC
+* V 51 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: HBOND
+* V 52 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: IUSR
+* V 53 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: INTE
+* V 54 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: NBOND
+* V 55 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: CONS
+* V 56 1
+[type         ] integer
+[value        ] 0
+[name         ] Ene: USER
+* V 57 1
+[type         ] integer
+[value        ] 1
+[name         ] Min: algorithm
+[comments     ] 1=SD, 2=CONJ, 3=ABNR, 4=NRAP, 5=POWEll
+* V 58 1
+[type         ] integer
+[value        ] 50
+[name         ] Min: NSTEp
+* V 59 1
+[type         ] integer
+[value        ] 5
+[name         ] Min: NPRInt
+* V 60 1
+[type         ] float
+[value        ] 0.01
+[name         ] Min: TOLGrd
+* V 61 1
+[type         ] float
+[value        ] 0
+[name         ] Min: TOLVal
+* V 62 1
+[type         ] float
+[value        ] 0
+[name         ] Min: TOLStep
+* V 63 1
+[type         ] float
+[value        ] 0.02
+[name         ] Min: STEPSIZE
+* V 64 1
+[type         ] integer
+[value        ] 1
+[name         ] Bas dyns: type
+* V 65 1
+[type         ] integer
+[value        ] 300
+[name         ] Heat: NSTEp
+* V 66 1
+[type         ] char
+[value        ]   
+[name         ] Heat: Rst. read
+* V 67 1
+[type         ] char
+[value        ] heat
+[name         ] Heat: Rst. write
+* V 68 1
+[type         ] char
+[value        ] heat
+[name         ] Heat: DCD
+* V 69 1
+[type         ] char
+[value        ] heat
+[name         ] Heat: ENE
+* V 70 1
+[type         ] integer
+[value        ] 10
+[name         ] Heat: IPRFrq
+* V 71 1
+[type         ] integer
+[value        ] 0
+[name         ] Heat: IEQFrq
+* V 72 1
+[type         ] float
+[value        ] 0.001
+[name         ] Heat: TIME
+* V 73 1
+[type         ] float
+[value        ] 0
+[name         ] Heat: FIRStt
+* V 74 1
+[type         ] float
+[value        ] 300
+[name         ] Heat: FINAlt
+* V 75 1
+[type         ] integer
+[value        ] 3
+[name         ] Heat: How
+* V 76 1
+[type         ] integer
+[value        ] 300
+[name         ] Equil: NSTEp
+* V 77 1
+[type         ] char
+[value        ] heat
+[name         ] Equil: Rst. read
+* V 78 1
+[type         ] char
+[value        ] equil
+[name         ] Equil: Rst. write
+* V 79 1
+[type         ] char
+[value        ] equil
+[name         ] Equil: DCD
+* V 80 1
+[type         ] char
+[value        ] equil
+[name         ] Equil: ENE
+* V 81 1
+[type         ] integer
+[value        ] 10
+[name         ] Equil: IPRFrq
+* V 82 1
+[type         ] integer
+[value        ] 200
+[name         ] Equil: IEQFrq
+* V 83 1
+[type         ] float
+[value        ] 0.001
+[name         ] Equil: TIME
+* V 84 1
+[type         ] float
+[value        ] 0
+[name         ] Equil: FIRStt
+* V 85 1
+[type         ] float
+[value        ] 300
+[name         ] Equil: FINAlt
+* V 86 1
+[type         ] integer
+[value        ] 3
+[name         ] Equil: How
+* V 87 1
+[type         ] integer
+[value        ] 300
+[name         ] Sim: NSTEp
+* V 88 1
+[type         ] char
+[value        ] equil
+[name         ] Sim: Rst. read
+* V 89 1
+[type         ] char
+[value        ] simul
+[name         ] Sim: Rst. write
+* V 90 1
+[type         ] char
+[value        ] simul
+[name         ] Sim: DCD
+* V 91 1
+[type         ] char
+[value        ] simul
+[name         ] Sim: ENE
+* V 92 1
+[type         ] integer
+[value        ] 10
+[name         ] Sim: IPRFrq
+* V 93 1
+[type         ] integer
+[value        ] 0
+[name         ] Sim: IEQFrq
+* V 94 1
+[type         ] float
+[value        ] 0.001
+[name         ] Sim: TIME
+* V 95 1
+[type         ] float
+[value        ] 0
+[name         ] Sim: FIRStt
+* V 96 1
+[type         ] float
+[value        ] 300
+[name         ] Sim: FINAlt
+* V 97 1
+[type         ] integer
+[value        ] 3
+[name         ] Sim: How
+* V 98 1
+[type         ] integer
+[value        ] 1
+[name         ] Det dyn: algorithm
+* V 99 1
+[type         ] integer
+[value        ] 3
+[name         ] Det dyn: How
+* V 100 1
+[type         ] float
+[value        ] 0.001
+[name         ] Det dyn: TIME
+* V 101 1
+[type         ] integer
+[value        ] 500
+[name         ] Det dyn: NSTEp
+* V 102 1
+[type         ] integer
+[value        ] 1000
+[name         ] Det dyn: ISVFrq
+* V 103 1
+[type         ] integer
+[value        ] 0
+[name         ] Det dyn: IHTFrq
+* V 104 1
+[type         ] integer
+[value        ] 0
+[name         ] Det dyn: IEQFrq
+* V 105 1
+[type         ] integer
+[value        ] 100
+[name         ] Det dyn: IPRFrq
+* V 106 1
+[type         ] integer
+[value        ] 10
+[name         ] Det dyn: NSAVc
+* V 107 1
+[type         ] integer
+[value        ] 10
+[name         ] Det dyn: NSAVv
+* V 108 1
+[type         ] integer
+[value        ] 10
+[name         ] Det dyn: NPRInt
+* V 109 1
+[type         ] integer
+[value        ] 100
+[name         ] Det dyn: ILBFrq
+* V 110 1
+[type         ] float
+[value        ] 20
+[name         ] Det dyn: FBeta
+* V 111 1
+[type         ] char
+[value        ]   
+[name         ] Det dyn: Rst. read
+* V 112 1
+[type         ] char
+[value        ] detail
+[name         ] Det dyn: Rst. write
+* V 113 1
+[type         ] char
+[value        ] detail
+[name         ] Det dyn: DCD
+* V 114 1
+[type         ] char
+[value        ] detail
+[name         ] Det dyn: DVL
+* V 115 1
+[type         ] char
+[value        ] detail
+[name         ] Det dyn: ENE
+* V 116 1
+[type         ] float
+[value        ] 0
+[name         ] Det dyn: FIRStt
+* V 117 1
+[type         ] float
+[value        ] 300
+[name         ] Det dyn: FINAlt
+* V 118 1
+[type         ] float
+[value        ] 10
+[name         ] Det dyn: TEMINC
+* V 119 1
+[type         ] float
+[value        ] -10
+[name         ] Det dyn: TWINDL
+* V 120 1
+[type         ] float
+[value        ] 10
+[name         ] Det dyn: TWINDH
+* V 121 1
+[type         ] integer
+[value        ] 1
+[name         ] Det dyn: ICHECW
+* V 122 1
+[type         ] float
+[value        ] 300
+[name         ] Det dyn: TBATh
+* V 123 1
+[type         ] float
+[value        ] 0
+[name         ] Det dyn: RBUFf
+* V 124 1
+[type         ] integer
+[value        ] 0
+[name         ] Det dyn: IASORS
+* V 125 1
+[type         ] integer
+[value        ] 1
+[name         ] Det dyn: ASORS A
+* V 126 1
+[type         ] integer
+[value        ] 0
+[name         ] Det dyn: ASORS S
+* V 127 1
+[type         ] integer
+[value        ] 0
+[name         ] Shake: on
+* V 128 1
+[type         ] integer
+[value        ] 0
+[name         ] Shake: BOND
+* V 129 1
+[type         ] integer
+[value        ] 1
+[name         ] Shake: BONH
+* V 130 1
+[type         ] integer
+[value        ] 0
+[name         ] Shake: ANGL
+* V 131 1
+[type         ] integer
+[value        ] 0
+[name         ] Shake: ANGH
+* V 132 1
+[type         ] integer
+[value        ] 0
+[name         ] Shake: PARA
+* V 133 1
+[type         ] float
+[value        ] 1E-09
+[name         ] Shake: TOL
+* V 134 1
+[type         ] integer
+[value        ] 500
+[name         ] Shake: MXIT
+* V 135 1
+[type         ] integer
+[value        ] 1
+[name         ] Shake: Param
+[comments     ] 1=Use parameter values; 0=Use coordinates
+* V 136 1
+[type         ] integer
+[value        ] 1
+[name         ] Shake: Dynamics
+[comments     ] 1=Shake ON in dynamics; 0=shake OFF in dynamics
+* END

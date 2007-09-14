@@ -1,0 +1,19 @@
+;
+; Settings to test nonbonded kernel 112
+;
+dt                  =  0.002	
+nsteps              =  0	; just calculate energies once
+nstfout             =  1
+nstxout             =  1
+nstlist             =  1
+rlist               =  0.01     ; no short-range interactions 
+rvdw                =  0.9
+rcoulomb            =  0.9
+vdwtype             = cut-off
+rcoulomb-switch     = 0.7
+coulombtype         = switch
+energygrps          = protein sol
+energygrp-excl      = protein protein protein sol
+constraints         = none
+define              = -DFLEXIBLE
+cpp                 = cpp

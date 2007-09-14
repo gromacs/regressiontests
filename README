@@ -1,0 +1,8 @@
+For the kernel tests, reference states were calculated with the double
+precision C loops in Gromacs 3.3, after making sure the results were
+identical to those of Gromacs 3.2. Software invsqrt was not used.
+
+For the other tests, the reference is gromacs 3.3.2.
+
+For more info see http://wiki.gromacs.org/index.php/Test-set
+
