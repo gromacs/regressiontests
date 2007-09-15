@@ -312,26 +312,27 @@ sub test_pdb2gmx {
 	foreach my $ff ( "G43a1", "oplsaa", "G53a6", "encads" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
-	    my @www = ();
+	    my @water = ();
 	    my @vsite = ( "none", "h" );
 	    if ( $ff eq "oplsaa"  ) {
-		@www = ( "tip3p", "tip4p", "tip5p" );
+		@water = ( "tip3p", "tip4p", "tip5p" );
 	    }
 	    elsif ( $ff eq "encads" ) {
 		@vsite = ( "none" );
-		@www = ( "spc" );
+		@water = ( "spc" );
 	    }
 	    else {
-		@www = ( "spc", "spce" );
+		@water = ( "spc", "spce" );
 	    }
 	    foreach my $dd ( @vsite ) {
 		mkdir("$dd");
 		chdir("$dd");
-		foreach my $ww ( @www ) {
+		foreach my $ww ( @water ) {
 		    $ntest++;
 		    my $line = "";
 		    printf(LOG "****************************************************\n");
 		    printf(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
+		    printf(LOG "** Working directory = %s\n",`pwd`);
 		    printf(LOG "****************************************************\n");
 		    mkdir("$ww");
 		    chdir("$ww");
