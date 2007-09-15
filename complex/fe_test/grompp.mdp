@@ -8,7 +8,7 @@
 ; VARIOUS PREPROCESSING OPTIONS
 title                    = Yo
 ; Preprocessor - specify a full path if necessary.
-cpp                      = /lib/cpp
+cpp                      = cpp
 include                  = 
 define                   = 
 
