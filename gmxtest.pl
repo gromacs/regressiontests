@@ -1,30 +1,34 @@
 #!/usr/bin/perl -w
 
-$parallel = 0;
-$double   = 0;
-$verbose  = 0;
-$etol     = 0.05;
-$ttol     = 0.001;
-$ref      = "";
+use strict;
+
+my $parallel = 0;
+my $double   = 0;
+my $verbose  = 0;
+my $etol     = 0.05;
+my $ttol     = 0.001;
+my $ref      = "";
 
 # virial - this tests the shifted force contribution.
 # However, it is a sum of very many large terms, so it is
 # often numerically imprecise.
-$virtol_rel   = 0.01;
-$virtol_abs   = 0.1;
+my $virtol_rel   = 0.01;
+my $virtol_abs   = 0.1;
 
 # force tolerance is measured by calculating scalar products.
 # tolerance 0.001 means the scalar product between the two
 # compared forces should be at least 0.999.
-$ftol_rel     = 0.001;
-$ftol_sprod   = 0.001;
+my $ftol_rel     = 0.001;
+my $ftol_sprod   = 0.001;
+
+# globals used for programs
+my $grompp = "";
+my $mdrun  = "";
 
 sub setup_vars {
+    my $mdprefix = "";
     if ( $parallel > 0 ) {
 	$mdprefix = "mpirun -c $parallel ";
-    }
-    else {
-	$mdprefix = "";
     }
     
     if ( $double > 0 ) {
@@ -41,21 +45,22 @@ sub setup_vars {
 
 sub check_force()
 {
-    $tmp = "checkforce.tmp";
-    $cfor = "checkforce.out";
+    my $tmp = "checkforce.tmp";
+    my $cfor = "checkforce.out";
+    my $reftrr = "${ref}.trr";
     system("gmxcheck -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null");    
     `grep "f\\[" $cfor > $tmp`;
-    $nerr_force = 0;
+    my $nerr_force = 0;
     
     open(FIN,"$tmp");
-    while($line=<FIN>)
+    while(my $line=<FIN>)
     {
-	@f1=split(" ",substr($line,10,38));
-	@f2=split(" ",substr($line,53,38));
+	my @f1=split(" ",substr($line,10,38));
+	my @f2=split(" ",substr($line,53,38));
 	
-	$l1 = sqrt($f1[0]*$f1[0]+$f1[1]*$f1[1]+$f1[2]*$f1[2]);
-	$l2 = sqrt($f2[0]*$f2[0]+$f2[1]*$f2[1]+$f2[2]*$f2[2]);
-	$sprod = ($f1[0]*$f2[0]+$f1[1]*$f2[1]+$f1[2]*$f2[2])/($l1*$l2);
+	my $l1 = sqrt($f1[0]*$f1[0]+$f1[1]*$f1[1]+$f1[2]*$f1[2]);
+	my $l2 = sqrt($f2[0]*$f2[0]+$f2[1]*$f2[1]+$f2[2]*$f2[2]);
+	my $sprod = ($f1[0]*$f2[0]+$f1[1]*$f2[1]+$f1[2]*$f2[2])/($l1*$l2);
 	
 	if( $sprod < (1.0-$ftol_sprod))
 	{
@@ -70,23 +75,23 @@ sub check_force()
 
 sub check_virial()
 {
-    $tmp = "checkvir.tmp";
-    $cvir = "checkvir.out";
-    
+    my $tmp = "checkvir.tmp";
+    my $cvir = "checkvir.out";
+    my $refedr = "${ref}.edr";
     system("gmxcheck -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null");   
     
     `grep "Vir-" $cvir > $tmp`;
-    $nerr_vir = 0;
+    my $nerr_vir = 0;
     
     open(VIN,"$tmp");
-    while($line=<VIN>)
+    while(my $line=<VIN>)
     {
-	@v1=split(" ",substr($line,26,14));
-	@v2=split(" ",substr($line,52,13));
+	my @v1=split(" ",substr($line,26,14));
+	my @v2=split(" ",substr($line,52,13));
 	
-	$diff = abs($v1[0]-$v2[0]);
+	my $diff = abs($v1[0]-$v2[0]);
 	
-	$norm = abs($v1[0])+abs($v2[0]);
+	my $norm = abs($v1[0])+abs($v2[0]);
 	
 	if((2*$diff > $virtol_rel *$norm) && ($diff>$virtol_abs))
 	{
@@ -99,22 +104,55 @@ sub check_virial()
     return $nerr_vir;
 }
 
+sub check_xvg {
+    my $refx = shift;
+    my $kkk  = shift;
+    my $ndx1 = shift;
+    my $ndx2 = shift;
+    
+    my $nerr = 0;
+    if ((-f $refx) && (-f $kkk)) {
+	open(EEE,"paste $refx $kkk |");
+	my $n = 0;
+	my $header = 0;
+	while (my $line = <EEE>) {
+	    if ((index($line,"#") < 0) && (index($line,"\@") < 0)) {
+		chomp($line);
+		my @tmp = split(' ',$line);
+		my $x1 = $tmp[$ndx1];
+		my $x2 = $tmp[$ndx2];
+		if ((($x1-$x2)/($x1+$x2)) > $etol) {
+		    $nerr++;
+		    if (!$header) {
+			$header = 1;
+			printf("N      Reference   This test\n");
+		    }
+		    printf("%4d  %10g  %10g\n",$n,$tmp[3],$tmp[7]);
+		}
+		$n++;
+	    }
+	}
+	close EEE;
+    }
+    return $nerr;
+}
+
 sub test_systems {
     setup_vars();
-    $npassed = 0;
-    foreach $dir ( @_ ) {
+    my $npassed = 0;
+    foreach my $dir ( @_ ) {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    if ($verbose > 0) {
 		print "Testing $dir . . . ";
 	    }
 	    
-	    $nerror = 0;
-	    $ndx = "";
+	    my $nerror = 0;
+	    my $ndx = "";
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
 	    }
-	    $par = "";
+	    my $par = "";
 	    if ($parallel > 1) {
 		$par = "-np $parallel";
 	    }
@@ -125,7 +163,7 @@ sub test_systems {
 		$nerror = 1;
 	    }
 	    if ($nerror == 0) {
-		$reftpr = "${ref}.tpr";
+		my $reftpr = "${ref}.tpr";
 		if (! -f $reftpr) {
 		    print ("No $reftpr file in $dir\n");
 		    print ("This means you are not really testing $dir\n");
@@ -144,13 +182,13 @@ sub test_systems {
 		# First check whether we have any output
 		if ((-f "ener.edr" ) && (-f "traj.trr")) {
 		    # Now check whether we have any reference files
-		    $refedr = "${ref}.edr";
+		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
 			system("cp ener.edr $refedr");
 		    }
-		    $reftrr = "${ref}.trr";
+		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
@@ -159,11 +197,14 @@ sub test_systems {
 		    # Now do the real tests
 		    system("gmxcheck -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
 		    
-		    $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
-		    $nerr_force = check_force();
-		    $nerr_vir   = check_virial();
+		    my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
+		    my $nerr_force = check_force();
+		    my $nerr_vir   = check_virial();
+		
+		    my $nerr_xvg   = check_xvg("${ref}.xvg","dgdl.xvg",1,3);
 		    
-		    $nerror = ($nerr_pot || $nerr_force || $nerr_vir);
+		    $nerror = ($nerr_pot || $nerr_force || 
+			       $nerr_vir || $nerr_xvg);
 		}
 		else {
 		    $nerror = 1;
@@ -173,11 +214,11 @@ sub test_systems {
 		print "FAILED. Check files in $dir\n";
 	    }
 	    else {
-		@args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
+		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
 		unlink(@args);
 		
 		if ($verbose > 0) {
-		    $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
+		    my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
 		    if ( $nmdp > 2) {
 			printf("PASSED but check mdp file differences\n");
 		    }
@@ -195,21 +236,21 @@ sub test_systems {
 }
 
 sub my_glob {
-    @kkk = `/bin/ls | grep -v CVS`;
-    for $k ( @kkk ) {
+    my @kkk = `/bin/ls | grep -v CVS`;
+    for my $k ( @kkk ) {
 	chomp $k;
     }
     return @kkk;
 }
 
 sub cleandirs {
-    $mydir = shift;
+    my $mydir = shift;
     chdir($mydir);
-    foreach $dir ( my_glob() ) {
+    foreach my $dir ( my_glob() ) {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    @args = glob("#*# *~ *.out core.* *.xvg topol.tpr confout.gro ener.edr md.log traj.trr" );
+	    my @args = glob("#*# *~ *.out core.* *.xvg topol.tpr confout.gro ener.edr md.log traj.trr" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -218,13 +259,13 @@ sub cleandirs {
 }
 
 sub refcleandir {
-    $sdir = shift;
+    my $sdir = shift;
     
     if (-d $sdir ) {
 	cleandirs($sdir);
 	chdir($sdir);
-	@mydirs = my_glob();
-	foreach $dir ( @mydirs ) {
+	my @mydirs = my_glob();
+	foreach my $dir ( @mydirs ) {
 	    if ( -d $dir ) {
 		chdir($dir);
 		print "Removing reference files in $dir\n"; 
@@ -237,11 +278,11 @@ sub refcleandir {
 }
 
 sub test_dirs {
-    $dirs = shift;
+    my $dirs = shift;
     chdir($dirs);
-    @kernels = my_glob();
-    $nn = $#kernels + 1;
-    $npassed = test_systems(@kernels);
+    my @kernels = my_glob();
+    my $nn = $#kernels + 1;
+    my $npassed = test_systems(@kernels);
     if ($npassed < $nn) {
 	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
     }
@@ -252,33 +293,38 @@ sub test_dirs {
 }
 
 sub test_pdb2gmx {
-    $logfn = "pdb2gmx.log";
+    my $logfn = "pdb2gmx.log";
 
     setup_vars();    
     chdir("pdb2gmx");
     open (LOG,">$logfn") || die("Opening $logfn for writing");
-    $npdb_dir = 0;
-    @pdb_dirs = ();
-    foreach $pdb ( glob("*.pdb") ) {
-	$pdir = "pdb-$pdb";
-	@kkk  = split('\.',$pdir);
-	$dir  = $kkk[0];
+    my $npdb_dir = 0;
+    my @pdb_dirs = ();
+    my $ntest    = 0;
+    my $nerror   = 0;
+    foreach my $pdb ( glob("*.pdb") ) {
+	my $pdir = "pdb-$pdb";
+	my @kkk  = split('\.',$pdir);
+	my $dir  = $kkk[0];
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach $ff ( "G43a1", "oplsaa", "gmx" ) {
+	foreach my $ff ( "G43a1", "oplsaa", "gmx" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
+	    my @www = ();
 	    if ( $ff eq "oplsaa"  ) {
 		@www = ( "tip3p", "tip4p", "tip5p" );
 	    }
 	    else {
 		@www = ( "spc", "spce", "tip4p" );
 	    }
-	    foreach $dd ( "none", "h", "aromatics" ) {
+	    foreach my $dd ( "none", "h", "aromatics" ) {
 		mkdir("$dd");
 		chdir("$dd");
-		foreach $ww ( @www ) {
+		foreach my $ww ( @www ) {
+		    $ntest++;
+		    my $line = "";
 		    printf(LOG "****************************************************\n");
 		    printf(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
 		    printf(LOG "****************************************************\n");
@@ -316,39 +362,26 @@ sub test_pdb2gmx {
     
     system("grep 'Potential Energy' pdb2gmx.log > ener.log");
     
-    $nsuccess = `wc -l ener.log | awk '{print \$1}'`;
-    if ( $nsuccess != 54 ) {
-	print "Error not all 54 tests have been done successfully\n";
+    my $nsuccess = `wc -l ener.log | awk '{print \$1}'`;
+    chomp($nsuccess);
+    if ( $nsuccess != $ntest ) {
+	print "Error not all $ntest pdb2gmx tests have been done successfully\n";
 	print "Only $nsuccess energies in the log file\n";
     }
     else {
-	open(EEE,"paste reference.log ener.log |");
-	$n = 0;
-	$nerror = 0;
-	$header = 0;
-	while ($line = <EEE>) {
-	    chomp($line);
-	    @tmp = split(' ',$line);
-	    if ((($tmp[3]-$tmp[7])/($tmp[3]+$tmp[7])) > $etol) {
-		$nerror++;
-		if (!$header) {
-		    $header = 1;
-		    printf("Sim.   Reference   This test\n");
-		}
-		printf("%4d  %10g  %10g\n",$n,$tmp[3],$tmp[7]);
-	    }
-	    $n++;
-	}
-	close EEE;
+	$nerror = check_xvg("reference.log","ener.log",3,7);
 	
 	if ( $nerror != 0 ) {
 	    print "There were $nerror differences in final energy with the reference file\n";
 	}
 	else {
-	    print "pdb2gmx test PASSED\n";
+	    print "All $ntest pdb2gmx tests PASSED\n";
 	    system("rm -rf @pdb_dirs");
 	    unlink("ener.log","pdb2gmx.log");
 	} 
+    }
+    if ($nerror > 0) {
+	print "pdb2gmx tests FAILED\n";
     }
     chdir("..");
 }
@@ -368,8 +401,9 @@ sub usage {
     exit "1";
 }
 
+my $kk = 0;
 for ($kk=0; ($kk <= $#ARGV); $kk++) {
-    $arg = $ARGV[$kk];
+    my $arg = $ARGV[$kk];
     if ($arg eq "simple") {
 	test_dirs("simple");
     }
@@ -386,6 +420,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	test_dirs("simple");
 	test_dirs("complex");
 	test_dirs("kernel");
+	test_pdb2gmx();
     }
     elsif ($arg eq "clean" ) {
         clean_all();
