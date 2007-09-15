@@ -1,15 +1,15 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: spoel (501)
-;	On host: kahlo.bmc.uu.se
-;	At date: Thu Sep  6 13:50:41 2007
+;	By user: onbekend (0)
+;	On host: onbekend
+;	At date: Sat Sep 15 13:29:08 2007
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
-; Preprocessor information: use cpp syntax.
-; e.g.: -I/home/joe/doe -I/home/mary/hoe
+title                    = 
+; Preprocessor - specify a full path if necessary.
+cpp                      = cpp
 include                  = -I../top
-; e.g.: -DI_Want_Cookies -DMe_Too
 define                   = 
 
 ; RUN CONTROL PARAMETERS
@@ -44,9 +44,6 @@ fcstep                   = 0
 nstcgsteep               = 1000
 nbfgscorr                = 10
 
-; TEST PARTICLE INSERTION OPTIONS
-rtpi                     = 0.05
-
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
 nstxout                  = 0
@@ -71,11 +68,12 @@ energygrps               = System
 nstlist                  = 5
 ; ns algorithm (simple or grid)
 ns_type                  = simple
-; Periodic boundary conditions: xyz, no, xy
+; Periodic boundary conditions: xyz (default), no (vacuum)
+; or full (infinite systems only)
 pbc                      = xyz
-periodic_molecules       = no
 ; nblist cut-off        
 rlist                    = 0.9
+domain-decomposition     = no
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
@@ -138,8 +136,6 @@ Pcoupltype               = Isotropic
 tau_p                    = 1
 compressibility          = 
 ref_p                    = 1.0	1.0	1.0
-; Scaling of reference coordinates, No, All or COM
-refcoord_scaling         = No
 ; Random seed for Andersen thermostat
 andersen_seed            = 815131
 
@@ -191,7 +187,7 @@ constraints              = none
 ; Type of constraint algorithm
 constraint-algorithm     = Lincs
 ; Do not constrain the start configuration
-continuation             = no
+unconstrained-start      = no
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = no
 ; Relative tolerance of shake
@@ -211,18 +207,6 @@ morse                    = no
 ; ENERGY GROUP EXCLUSIONS
 ; Pairs of energy groups for which all non-bonded interactions are excluded
 energygrp_excl           = 
-
-; WALLS                
-; Number of walls, type, atom types, densities and box-z scale factor for Ewald
-nwall                    = 0
-wall_type                = 9-3
-wall_atomtype            = 
-wall_density             = 
-wall_ewald_zfac          = 3
-
-; COM PULLING          
-; Pull type: no, umbrella, constraint or constant_force
-pull                     = no
 
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
