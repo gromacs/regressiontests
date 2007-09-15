@@ -1,0 +1,33 @@
+# This file was created Sat Sep 15 13:28:45 2007
+# by the following command:
+# mdrun_d 
+#
+# mdrun_d is part of G R O M A C S:
+#
+# Giving Russians Opium May Alter Current Situation
+#
+@    title "dG/d\8l\4"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "dG/d\8l\4 (kJ mol\S-1\N [\8l\4]\S-1\N)"
+@TYPE xy
+0.0000 -107.835
+0.0005 -40.0701
+0.0010 4.02149
+0.0015 36.1126
+0.0020 61.169
+0.0025 81.7128
+0.0030 99.2067
+0.0035 114.52
+0.0040 128.217
+0.0045 140.675
+0.0050 152.138
+0.0055 162.806
+0.0060 172.794
+0.0065 182.192
+0.0070 191.071
+0.0075 199.468
+0.0080 207.465
+0.0085 215.09
+0.0090 222.384
+0.0095 229.386
+0.0100 236.142
