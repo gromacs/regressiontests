@@ -309,17 +309,22 @@ sub test_pdb2gmx {
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach my $ff ( "G43a1", "oplsaa", "gmx" ) {
+	foreach my $ff ( "G43a1", "oplsaa", "G53a6", "encads" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
 	    my @www = ();
+	    my @vsite = ( "none", "h" );
 	    if ( $ff eq "oplsaa"  ) {
 		@www = ( "tip3p", "tip4p", "tip5p" );
 	    }
-	    else {
-		@www = ( "spc", "spce", "tip4p" );
+	    elsif ( $ff eq "encads" ) {
+		@vsite = ( "none" );
+		@www = ( "spc" );
 	    }
-	    foreach my $dd ( "none", "h", "aromatics" ) {
+	    else {
+		@www = ( "spc", "spce" );
+	    }
+	    foreach my $dd ( @vsite ) {
 		mkdir("$dd");
 		chdir("$dd");
 		foreach my $ww ( @www ) {
@@ -369,16 +374,21 @@ sub test_pdb2gmx {
 	print "Only $nsuccess energies in the log file\n";
     }
     else {
-	$nerror = check_xvg("reference.log","ener.log",3,7);
-	
-	if ( $nerror != 0 ) {
-	    print "There were $nerror differences in final energy with the reference file\n";
+	my $reflog = "${ref}.log";
+	if (! -f $reflog) {
+	    print "No file $reflog. You are not really testing pdb2gmx\n";
+	    system("cp ener.log $reflog");
 	}
 	else {
-	    print "All $ntest pdb2gmx tests PASSED\n";
-	    system("rm -rf @pdb_dirs");
-	    unlink("ener.log","pdb2gmx.log");
-	} 
+	    $nerror = check_xvg($reflog,"ener.log",3,7);
+	
+	    if ( $nerror != 0 ) {
+		print "There were $nerror differences in final energy with the reference file\n";
+	    }
+	}
+	print "All $ntest pdb2gmx tests PASSED\n";
+	system("rm -rf @pdb_dirs");
+	unlink("ener.log","pdb2gmx.log");
     }
     if ($nerror > 0) {
 	print "pdb2gmx tests FAILED\n";
