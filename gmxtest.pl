@@ -194,10 +194,18 @@ sub test_systems {
     return $npassed;
 }
 
+sub my_glob {
+    @kkk = `/bin/ls | grep -v CVS`;
+    for $k ( @kkk ) {
+	chomp $k;
+    }
+    return @kkk;
+}
+
 sub cleandirs {
     $mydir = shift;
     chdir($mydir);
-    foreach $dir ( glob("*") ) {
+    foreach $dir ( my_glob() ) {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
@@ -215,7 +223,7 @@ sub refcleandir {
     if (-d $sdir ) {
 	cleandirs($sdir);
 	chdir($sdir);
-	@mydirs = glob("*");
+	@mydirs = my_glob();
 	foreach $dir ( @mydirs ) {
 	    if ( -d $dir ) {
 		chdir($dir);
@@ -228,30 +236,17 @@ sub refcleandir {
     }
 }
 
-sub test_kernel {
-    chdir("kernel");
-    @kernels = glob("*");
+sub test_dirs {
+    $dirs = shift;
+    chdir($dirs);
+    @kernels = my_glob();
     $nn = $#kernels + 1;
     $npassed = test_systems(@kernels);
     if ($npassed < $nn) {
-	printf("%d out of $nn kernel tests FAILED\n",$nn-$npassed);
+	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
     }
     else {
-	printf("All $nn kernel tests PASSED\n");
-    }
-    chdir("..");
-}
-
-sub test_simple {
-    chdir("simple");
-    @simple = glob("*");
-    $nn = $#simple + 1;
-    $npassed = test_systems(@simple);
-    if ($npassed < $nn) {
-	printf("%d out of $nn simple tests FAILED\n",$nn-$npassed);
-    }
-    else {
-	printf("All $nn simple tests PASSED\n");
+	printf("All $nn $dirs tests PASSED\n");
     }
     chdir("..");
 }
@@ -358,20 +353,6 @@ sub test_pdb2gmx {
     chdir("..");
 }
 
-sub test_complex {
-    chdir("complex");
-    @complex = glob("*");
-    $nn = $#complex + 1;
-    $npassed = test_systems(@complex);
-    if ($npassed < $nn) {
-	printf("%d out of $nn complex tests FAILED\n",$nn-$npassed);
-    }
-    else {
-	printf("All $nn complex tests PASSED\n");
-    }
-    chdir("..");
-}
-
 sub clean_all {
     cleandirs("simple");
     cleandirs("complex");
@@ -383,28 +364,28 @@ sub clean_all {
 
 sub usage {
     print "Usage: ./gmxtest.pl [ -np N ] [-verbose ] [ -double ] [ simple | complex | kernel | pdb2gmx | all ]\n";
-    print "   or: ./gmxtest.pl clean | refclean | archive\n";
+    print "   or: ./gmxtest.pl clean | refclean | dist\n";
     exit "1";
 }
 
 for ($kk=0; ($kk <= $#ARGV); $kk++) {
     $arg = $ARGV[$kk];
     if ($arg eq "simple") {
-	test_simple();
+	test_dirs("simple");
     }
     elsif ($arg eq "complex") {
-	test_complex();
+	test_dirs("complex");
     }
     elsif ($arg eq "kernel" ) {
-	test_kernel();
+	test_dirs("kernel");
     }
     elsif ($arg eq "pdb2gmx" ) {
 	test_pdb2gmx();
     }
     elsif ($arg eq "all" ) {
-	test_simple();
-	test_complex();
-	test_kernel();
+	test_dirs("simple");
+	test_dirs("complex");
+	test_dirs("kernel");
     }
     elsif ($arg eq "clean" ) {
         clean_all();
@@ -414,9 +395,10 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	refcleandir("simple");
 	refcleandir("complex");
     }
-    elsif ($arg eq "archive" ) {
+    elsif ($arg eq "dist" ) {
+	clean_all();
 	chdir("..");
-	system("tar czvf gmxtest.tgz test/gmxtest test/test_kernels test/d.*/conf.gro test/d.*/topol.top test/d.*/grompp.mdp test/d.*/*.itp test/d.*/reference_?.*r");
+	system("tar --exclude CVS -czvf gmxtest.tgz gmxtest");
 	chdir("gmxtest");
     }
     elsif ($arg eq "help" ) {
