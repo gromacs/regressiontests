@@ -440,6 +440,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	setup_vars();
 	refcleandir("simple");
 	refcleandir("complex");
+	unlink("pdb2gmx/reference_s.log","pdb2gmx/reference_d.log");
     }
     elsif ($arg eq "dist" ) {
 	clean_all();
