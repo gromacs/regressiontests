@@ -6,7 +6,6 @@
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
-include                  = -I/home/gmx/top
 define                   = 
 
 ; RUN CONTROL PARAMETERS
