@@ -411,7 +411,23 @@ sub usage {
     print "   or: ./gmxtest.pl clean | refclean | dist\n";
     exit "1";
 }
+sub test_gmx {
+  my @progs = ( "grompp", "mdrun", "pdb2gmx" );
+  
+  foreach my $p ( @progs ) {
+    my $pp = $p;
+    if ($double > 0) {
+      $pp = $p . "_d";
+    }
+    my $tgpp = `which $pp`;
+    if (index($tgpp,$pp) < 0) {
+      printf("ERROR: Can not find $pp in your path.\nPlease source GMXRC and try again.\n");
+      exit(1);
+    }
+  }
+}
 
+test_gmx();
 my $kk = 0;
 for ($kk=0; ($kk <= $#ARGV); $kk++) {
     my $arg = $ARGV[$kk];
