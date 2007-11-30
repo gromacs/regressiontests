@@ -412,7 +412,7 @@ sub usage {
     exit "1";
 }
 sub test_gmx {
-  my @progs = ( "grompp", "mdrun", "pdb2gmx" );
+  my @progs = ( "grompp", "mdrun", "pdb2gmx", "gmxcheck", "editconf" );
   
   foreach my $p ( @progs ) {
     my $pp = $p;
