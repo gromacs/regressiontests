@@ -68,8 +68,9 @@ sub check_force()
 	}
     }     
     close(FIN);
-    unlink($tmp,$cfor);
-    
+    if ($nerr_force == 0) {
+      unlink($tmp,$cfor);
+    }
     return $nerr_force;
 }
 
@@ -99,8 +100,9 @@ sub check_virial()
 	}
     }     
     close(VIN);
-    unlink($tmp,$cvir);
-    
+    if ($nerr_vir == 0) {
+      unlink($tmp,$cvir);
+    }
     return $nerr_vir;
 }
 
@@ -198,6 +200,7 @@ sub test_systems {
 		    system("gmxcheck -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
 		    
 		    my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
+		    chomp($nerr_pot);
 		    my $nerr_force = check_force();
 		    my $nerr_vir   = check_virial();
 		
@@ -215,7 +218,7 @@ sub test_systems {
 	    }
 	    else {
 		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
-		unlink(@args);
+		#unlink(@args);
 		
 		if ($verbose > 0) {
 		    my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
