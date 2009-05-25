@@ -352,7 +352,7 @@ sub test_pdb2gmx {
 		    printf(LOG "****************************************************\n");
 		    printf(LOG "**  Running grompp\n");
 		    printf(LOG "****************************************************\n");
-		    open(PIPE,"$grompp -f ../../../../em -c b4em 2>&1 |");
+		    open(PIPE,"$grompp -maxwarn 1 -f ../../../../em -c b4em 2>&1 |");
 		    while ($line = <PIPE>) { printf(LOG $line); } close PIPE;
 		    printf(LOG "****************************************************\n");
 		    printf(LOG "**  Running mdrun\n");

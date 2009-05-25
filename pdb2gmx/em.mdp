@@ -28,8 +28,6 @@ comm-grps                =
 
 ; LANGEVIN DYNAMICS OPTIONS
 ; Temperature, friction coefficient (amu/ps) and random seed
-bd-temp                  = 300
-bd-fric                  = 0
 ld-seed                  = 1993
 
 ; ENERGY MINIMIZATION OPTIONS
