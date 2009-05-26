@@ -14,3 +14,7 @@ CFLAGS "-O0 -float-store"
 
 For more info see http://wiki.gromacs.org/index.php/Test-set
 
+Update 2009-05-25: Big thanks to Mark Abraham for working through all 
+the test sets and providing patches to make sure they don't generate
+bogus errors for the latest Gromacs version.
+

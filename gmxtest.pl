@@ -4,11 +4,11 @@ use strict;
 
 my $parallel = 0;
 my $double   = 0;
-my $verbose  = 0;
+my $verbose  = 1;
 my $etol     = 0.05;
 my $ttol     = 0.001;
-my $ref      = "";
-
+my $suffix   = '';
+my $prefix   = '';
 # virial - this tests the shifted force contribution.
 # However, it is a sum of very many large terms, so it is
 # often numerically imprecise.
@@ -21,24 +21,32 @@ my $virtol_abs   = 0.1;
 my $ftol_rel     = 0.001;
 my $ftol_sprod   = 0.001;
 
-# globals used for programs
-my $grompp = "";
-my $mdrun  = "";
-
-sub setup_vars {
-    my $mdprefix = "";
+# trickery for program and reference file names
+my $mdprefix = '';
+my $ref      = '';
+my %progs = ( 'grompp'   => 'grompp',
+	      'mdrun'    => 'mdrun',
+	      'pdb2gmx'  => 'pdb2gmx',
+	      'gmxcheck' => 'gmxcheck',
+	      'editconf' => 'editconf' );
+sub setup_vars()
+{
+    # It is assumed that double-precision MPI mdrun is named
+    # ${prefix}mdrun_mpi_d{$suffix}, and that utility programs
+    # are not compiled with MPI and thus do not have _mpi suffixes.
     if ( $parallel > 0 ) {
-	$mdprefix = "mpirun -c $parallel ";
+	$progs{'mdrun'} .= "_mpi";
+	$mdprefix = "mpirun -c $parallel";
     }
-    
+    foreach my $prog ( values %progs ) {
+	$prog = $prefix . $prog;
+	$prog .= "_d" if ( $double > 0 );
+	$prog .= $suffix;
+    }
     if ( $double > 0 ) {
-	$grompp = "grompp_d";
-	$mdrun  = $mdprefix . "mdrun_d";
 	$ref    = "reference_d";
     }
     else {
-	$grompp = "grompp";
-	$mdrun  = $mdprefix . "mdrun";
 	$ref    = "reference_s";
     }
 }
@@ -48,7 +56,7 @@ sub check_force()
     my $tmp = "checkforce.tmp";
     my $cfor = "checkforce.out";
     my $reftrr = "${ref}.trr";
-    system("gmxcheck -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null");    
+    system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null");    
     `grep "f\\[" $cfor > $tmp`;
     my $nerr_force = 0;
     
@@ -79,7 +87,7 @@ sub check_virial()
     my $tmp = "checkvir.tmp";
     my $cvir = "checkvir.out";
     my $refedr = "${ref}.edr";
-    system("gmxcheck -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null");   
+    system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null");   
     
     `grep "Vir-" $cvir > $tmp`;
     my $nerr_vir = 0;
@@ -127,7 +135,7 @@ sub check_xvg {
 		    $nerr++;
 		    if (!$header) {
 			$header = 1;
-			printf("N      Reference   This test\n");
+			print("N      Reference   This test\n");
 		    }
 		    printf("%4d  %10g  %10g\n",$n,$tmp[3],$tmp[7]);
 		}
@@ -140,7 +148,6 @@ sub check_xvg {
 }
 
 sub test_systems {
-    setup_vars();
     my $npassed = 0;
     foreach my $dir ( @_ ) {
 	if ( -d $dir ) {
@@ -158,8 +165,9 @@ sub test_systems {
 	    if ($parallel > 1) {
 		$par = "-np $parallel";
 	    }
-	    system("$grompp -maxwarn 10 $ndx $par > grompp.out 2>&1");
+	    system("$progs{'grompp'} -maxwarn 10 $ndx > grompp.out 2>&1");
 	    
+	    my $error_detail = ' ';
 	    if (! -f "topol.tpr") {
 		print ("No topol.tpr file in $dir. grompp failed\n");	    
 		$nerror = 1;
@@ -171,7 +179,7 @@ sub test_systems {
 		    print ("This means you are not really testing $dir\n");
 		    system("cp topol.tpr $reftpr");
 		}
-		system("gmxcheck -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
+		system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
 		$nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
 		if ($nerror > 0) {
 		    print "topol.tpr file different from $reftpr. Check files in $dir\n";
@@ -179,7 +187,7 @@ sub test_systems {
 	    }
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
-		system("$mdrun > mdrun.out 2>&1");
+		system("$mdprefix $progs{'mdrun'} > mdrun.out 2>&1");
 		
 		# First check whether we have any output
 		if ((-f "ener.edr" ) && (-f "traj.trr")) {
@@ -197,7 +205,7 @@ sub test_systems {
 			system("cp traj.trr $reftrr");
 		    }
 		    # Now do the real tests
-		    system("gmxcheck -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
+		    system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
 		    
 		    my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
 		    chomp($nerr_pot);
@@ -208,13 +216,20 @@ sub test_systems {
 		    
 		    $nerror = ($nerr_pot || $nerr_force || 
 			       $nerr_vir || $nerr_xvg);
+
+		    my @error_detail;
+		    push(@error_detail, "checkpot.out ($nerr_pot errors)") if ($nerr_pot > 0);
+		    push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
+		    push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
+		    push(@error_detail, "${ref}.xvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
+		    $error_detail = join(', ', @error_detail) . ' ';
 		}
 		else {
 		    $nerror = 1;
 		}
 	    }
 	    if ($nerror > 0) {
-		print "FAILED. Check files in $dir\n";
+		print "FAILED. Check ${error_detail}files in $dir\n";
 	    }
 	    else {
 		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
@@ -223,7 +238,7 @@ sub test_systems {
 		if ($verbose > 0) {
 		    my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
 		    if ( $nmdp > 2) {
-			printf("PASSED but check mdp file differences\n");
+			print("PASSED but check mdp file differences\n");
 		    }
 		    else {
 			print "PASSED\n";
@@ -290,7 +305,7 @@ sub test_dirs {
 	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
     }
     else {
-	printf("All $nn $dirs tests PASSED\n");
+	print("All $nn $dirs tests PASSED\n");
     }
     chdir("..");
 }
@@ -298,7 +313,6 @@ sub test_dirs {
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
-    setup_vars();    
     chdir("pdb2gmx");
     open (LOG,">$logfn") || die("Opening $logfn for writing");
     my $npdb_dir = 0;
@@ -333,32 +347,36 @@ sub test_pdb2gmx {
 		foreach my $ww ( @water ) {
 		    $ntest++;
 		    my $line = "";
-		    printf(LOG "****************************************************\n");
-		    printf(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
-		    printf(LOG "** Working directory = %s\n",`pwd`);
-		    printf(LOG "****************************************************\n");
+		    print(LOG "****************************************************\n");
+		    print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
+		    print(LOG "** Working directory = %s\n",`pwd`);
+		    print(LOG "****************************************************\n");
 		    mkdir("$ww");
 		    chdir("$ww");
-		    printf(LOG "****************************************************\n");
-		    printf(LOG "**  Running pdb2gmx\n");
-		    printf(LOG "****************************************************\n");
-		    open(PIPE,"pdb2gmx -f ../../../../$pdb -ff $ff -ignh -vsite $dd -water $ww 2>&1 |");
-		    while ($line = <PIPE>) { printf(LOG $line); } close PIPE;
-		    printf(LOG "****************************************************\n");
-		    printf(LOG "**  Running editconf\n");
-		    printf(LOG "****************************************************\n");
-		    open(PIPE,"editconf -o b4em -box 5 5 5 -c -f conf 2>&1 |");
-		    while ($line = <PIPE>) { printf(LOG $line); } close PIPE;
-		    printf(LOG "****************************************************\n");
-		    printf(LOG "**  Running grompp\n");
-		    printf(LOG "****************************************************\n");
-		    open(PIPE,"$grompp -maxwarn 1 -f ../../../../em -c b4em 2>&1 |");
-		    while ($line = <PIPE>) { printf(LOG $line); } close PIPE;
-		    printf(LOG "****************************************************\n");
-		    printf(LOG "**  Running mdrun\n");
-		    printf(LOG "****************************************************\n");
-		    open(PIPE,"$mdrun 2>&1 |");
-		    while ($line = <PIPE>) { printf(LOG $line); } close PIPE;
+		    print(LOG "****************************************************\n");
+		    print(LOG "**  Running pdb2gmx\n");
+		    print(LOG "****************************************************\n");
+		    open(PIPE,"$progs{'pdb2gmx'} -f ../../../../$pdb -ff $ff -ignh -vsite $dd -water $ww 2>&1 |");
+		    print LOG while <PIPE>;
+		    close PIPE;
+		    print(LOG "****************************************************\n");
+		    print(LOG "**  Running editconf\n");
+		    print(LOG "****************************************************\n");
+		    open(PIPE,"$progs{'editconf'} -o b4em -box 5 5 5 -c -f conf 2>&1 |");
+		    print LOG while <PIPE>;
+		    close PIPE;
+		    print(LOG "****************************************************\n");
+		    print(LOG "**  Running grompp\n");
+		    print(LOG "****************************************************\n");
+		    open(PIPE,"$progs{'grompp'} -maxwarn 3 -f ../../../../em -c b4em 2>&1 |");
+		    print LOG while <PIPE>;
+		    close PIPE;
+		    print(LOG "****************************************************\n");
+		    print(LOG "**  Running mdrun\n");
+		    print(LOG "****************************************************\n");
+		    open(PIPE,"$mdprefix $progs{'mdrun'} 2>&1 |");
+		    print LOG while <PIPE>;
+		    close PIPE;
 		    chdir("..");
 		}
 		chdir("..");
@@ -415,68 +433,66 @@ sub usage {
     exit "1";
 }
 sub test_gmx {
-  my @progs = ( "grompp", "mdrun", "pdb2gmx", "gmxcheck", "editconf" );
-  
-  foreach my $p ( @progs ) {
+  foreach my $p ( values %progs ) {
     my $pp = $p;
-    if ($double > 0) {
-      $pp = $p . "_d";
-    }
     my $tgpp = `which $pp`;
     if (index($tgpp,$pp) < 0) {
-      printf("ERROR: Can not find $pp in your path.\nPlease source GMXRC and try again.\n");
+      print("ERROR: Can not find $pp in your path.\nPlease source GMXRC and try again.\n");
       exit(1);
     }
   }
 }
 
-test_gmx();
 my $kk = 0;
+my @work = ("setup_vars()", "test_gmx()");
+
 for ($kk=0; ($kk <= $#ARGV); $kk++) {
     my $arg = $ARGV[$kk];
-    if ($arg eq "simple") {
-	test_dirs("simple");
+    if ($arg eq 'simple') {
+	push @work, "test_dirs('simple')";
     }
-    elsif ($arg eq "complex") {
-	test_dirs("complex");
+    elsif ($arg eq 'complex') {
+	push @work, "test_dirs('complex')";
     }
-    elsif ($arg eq "kernel" ) {
-	test_dirs("kernel");
+    elsif ($arg eq 'kernel' ) {
+	push @work, "test_dirs('kernel')";
     }
-    elsif ($arg eq "pdb2gmx" ) {
-	test_pdb2gmx();
+    elsif ($arg eq 'pdb2gmx' ) {
+	push @work, "test_pdb2gmx()";
     }
-    elsif ($arg eq "all" ) {
-	test_dirs("simple");
-	test_dirs("complex");
-	test_dirs("kernel");
-	test_pdb2gmx();
+    elsif ($arg eq 'all' ) {
+	push @work, "test_dirs('simple')";
+	push @work, "test_dirs('complex')";
+	push @work, "test_dirs('kernel')";
+	push @work, "test_pdb2gmx()";
     }
-    elsif ($arg eq "clean" ) {
+    elsif ($arg eq 'clean' ) {
         clean_all();
     }
-    elsif ($arg eq "refclean" ) {
-	setup_vars();
-	refcleandir("simple");
-	refcleandir("complex");
-	unlink("pdb2gmx/reference_s.log","pdb2gmx/reference_d.log");
+    elsif ($arg eq 'refclean' ) {
+	push @work, "refcleandir('simple')";
+	push @work, "refcleandir('complex')";
+	push @work, "unlink('pdb2gmx/reference_s.log','pdb2gmx/reference_d.log')";
     }
-    elsif ($arg eq "dist" ) {
-	clean_all();
-	chdir("..");
-	system("tar --exclude CVS -czvf gmxtest.tgz gmxtest");
-	chdir("gmxtest");
+    elsif ($arg eq 'dist' ) {
+	push @work, "clean_all()";
+	push @work, "chdir('..')";
+	push @work, "system('tar --exclude CVS -czvf gmxtest.tgz gmxtest')";
+	push @work, "chdir('gmxtest')";
     }
-    elsif ($arg eq "help" ) {
-	usage();
+    elsif ($arg eq 'help' ) {
+	push @work, "usage()";
     }
-    elsif ($arg eq "-verbose") {
-	$verbose = 1;
+    elsif ($arg eq '-verbose') {
+	$verbose++;
     }
-    elsif ($arg eq "-double") {
+    elsif ($arg eq '-noverbose') {
+	$verbose = 0;
+    }
+    elsif ($arg eq '-double') {
 	$double = 1;
     }
-    elsif ($arg eq "-np" ) {
+    elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
 	    $parallel = $ARGV[$kk];
@@ -486,11 +502,41 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    print "Will test on $parallel processors\n";
 	}
     }
+    elsif ($arg eq '-suffix' ) {
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $suffix = $ARGV[$kk];
+	    print "Will test using executable suffix $suffix\n";
+	}
+    }
+    elsif ($arg eq '-prefix' ) {
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $prefix = $ARGV[$kk];
+	    print "Will test using executable prefix $prefix\n";
+	}
+    }
     else {
-	usage();
+	push @work, "usage()";
     }
 }
 
 if ($kk == 0) {
-    usage();
+    $#work = -1;
+    push @work, "usage()";
 }
+
+if ( 1 == $#work ) {
+    # there was no work added, so probably this was a gmxtest.pl clean
+    # so don't do setup either
+    $#work = -1;
+}
+
+# setup_vars() is always the first work to do, so now
+# parallel and double will work correctly regardless of
+# order on the command line
+foreach my $w ( @work ) {
+#    print "$w\n";
+    eval $w;
+}
+
