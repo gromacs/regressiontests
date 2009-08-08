@@ -21,6 +21,9 @@ my $virtol_abs   = 0.1;
 my $ftol_rel     = 0.001;
 my $ftol_sprod   = 0.001;
 
+# global variables to explain some situations to the user
+my $addversionnote = 0;
+
 # trickery for program and reference file names
 my $mdprefix = '';
 my $ref      = '';
@@ -31,9 +34,13 @@ my %progs = ( 'grompp'   => 'grompp',
 	      'editconf' => 'editconf' );
 sub setup_vars()
 {
-    # It is assumed that double-precision MPI mdrun is named
-    # ${prefix}mdrun_mpi_d{$suffix}, and that utility programs
-    # are not compiled with MPI and thus do not have _mpi suffixes.
+    # We assume that the name of executables match the 
+    # pattern ${prefix}mdrun[_mpi][_d]${suffix} where
+    # ${prefix} and ${suffix} are as defined above (or
+    # over-ridden on the command line), "_d" indicates a
+    # double-precision version, and (only in the case of
+    # mdrun) "_mpi" indicates a parallel version compiled
+    # with MPI.
     if ( $parallel > 0 ) {
 	$progs{'mdrun'} .= "_mpi";
 	$mdprefix = "mpirun -c $parallel";
@@ -158,6 +165,7 @@ sub test_systems {
 	    
 	    my $nerror = 0;
 	    my $ndx = "";
+	    my $tprversionmismatch;
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
 	    }
@@ -183,6 +191,12 @@ sub test_systems {
 		$nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
 		if ($nerror > 0) {
 		    print "topol.tpr file different from $reftpr. Check files in $dir\n";
+		}
+		system("grep 'reading tpx file (reference_d.tpr) version .* with version .* program' checktpr.out >& /dev/null");
+		$tprversionmismatch = (0 == ($? >> 8));
+		if ($tprversionmismatch > 0) {
+		    print "\nThe GROMACS version being tested is older than the reference version.\nPlease see the note at end of this output.\n";
+		    $addversionnote = 1;
 		}
 	    }
 	    if ($nerror == 0) {
@@ -237,7 +251,9 @@ sub test_systems {
 		
 		if ($verbose > 0) {
 		    my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
-		    if ( $nmdp > 2) {
+		    if ( $nmdp > 2 && `cat grompp.mdp | wc -l` > 50) {
+			# if the input .mdp file is trivially short, then 
+			# the above diff test will always fail
 			print("PASSED but check mdp file differences\n");
 		    }
 		    else {
@@ -268,7 +284,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* *.xvg topol.tpr confout.gro ener.edr md.log traj.trr" );
+	    my @args = glob("#*# *~ *.out core.* *.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp*" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -298,9 +314,9 @@ sub refcleandir {
 sub test_dirs {
     my $dirs = shift;
     chdir($dirs);
-    my @kernels = my_glob();
-    my $nn = $#kernels + 1;
-    my $npassed = test_systems(@kernels);
+    my @subdirs = my_glob();
+    my $nn = $#subdirs + 1;
+    my $npassed = test_systems(@subdirs);
     if ($npassed < $nn) {
 	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
     }
@@ -540,3 +556,31 @@ foreach my $w ( @work ) {
     eval $w;
 }
 
+if ($addversionnote > 0) {
+    print << "ENDOFNOTE"
+
+Note about GROMACS refernce versions
+------------------------------------
+Various different GROMACS versions are used to generate the reference
+files for these tests. Because of a known bug with Buckingham
+interactions in combination with LJ 1-4 interactions in GROMACS 3.3.x, 
+the kernel_[0-3]2[0-4] test references are generated with GROMACS 4.0.5. All 
+other kernel test references are generated with GROMACS 3.3. Most non-kernel
+test references are generated with GROMACS 3.3.2. See the README file for
+more detail.
+
+If you are trying to test a version that precedes some of the above, then
+this test set will not achieve your aim.
+
+If you are testing a 3.3/3.3.1/3.3.2/3.3.3 version, then it is expected that 
+all kernel_[0-3]2[0-4] tests fail, because of the known bug. This is only a 
+problem if you wish to use Buckingham interactions with LJ 1-4 interactions, 
+which is very rare. Most users can ignore this - or install GROMACS 4 
+instead!
+
+If you are seeing this message and neither of the above conditions is true, 
+then you have another problem. If you post to the GROMACS mailing lists,
+you must include the version number of GROMACS that you were testing, and
+which tests failed and what they reported.
+ENDOFNOTE
+}
