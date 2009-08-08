@@ -116,7 +116,7 @@ implicit_solvent         = No
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
-tcoupl                   = yes
+tcoupl                   = Berendsen
 ; Groups to couple separately
 tc_grps                  = System
 ; Time constant (ps) and reference temperature (K)
