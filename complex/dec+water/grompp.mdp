@@ -1,26 +1,21 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: mxa224 (665)
-;	On host: xe
-;	At date: Tue May 19 15:19:17 2009
+;	By user: spoel (500)
+;	On host: h28n2fls34o1123.telia.com
+;	At date: Sat May 10 01:14:24 2003
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
-; Preprocessor information: use cpp syntax.
-; e.g.: -I/home/joe/doe -I/home/mary/hoe
 include                  = -I../top
-; e.g.: -DI_Want_Cookies -DMe_Too
 define                   = 
 
 ; RUN CONTROL PARAMETERS
 integrator               = md
-; Start time and timestep in ps
+; start time and timestep in ps
 tinit                    = 0.0
 dt                       = 0.002
 nsteps                   = 50
-; For exact run continuation or redoing part of a run
-; Part index is updated automatically on checkpointing (keeps files separate)
-simulation_part          = 1
+; after checkpoint or tpbconv restart we can start on step > 0
 init_step                = 0
 ; mode for center of mass motion removal
 comm-mode                = Linear
@@ -30,7 +25,7 @@ nstcomm                  = 1
 comm-grps                = 
 
 ; LANGEVIN DYNAMICS OPTIONS
-; Friction coefficient (amu/ps) and random seed
+; Temperature, friction coefficient (amu/ps) and random seed
 bd-fric                  = 0
 ld-seed                  = 1993
 
@@ -40,20 +35,18 @@ emtol                    = 0.001
 emstep                   = 0.1
 ; Max number of iterations in relax_shells
 niter                    = 20
-; Step size (ps^2) for minimization of flexible constraints
+; Step size (1/ps^2) for minimization of flexible constraints
 fcstep                   = 0
 ; Frequency of steepest descents steps when doing CG
 nstcgsteep               = 1000
-nbfgscorr                = 10
-
-; TEST PARTICLE INSERTION OPTIONS
-rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
 nstxout                  = 0
 nstvout                  = 0
 nstfout                  = 0
+; Checkpointing helps you continue after crashes
+nstcheckpoint            = 0
 ; Output frequency for energies to log file and energy file
 nstlog                   = 0
 nstenergy                = 1
@@ -71,20 +64,19 @@ energygrps               = C10	SOL
 nstlist                  = 10
 ; ns algorithm (simple or grid)
 ns_type                  = grid
-; Periodic boundary conditions: xyz, no, xy
+; Periodic boundary conditions: xyz or no
 pbc                      = xyz
-periodic_molecules       = no
 ; nblist cut-off        
 rlist                    = 1
+domain-decomposition     = no
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
 coulombtype              = Cut-off
 rcoulomb-switch          = 0
 rcoulomb                 = 1
-; Relative dielectric constant for the medium and the reaction field
+; Dielectric constant (DC) for cut-off or DC of reaction field
 epsilon_r                = 1.0
-epsilon_rf               = 1
 ; Method for doing Van der Waals
 vdw-type                 = Cut-off
 ; cut-off lengths       
@@ -92,10 +84,6 @@ rvdw-switch              = 0
 rvdw                     = 1
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = No
-; Extension of the potential lookup tables beyond the cut-off
-table-extension          = 1
-; Seperate tables between energy group pairs
-energygrp_table          = 
 ; Spacing for the PME/PPPM FFT grid
 fourierspacing           = 0.12
 ; FFT grid size, when a value is 0 fourierspacing will be used
@@ -109,9 +97,6 @@ ewald_geometry           = 3d
 epsilon_surface          = 0
 optimize_fft             = no
 
-; IMPLICIT SOLVENT ALGORITHM
-implicit_solvent         = No
-
 ; GENERALIZED BORN ELECTROSTATICS
 ; Algorithm for calculating Born radii
 gb_algorithm             = Still
@@ -120,21 +105,15 @@ nstgbradii               = 0
 ; Cutoff for Born radii calculation; the contribution from atoms
 ; between rlist and rgbradii is updated every nstlist steps
 rgbradii                 = 0
-; Dielectric coefficient of the implicit solvent
-gb_epsilon_solvent       = 80
 ; Salt concentration in M for Generalized Born models
 gb_saltconc              = 0
-; Scaling factors used in the OBC GB model. Default values are OBC(II)
-gb_obc_alpha             = 1
-gb_obc_beta              = 0.8
-gb_obc_gamma             = 4.85
-; Surface tension (kJ/mol/nm^2) for the SA (nonpolar surface) part of GBSA
-; The default value (2.092) corresponds to 0.005 kcal/mol/Angstrom^2.
-sa_surface_tension       = 2.092
+
+; IMPLICIT SOLVENT (for use with Generalized Born electrostatics)
+implicit_solvent         = No
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
-tcoupl                   = Berendsen
+tcoupl                   = yes
 ; Groups to couple separately
 tc-grps                  = C10	SOL
 ; Time constant (ps) and reference temperature (K)
@@ -147,38 +126,8 @@ Pcoupltype               = Isotropic
 tau_p                    = 1
 compressibility          = 
 ref_p                    = 1.0	1.0	1.0
-; Scaling of reference coordinates, No, All or COM
-refcoord_scaling         = No
 ; Random seed for Andersen thermostat
 andersen_seed            = 0
-
-; OPTIONS FOR QMMM calculations
-QMMM                     = no
-; Groups treated Quantum Mechanically
-QMMM-grps                = 
-; QM method             
-QMmethod                 = 
-; QMMM scheme           
-QMMMscheme               = normal
-; QM basisset           
-QMbasis                  = 
-; QM charge             
-QMcharge                 = 
-; QM multiplicity       
-QMmult                   = 
-; Surface Hopping       
-SH                       = 
-; CAS space options     
-CASorbitals              = 
-CASelectrons             = 
-SAon                     = 
-SAoff                    = 
-SAsteps                  = 
-; Scale factor for MM charges
-MMChargeScaleFactor      = 1
-; Optimization of QM subsystem
-bOPT                     = 
-bTS                      = 
 
 ; SIMULATED ANNEALING  
 ; Type of annealing for each temperature group (no/single/periodic)
@@ -200,7 +149,7 @@ constraints              = all-bonds
 ; Type of constraint algorithm
 constraint-algorithm     = Lincs
 ; Do not constrain the start configuration
-continuation             = no
+unconstrained-start      = no
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = yes
 ; Relative tolerance of shake
@@ -221,19 +170,6 @@ morse                    = no
 ; Pairs of energy groups for which all non-bonded interactions are excluded
 energygrp_excl           = 
 
-; WALLS                
-; Number of walls, type, atom types, densities and box-z scale factor for Ewald
-nwall                    = 0
-wall_type                = 9-3
-wall_r_linpot            = -1
-wall_atomtype            = 
-wall_density             = 
-wall_ewald_zfac          = 3
-
-; COM PULLING          
-; Pull type: no, umbrella, constraint or constant_force
-pull                     = no
-
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
 disre                    = No
@@ -251,23 +187,21 @@ orire                    = no
 orire-fc                 = 0
 orire-tau                = 0
 orire-fitgrp             = 
-; Output frequency for trace(SD) and S to energy file
+; Output frequency for trace(SD) to energy file
 nstorireout              = 0
-; Dihedral angle restraints: No or Yes
+; Dihedral angle restraints: No, Simple or Ensemble
 dihre                    = No
 dihre-fc                 = 0
+dihre-tau                = 0
+; Output frequency for dihedral values to energy file
+nstdihreout              = 0
 
 ; Free energy control stuff
 free-energy              = no
 init-lambda              = 0
 delta-lambda             = 0
 sc-alpha                 = 0
-sc-power                 = 0
 sc-sigma                 = 0.3
-couple-moltype           = 
-couple-lambda0           = vdw-q
-couple-lambda1           = vdw-q
-couple-intramol          = no
 
 ; Non-equilibrium MD stuff
 acc-grps                 = 
@@ -275,7 +209,6 @@ accelerate               =
 freezegrps               = 
 freezedim                = 
 cos-acceleration         = 0
-deform                   = 
 
 ; Electric fields      
 ; Format is number of terms (int) and for all terms an amplitude (real)

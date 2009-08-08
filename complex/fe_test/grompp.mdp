@@ -1,15 +1,15 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: mxa224 (665)
-;	On host: xe
-;	At date: Tue May 19 15:19:21 2009
+;	By user: onbekend (0)
+;	On host: onbekend
+;	At date: Fri Sep 14 15:31:19 2007
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
-; Preprocessor information: use cpp syntax.
-; e.g.: -I/home/joe/doe -I/home/mary/hoe
+title                    = Yo
+; Preprocessor - specify a full path if necessary.
+cpp                      = cpp
 include                  = 
-; e.g.: -DI_Want_Cookies -DMe_Too
 define                   = 
 
 ; RUN CONTROL PARAMETERS
@@ -19,8 +19,6 @@ tinit                    = 0.0
 dt                       = 0.0005
 nsteps                   = 20
 ; For exact run continuation or redoing part of a run
-; Part index is updated automatically on checkpointing (keeps files separate)
-simulation_part          = 1
 init_step                = 0
 ; mode for center of mass motion removal
 comm-mode                = Linear
@@ -32,7 +30,7 @@ comm-grps                =
 ; LANGEVIN DYNAMICS OPTIONS
 ; Friction coefficient (amu/ps) and random seed
 bd-fric                  = 0
-ld_seed                  = 60592
+ld_seed                  = -1
 
 ; ENERGY MINIMIZATION OPTIONS
 ; Force tolerance and initial step-size
@@ -46,14 +44,13 @@ fcstep                   = 0
 nstcgsteep               = 1000
 nbfgscorr                = 10
 
-; TEST PARTICLE INSERTION OPTIONS
-rtpi                     = 0.05
-
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
 nstxout                  = 0
 nstvout                  = 0
 nstfout                  = 0
+; Checkpointing helps you continue after crashes
+nstcheckpoint            = 1000
 ; Output frequency for energies to log file and energy file
 nstlog                   = 4
 nstenergy                = 4
@@ -71,11 +68,12 @@ energygrps               = protein
 nstlist                  = 5
 ; ns algorithm (simple or grid)
 ns_type                  = grid
-; Periodic boundary conditions: xyz, no, xy
+; Periodic boundary conditions: xyz (default), no (vacuum)
+; or full (infinite systems only)
 pbc                      = xyz
-periodic_molecules       = no
 ; nblist cut-off        
 rlist                    = 0.9
+domain-decomposition     = no
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
@@ -109,9 +107,6 @@ ewald_geometry           = 3d
 epsilon_surface          = 0
 optimize_fft             = no
 
-; IMPLICIT SOLVENT ALGORITHM
-implicit_solvent         = No
-
 ; GENERALIZED BORN ELECTROSTATICS
 ; Algorithm for calculating Born radii
 gb_algorithm             = Still
@@ -120,17 +115,11 @@ nstgbradii               = 1
 ; Cutoff for Born radii calculation; the contribution from atoms
 ; between rlist and rgbradii is updated every nstlist steps
 rgbradii                 = 2
-; Dielectric coefficient of the implicit solvent
-gb_epsilon_solvent       = 80
 ; Salt concentration in M for Generalized Born models
 gb_saltconc              = 0
-; Scaling factors used in the OBC GB model. Default values are OBC(II)
-gb_obc_alpha             = 1
-gb_obc_beta              = 0.8
-gb_obc_gamma             = 4.85
-; Surface tension (kJ/mol/nm^2) for the SA (nonpolar surface) part of GBSA
-; The default value (2.092) corresponds to 0.005 kcal/mol/Angstrom^2.
-sa_surface_tension       = 2.092
+
+; IMPLICIT SOLVENT (for use with Generalized Born electrostatics)
+implicit_solvent         = No
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
@@ -147,8 +136,6 @@ Pcoupltype               = Isotropic
 tau_p                    = 1.0
 compressibility          = 4.6e-5
 ref_p                    = 1
-; Scaling of reference coordinates, No, All or COM
-refcoord_scaling         = No
 ; Random seed for Andersen thermostat
 andersen_seed            = 815131
 
@@ -196,11 +183,11 @@ gen_temp                 = 298
 gen_seed                 = 171533
 
 ; OPTIONS FOR BONDS    
-constraints              = none
+;constraints              = all-bonds
 ; Type of constraint algorithm
 constraint-algorithm     = Lincs
 ; Do not constrain the start configuration
-continuation             = no
+unconstrained-start      = no
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = no
 ; Relative tolerance of shake
@@ -221,19 +208,6 @@ morse                    = no
 ; Pairs of energy groups for which all non-bonded interactions are excluded
 energygrp_excl           = 
 
-; WALLS                
-; Number of walls, type, atom types, densities and box-z scale factor for Ewald
-nwall                    = 0
-wall_type                = 9-3
-wall_r_linpot            = -1
-wall_atomtype            = 
-wall_density             = 
-wall_ewald_zfac          = 3
-
-; COM PULLING          
-; Pull type: no, umbrella, constraint or constant_force
-pull                     = no
-
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
 disre                    = No
@@ -253,9 +227,12 @@ orire-tau                = 0
 orire-fitgrp             = 
 ; Output frequency for trace(SD) and S to energy file
 nstorireout              = 100
-; Dihedral angle restraints: No or Yes
+; Dihedral angle restraints: No, Simple or Ensemble
 dihre                    = No
 dihre-fc                 = 1000
+dihre-tau                = 0
+; Output frequency for dihedral values to energy file
+nstdihreout              = 100
 
 ; Free energy control stuff
 free-energy              = yes
@@ -264,10 +241,6 @@ delta-lambda             = 0.05
 sc_alpha                 = 0.6
 sc_power                 = 1
 sc_sigma                 = 0.28
-couple-moltype           = 
-couple-lambda0           = vdw-q
-couple-lambda1           = vdw-q
-couple-intramol          = no
 
 ; Non-equilibrium MD stuff
 acc-grps                 = 
