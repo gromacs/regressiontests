@@ -1,11 +1,14 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: spoel (291)
-;	On host: comp-pvfs-0-21.local
-;	At date: Mon Mar 14 14:49:59 2005
+;	By user: onbekend (0)
+;	On host: onbekend
+;	At date: Mon Aug 10 15:52:29 2009
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
+title                    = 
+; Preprocessor - specify a full path if necessary.
+cpp                      = cpp
 include                  = 
 define                   = -DDIHS -DBONDS
 
@@ -25,6 +28,7 @@ nstcomm                  = 1
 comm-grps                = 
 
 ; LANGEVIN DYNAMICS OPTIONS
+; Friction coefficient (amu/ps) and random seed
 bd-fric                  = 0
 ld-seed                  = 1993
 
@@ -76,8 +80,9 @@ domain-decomposition     = no
 coulombtype              = Cut-off
 rcoulomb_switch          = 0
 rcoulomb                 = 0.8
-; Dielectric constant (DC) for cut-off or DC of reaction field
+; Relative dielectric constant for the medium and the reaction field
 epsilon_r                = 1
+epsilon_rf               = 1
 ; Method for doing Van der Waals
 vdw-type                 = Cut-off
 ; cut-off lengths       
@@ -87,6 +92,8 @@ rvdw                     = 0.8
 DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
 table-extension          = 1
+; Seperate tables between energy group pairs
+energygrp_table          = 
 ; Spacing for the PME/PPPM FFT grid
 fourierspacing           = 0.12
 ; FFT grid size, when a value is 0 fourierspacing will be used
@@ -131,6 +138,34 @@ compressibility          =
 ref_p                    = 1.0
 ; Random seed for Andersen thermostat
 andersen_seed            = 815131
+
+; OPTIONS FOR QMMM calculations
+QMMM                     = no
+; Groups treated Quantum Mechanically
+QMMM-grps                = 
+; QM method             
+QMmethod                 = 
+; QMMM scheme           
+QMMMscheme               = normal
+; QM basisset           
+QMbasis                  = 
+; QM charge             
+QMcharge                 = 
+; QM multiplicity       
+QMmult                   = 
+; Surface Hopping       
+SH                       = 
+; CAS space options     
+CASorbitals              = 
+CASelectrons             = 
+SAon                     = 
+SAoff                    = 
+SAsteps                  = 
+; Scale factor for MM charges
+MMChargeScaleFactor      = 1
+; Optimization of QM subsystem
+bOPT                     = 
+bTS                      = 
 
 ; SIMULATED ANNEALING  
 ; Type of annealing for each temperature group (no/single/periodic)
@@ -204,6 +239,7 @@ free_energy              = no
 init_lambda              = 0
 delta_lambda             = 0
 sc-alpha                 = 0
+sc-power                 = 0
 sc-sigma                 = 0.3
 
 ; Non-equilibrium MD stuff
