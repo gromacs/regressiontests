@@ -26,16 +26,16 @@ configured as
 ./configure --enable-double --disable-software-sqrt CFLAGS="-O0 -ffloat-store" 
 
 and run with environment variable NOASSEMBLYLOOPS set to 1. The compiler was 
-gcc 4.1.2 20070626 (Red Hat 4.1.2-13) running on Pentium III hardware. 
-Buckingham kernel tests were calculated with GROMACS 4.0.5 (because of the 
-Buckingham/LJ-14 bug in 3.3.x), other kernel tests with GROMACS 3.3, most 
-other tests with GROMACS 3.3.2, and tests of functionality introduced in 4.0 
-with GROMACS 4.0.5.
+gcc 4.1.2 20070626 (Red Hat 4.1.2-13) running on Pentium III hardware. The
+following versions of GROMACS were used in generating reference states:
+** Buckingham kernel tests were calculated with GROMACS 4.0.5 (because of the 
+Buckingham/LJ-14 bug in 3.3.x), 
+** all other kernel tests with GROMACS 3.3, 
+** most other tests with GROMACS 3.3.2, and 
+** tests of functionality introduced in 4.0 with GROMACS 4.0.5.
 
-* All .mdp files reverted to those created by DvdS, (i.e. per git cc5379438706044faabedbc83bd2e3b8dbecfe42)
+* All .mdp files reverted to those created by DvdS, (i.e. per git 
+cc5379438706044faabedbc83bd2e3b8dbecfe42) and then corrected (e.g. to remove
+non-zero nstxtcout, or a wrong -Ddefine in simple/rb1)
 
 * "tcoupl = yes" changed to "tcoupl = Berendsen"
-
-* "ns-type = simple" changed to "ns-type = grid"
-
-
