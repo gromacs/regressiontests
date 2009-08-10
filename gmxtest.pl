@@ -61,8 +61,21 @@ sub setup_vars()
 sub do_system
 {
     my $command = shift;
+    my $normalreturn = shift;
+    my $callback = shift;
+    $normalreturn = 0 unless(defined $normalreturn);
     my $returnvalue = system($command) >> 8;
-    print "Return value of '$command' was $returnvalue\n";
+    if ($normalreturn != $returnvalue)
+    {
+	if (defined $callback)
+	{
+	    &$callback($returnvalue);
+	}
+#	else 
+	{
+	    print "Abnormal return value for '$command' was $returnvalue\n";
+	}
+    }
 }
 
 sub do_rmrf
@@ -185,7 +198,6 @@ sub test_systems {
 	    
 	    my $nerror = 0;
 	    my $ndx = "";
-	    my $tprversionmismatch;
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
 	    }
@@ -205,18 +217,18 @@ sub test_systems {
 		if (! -f $reftpr) {
 		    print ("No $reftpr file in $dir\n");
 		    print ("This means you are not really testing $dir\n");
-		    rename('topol.tpr', $reftpr);
-		}
-		do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
-		$nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
-		if ($nerror > 0) {
-		    print "topol.tpr file different from $reftpr. Check files in $dir\n";
-		}
-		do_system("grep 'reading tpx file (reference_d.tpr) version .* with version .* program' checktpr.out >& /dev/null");
-		$tprversionmismatch = (0 == ($? >> 8));
-		if ($tprversionmismatch > 0) {
-		    print "\nThe GROMACS version being tested is older than the reference version.\nPlease see the note at end of this output.\n";
-		    $addversionnote = 1;
+		    link('topol.tpr', $reftpr);
+		} else {
+		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
+		    $nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
+		    if ($nerror > 0) {
+			print "topol.tpr file different from $reftpr. Check files in $dir\n";
+		    }
+		    do_system("grep 'reading tpx file (reference_d.tpr) version .* with version .* program' checktpr.out >& /dev/null", 1,
+			      sub {
+				  print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
+				  $addversionnote = 1;
+			      } );
 		}
 	    }
 	    if ($nerror == 0) {
@@ -225,37 +237,40 @@ sub test_systems {
 		
 		# First check whether we have any output
 		if ((-f "ener.edr" ) && (-f "traj.trr")) {
+		    my @error_detail;
 		    # Now check whether we have any reference files
 		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			rename('ener.edr', $refedr);
+			link('ener.edr', $refedr);
+		    } else {
+			# Now do the real tests
+			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
+			my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
+			chomp($nerr_pot);
+			push(@error_detail, "checkpot.out ($nerr_pot errors)") if ($nerr_pot > 0);
+
+			my $nerr_vir   = check_virial();
+			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
+
+			$nerror |= $nerr_pot | $nerr_vir;
 		    }
 		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			rename('traj.trr', $reftrr);
-		    }
-		    # Now do the real tests
-		    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
-		    
-		    my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
-		    chomp($nerr_pot);
-		    my $nerr_force = check_force();
-		    my $nerr_vir   = check_virial();
+			link('traj.trr', $reftrr);
+		    } else {
+			# Now do the real tests
+			my $nerr_force = check_force();
+			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
 		
-		    my $nerr_xvg   = check_xvg("${ref}.xvg","dgdl.xvg",1,3);
+			my $nerr_xvg   = check_xvg("${ref}.xvg","dgdl.xvg",1,3);
+			push(@error_detail, "${ref}.xvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
 		    
-		    $nerror = ($nerr_pot || $nerr_force || 
-			       $nerr_vir || $nerr_xvg);
-
-		    my @error_detail;
-		    push(@error_detail, "checkpot.out ($nerr_pot errors)") if ($nerr_pot > 0);
-		    push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
-		    push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
-		    push(@error_detail, "${ref}.xvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
+			$nerror |= $nerr_force || $nerr_xvg;
+		    }
 		    $error_detail = join(', ', @error_detail) . ' ';
 		}
 		else {
@@ -435,7 +450,7 @@ sub test_pdb2gmx {
 	my $reflog = "${ref}.log";
 	if (! -f $reflog) {
 	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    rename('ener.log', $reflog);
+	    link('ener.log', $reflog);
 	}
 	else {
 	    $nerror = check_xvg($reflog,"ener.log",3,7);
