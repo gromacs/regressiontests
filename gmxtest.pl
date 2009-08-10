@@ -284,7 +284,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* *.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z0-9]*" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z0-9]*" );
 	    unlink (@args);
 	    chdir("..");
 	}
