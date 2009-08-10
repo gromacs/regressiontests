@@ -58,12 +58,32 @@ sub setup_vars()
     }
 }
 
+sub do_system
+{
+    my $command = shift;
+    my $returnvalue = system($command) >> 8;
+    print "Return value of '$command' was $returnvalue\n";
+}
+
+sub do_rmrf
+{
+#    print "do_rmrf(@_)\n";
+#    `ls @_`;
+    my @dirs = glob(@_);
+#    print "do_rmrf(@dirs)\n";
+    foreach my $dir (@dirs) {
+#	print "Unlinking files in $dir\n"; 
+	unlink glob "$dir/*"; 
+	rmdir $dir;
+    }
+}
+
 sub check_force()
 {
     my $tmp = "checkforce.tmp";
     my $cfor = "checkforce.out";
     my $reftrr = "${ref}.trr";
-    system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null");    
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null");    
     `grep "f\\[" $cfor > $tmp`;
     my $nerr_force = 0;
     
@@ -94,7 +114,7 @@ sub check_virial()
     my $tmp = "checkvir.tmp";
     my $cvir = "checkvir.out";
     my $refedr = "${ref}.edr";
-    system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null");   
+    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null");   
     
     `grep "Vir-" $cvir > $tmp`;
     my $nerr_vir = 0;
@@ -173,7 +193,7 @@ sub test_systems {
 	    if ($parallel > 1) {
 		$par = "-np $parallel";
 	    }
-	    system("$progs{'grompp'} -maxwarn 10 $ndx > grompp.out 2>&1");
+	    do_system("$progs{'grompp'} -maxwarn 10 $ndx > grompp.out 2>&1");
 	    
 	    my $error_detail = ' ';
 	    if (! -f "topol.tpr") {
@@ -185,14 +205,14 @@ sub test_systems {
 		if (! -f $reftpr) {
 		    print ("No $reftpr file in $dir\n");
 		    print ("This means you are not really testing $dir\n");
-		    system("cp topol.tpr $reftpr");
+		    rename('topol.tpr', $reftpr);
 		}
-		system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
+		do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
 		$nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
 		if ($nerror > 0) {
 		    print "topol.tpr file different from $reftpr. Check files in $dir\n";
 		}
-		system("grep 'reading tpx file (reference_d.tpr) version .* with version .* program' checktpr.out >& /dev/null");
+		do_system("grep 'reading tpx file (reference_d.tpr) version .* with version .* program' checktpr.out >& /dev/null");
 		$tprversionmismatch = (0 == ($? >> 8));
 		if ($tprversionmismatch > 0) {
 		    print "\nThe GROMACS version being tested is older than the reference version.\nPlease see the note at end of this output.\n";
@@ -201,7 +221,7 @@ sub test_systems {
 	    }
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
-		system("$mdprefix $progs{'mdrun'} > mdrun.out 2>&1");
+		do_system("$mdprefix $progs{'mdrun'} > mdrun.out 2>&1");
 		
 		# First check whether we have any output
 		if ((-f "ener.edr" ) && (-f "traj.trr")) {
@@ -210,16 +230,16 @@ sub test_systems {
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			system("cp ener.edr $refedr");
+			rename('ener.edr', $refedr);
 		    }
 		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			system("cp traj.trr $reftrr");
+			rename('traj.trr', $reftrr);
 		    }
 		    # Now do the real tests
-		    system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
+		    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
 		    
 		    my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
 		    chomp($nerr_pot);
@@ -258,7 +278,7 @@ sub test_systems {
 		    }
 		    else {
 			print "PASSED\n";
-			system("rm -f mdout.mdp");
+			unlink("mdout.mdp");
 		    }
 		}
 		$npassed++;
@@ -403,7 +423,7 @@ sub test_pdb2gmx {
     }
     close LOG;
     
-    system("grep 'Potential Energy' pdb2gmx.log > ener.log");
+    do_system("grep 'Potential Energy' pdb2gmx.log > ener.log");
     
     my $nsuccess = `wc -l ener.log | awk '{print \$1}'`;
     chomp($nsuccess);
@@ -415,7 +435,7 @@ sub test_pdb2gmx {
 	my $reflog = "${ref}.log";
 	if (! -f $reflog) {
 	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    system("cp ener.log $reflog");
+	    rename('ener.log', $reflog);
 	}
 	else {
 	    $nerror = check_xvg($reflog,"ener.log",3,7);
@@ -425,7 +445,8 @@ sub test_pdb2gmx {
 	    }
 	}
 	print "All $ntest pdb2gmx tests PASSED\n";
-	system("rm -rf @pdb_dirs");
+	do_rmrf(@pdb_dirs);
+#	system("rm -rf @pdb_dirs");
 	unlink("ener.log","pdb2gmx.log");
     }
     if ($nerror > 0) {
@@ -439,7 +460,8 @@ sub clean_all {
     cleandirs("complex");
     cleandirs("kernel");
     chdir("pdb2gmx");
-    system("rm -rf pdb-* ener.log pdb2gmx.log");
+    unlink("ener.log", "pdb2gmx.log");
+    do_rmrf("pdb-*");
     chdir("..");
 }
 
