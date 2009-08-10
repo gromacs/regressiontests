@@ -10,7 +10,7 @@ title                    =
 ; Preprocessor - specify a full path if necessary.
 cpp                      = cpp
 include                  = 
-define                   = -DRYCKAERT -DMOL1
+define                   = -DRYCKAERT -DBONDS
 
 ; RUN CONTROL PARAMETERS
 integrator               = md
