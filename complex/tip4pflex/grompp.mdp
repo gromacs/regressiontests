@@ -52,7 +52,7 @@ nstcheckpoint            = 1000
 nstlog                   = 0
 nstenergy                = 1
 ; Output frequency and precision for xtc file
-nstxtcout                = 20
+nstxtcout                = 0
 xtc-precision            = 1000
 ; This selects the subset of atoms for the xtc file. You can
 ; select multiple groups. By default all atoms will be written.
