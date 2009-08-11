@@ -1,10 +1,10 @@
-# This file was created Sat Sep 15 13:28:45 2007
+# This file was created Tue Aug 11 12:32:24 2009
 # by the following command:
-# mdrun_d 
+# mdrun_d_332 
 #
-# mdrun_d is part of G R O M A C S:
+# mdrun_d_332 is part of G R O M A C S:
 #
-# Giving Russians Opium May Alter Current Situation
+# GROup of MAchos and Cynical Suckers
 #
 @    title "dG/d\8l\4"
 @    xaxis  label "Time (ps)"
