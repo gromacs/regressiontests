@@ -21,11 +21,12 @@ my $virtol_abs   = 0.1;
 my $ftol_rel     = 0.001;
 my $ftol_sprod   = 0.001;
 
-# global variables to explain some situations to the user
+# global variables to flag whether to explain some situations to the user
 my $addversionnote = 0;
 
 # trickery for program and reference file names
 my $mdprefix = '';
+my $mdparams = '';
 my $ref      = '';
 my %progs = ( 'grompp'   => 'grompp',
 	      'mdrun'    => 'mdrun',
@@ -34,15 +35,14 @@ my %progs = ( 'grompp'   => 'grompp',
 	      'editconf' => 'editconf' );
 sub setup_vars()
 {
-    # We assume that the name of executables match the 
-    # pattern ${prefix}mdrun[_mpi][_d]${suffix} where
-    # ${prefix} and ${suffix} are as defined above (or
-    # over-ridden on the command line), "_d" indicates a
-    # double-precision version, and (only in the case of
-    # mdrun) "_mpi" indicates a parallel version compiled
-    # with MPI.
+    # We assume that the name of executables match the pattern 
+    # ${prefix}mdrun[_mpi][_d]${suffix} where ${prefix} and ${suffix} are 
+    # as defined above (oro ver-ridden on the command line), "_d" indicates 
+    # a double-precision version, and (only in the case of mdrun) "_mpi" 
+    # indicates a parallel version compiled with MPI.
     if ( $parallel > 0 ) {
 	$progs{'mdrun'} .= "_mpi";
+	# edit the next line if you need to customize the call to mpirun
 	$mdprefix = "mpirun -c $parallel";
     }
     foreach my $prog ( values %progs ) {
@@ -50,20 +50,19 @@ sub setup_vars()
 	$prog .= "_d" if ( $double > 0 );
 	$prog .= $suffix;
     }
-    if ( $double > 0 ) {
-	$ref    = "reference_d";
-    }
-    else {
-	$ref    = "reference_s";
-    }
+    $ref = 'reference_' . ($double > 0 ? 'd' : 's');
 }
 
+# Wrapper function to call system(), and then perhaps a callback based on the
+# value of the return code. When no callback exists, a generic error is
+# displayed
 sub do_system
 {
     my $command = shift;
     my $normalreturn = shift;
     my $callback = shift;
     $normalreturn = 0 unless(defined $normalreturn);
+
     my $returnvalue = system($command) >> 8;
     if ($normalreturn != $returnvalue)
     {
@@ -71,24 +70,12 @@ sub do_system
 	{
 	    &$callback($returnvalue);
 	}
-#	else 
+	else 
 	{
-	    print "Abnormal return value for '$command' was $returnvalue\n";
+	    print "\nAbnormal return value for '$command' was $returnvalue\n";
 	}
     }
-}
-
-sub do_rmrf
-{
-#    print "do_rmrf(@_)\n";
-#    `ls @_`;
-    my @dirs = glob(@_);
-#    print "do_rmrf(@dirs)\n";
-    foreach my $dir (@dirs) {
-#	print "Unlinking files in $dir\n"; 
-	unlink glob "$dir/*"; 
-	rmdir $dir;
-    }
+    return $returnvalue;
 }
 
 sub check_force()
@@ -96,7 +83,8 @@ sub check_force()
     my $tmp = "checkforce.tmp";
     my $cfor = "checkforce.out";
     my $reftrr = "${ref}.trr";
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null");    
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null", 0,
+	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n" });
     `grep "f\\[" $cfor > $tmp`;
     my $nerr_force = 0;
     
@@ -127,7 +115,8 @@ sub check_virial()
     my $tmp = "checkvir.tmp";
     my $cvir = "checkvir.out";
     my $refedr = "${ref}.edr";
-    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null");   
+    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null", 0,
+	sub { print "\ngmxcheck failed on the .edr file while checking the virial\n" });
     
     `grep "Vir-" $cvir > $tmp`;
     my $nerr_vir = 0;
@@ -159,7 +148,8 @@ sub check_xvg {
     my $kkk  = shift;
     my $ndx1 = shift;
     my $ndx2 = shift;
-    
+    my $pdb2gmx_test_names = shift;
+
     my $nerr = 0;
     if ((-f $refx) && (-f $kkk)) {
 	open(EEE,"paste $refx $kkk |");
@@ -171,13 +161,17 @@ sub check_xvg {
 		my @tmp = split(' ',$line);
 		my $x1 = $tmp[$ndx1];
 		my $x2 = $tmp[$ndx2];
-		if ((($x1-$x2)/($x1+$x2)) > $etol) {
+		my $error = abs(($x1-$x2)/($x1+$x2));
+		if ($error > $etol) {
 		    $nerr++;
 		    if (!$header) {
 			$header = 1;
-			print("N      Reference   This test\n");
+			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nIndex  Reference   This test       Error  Description\n");
 		    }
-		    printf("%4d  %10g  %10g\n",$n,$tmp[3],$tmp[7]);
+		    printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
+			   defined $pdb2gmx_test_names && 
+			   defined $$pdb2gmx_test_names[$n] ? 
+			   $$pdb2gmx_test_names[$n] : 'unknown');
 		}
 		$n++;
 	    }
@@ -219,12 +213,13 @@ sub test_systems {
 		    print ("This means you are not really testing $dir\n");
 		    link('topol.tpr', $reftpr);
 		} else {
-		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1");
+		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1", 0, 
+			sub { print "Comparison of input .tpr files failed!\n" });
 		    $nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
 		    if ($nerror > 0) {
 			print "topol.tpr file different from $reftpr. Check files in $dir\n";
 		    }
-		    do_system("grep 'reading tpx file (reference_d.tpr) version .* with version .* program' checktpr.out >& /dev/null", 1,
+		    do_system("grep 'reading tpx file (reference_[sd].tpr) version .* with version .* program' checktpr.out >& /dev/null", 1,
 			      sub {
 				  print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
 				  $addversionnote = 1;
@@ -233,11 +228,12 @@ sub test_systems {
 	    }
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
-		do_system("$mdprefix $progs{'mdrun'} > mdrun.out 2>&1");
+		my @error_detail;
+		$nerror = do_system("$mdprefix $progs{'mdrun'} $mdparams > mdrun.out 2>&1", 0,
+		    sub { push(@error_detail, "mdrun.out and md.log") } );
 		
 		# First check whether we have any output
 		if ((-f "ener.edr" ) && (-f "traj.trr")) {
-		    my @error_detail;
 		    # Now check whether we have any reference files
 		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
@@ -246,8 +242,13 @@ sub test_systems {
 			link('ener.edr', $refedr);
 		    } else {
 			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null");
-			my $nerr_pot   = `grep step checkpot.out | grep -v gcq | wc -l`;
+			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null", 0,
+				  sub {
+				      if($nerror != 0) {
+					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
+				      }
+				  });
+			my $nerr_pot = `grep step checkpot.out | grep -v gcq | wc -l`;
 			chomp($nerr_pot);
 			push(@error_detail, "checkpot.out ($nerr_pot errors)") if ($nerr_pot > 0);
 
@@ -265,17 +266,18 @@ sub test_systems {
 			# Now do the real tests
 			my $nerr_force = check_force();
 			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
-		
-			my $nerr_xvg   = check_xvg("${ref}.xvg","dgdl.xvg",1,3);
-			push(@error_detail, "${ref}.xvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
-		    
-			$nerror |= $nerr_force || $nerr_xvg;
+			$nerror |= $nerr_force;
 		    }
-		    $error_detail = join(', ', @error_detail) . ' ';
+		    # This bit below is only relevant for free energy tests
+		    my $refxvg = "${ref}.xvg";
+		    my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1,3);
+		    push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
+		    $nerror |= $nerr_xvg;
 		}
 		else {
 		    $nerror = 1;
 		}
+		$error_detail = join(', ', @error_detail) . ' ';
 	    }
 	    if ($nerror > 0) {
 		print "FAILED. Check ${error_detail}files in $dir\n";
@@ -285,15 +287,34 @@ sub test_systems {
 		#unlink(@args);
 		
 		if ($verbose > 0) {
-		    my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
-		    if ( $nmdp > 2 && `cat grompp.mdp | wc -l` > 50) {
+		    if (`cat grompp.mdp | wc -l` < 50) {
 			# if the input .mdp file is trivially short, then 
-			# the above diff test will always fail
-			print("PASSED but check mdp file differences\n");
+			# the diff test below will always fail, however this
+			# is normal and expected for the usefully-short
+			# kernel test .mdp files, so we don't compare the
+			# .mdp files in this case
+			print "PASSED\n";
 		    }
 		    else {
-			print "PASSED\n";
-			unlink("mdout.mdp");
+			my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
+			if ( $nmdp > 2 ) {
+			    if (-f 'grompp4.mdp') {
+				if (`diff grompp4.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l` > 2 ) {
+				    print("PASSED but check mdp file differences\n");
+				} 
+				else {
+				    print "PASSED\n";
+				    unlink("mdout.mdp");
+				}
+			    }
+			    else {
+				print("PASSED but check mdp file differences\n");
+			    }
+			}
+			else {
+			    print "PASSED\n";
+			    unlink("mdout.mdp");
+			}
 		    }
 		}
 		$npassed++;
@@ -319,7 +340,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z0-9]* *.cpt" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* *.cpt" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -370,6 +391,7 @@ sub test_pdb2gmx {
     my @pdb_dirs = ();
     my $ntest    = 0;
     my $nerror   = 0;
+    my @pdb2gmx_test_names;
     foreach my $pdb ( glob("*.pdb") ) {
 	my $pdir = "pdb-$pdb";
 	my @kkk  = split('\.',$pdir);
@@ -397,10 +419,11 @@ sub test_pdb2gmx {
 		chdir("$dd");
 		foreach my $ww ( @water ) {
 		    $ntest++;
+		    push @pdb2gmx_test_names, "$pdb with $ff using vsite=$dd and water=$ww";
 		    my $line = "";
 		    print(LOG "****************************************************\n");
 		    print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
-		    print(LOG "** Working directory = %s\n",`pwd`);
+		    printf(LOG "** Working directory = %s\n",`pwd`);
 		    print(LOG "****************************************************\n");
 		    mkdir("$ww");
 		    chdir("$ww");
@@ -425,7 +448,7 @@ sub test_pdb2gmx {
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running mdrun\n");
 		    print(LOG "****************************************************\n");
-		    open(PIPE,"$mdprefix $progs{'mdrun'} 2>&1 |");
+		    open(PIPE,"$mdprefix $progs{'mdrun'} $mdparams 2>&1 |");
 		    print LOG while <PIPE>;
 		    close PIPE;
 		    chdir("..");
@@ -453,18 +476,19 @@ sub test_pdb2gmx {
 	    link('ener.log', $reflog);
 	}
 	else {
-	    $nerror = check_xvg($reflog,"ener.log",3,7);
-	
+	    $nerror = check_xvg($reflog,"ener.log",3,7,\@pdb2gmx_test_names);
+
 	    if ( $nerror != 0 ) {
-		print "There were $nerror differences in final energy with the reference file\n";
+		print "There were $nerror/$ntest differences in final energy with the reference file\n";
 	    }
 	}
+    }
+    if (0 == $nerror) {
 	print "All $ntest pdb2gmx tests PASSED\n";
-	do_rmrf(@pdb_dirs);
-#	system("rm -rf @pdb_dirs");
+	`rm -rf @pdb_dirs`;
 	unlink("ener.log","pdb2gmx.log");
     }
-    if ($nerror > 0) {
+    else {
 	print "pdb2gmx tests FAILED\n";
     }
     chdir("..");
@@ -476,15 +500,16 @@ sub clean_all {
     cleandirs("kernel");
     chdir("pdb2gmx");
     unlink("ener.log", "pdb2gmx.log");
-    do_rmrf("pdb-*");
+    `rm -rf pdb-*`;
     chdir("..");
 }
 
 sub usage {
-    print "Usage: ./gmxtest.pl [ -np N ] [-verbose ] [ -double ] [ simple | complex | kernel | pdb2gmx | all ]\n";
+    print "Usage: ./gmxtest.pl [ -np N ] [-verbose ] [ -double ] [ -prefix xxx ]\n [ -suffix xxx ] [ -reprod ] [ simple | complex | kernel | pdb2gmx | all ]\n";
     print "   or: ./gmxtest.pl clean | refclean | dist\n";
     exit "1";
 }
+
 sub test_gmx {
   foreach my $p ( values %progs ) {
     my $pp = $p;
@@ -530,7 +555,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'dist' ) {
 	push @work, "clean_all()";
 	push @work, "chdir('..')";
-	push @work, "system('tar --exclude CVS -czvf gmxtest.tgz gmxtest')";
+	push @work, "system('tar --exclude CVS --exclude .git --exclude .gitattributes -czvf gmxtest.tgz gmxtest')";
 	push @work, "chdir('gmxtest')";
     }
     elsif ($arg eq 'help' ) {
@@ -569,6 +594,15 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    print "Will test using executable prefix $prefix\n";
 	}
     }
+    elsif ($arg eq '-mdparam' ) {
+	# The user is responsible for providing sensible values for
+	# this flag when they want them
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $mdparams .= "$ARGV[$kk]";
+	    print "Will test using 'mdrun $mdparams'\n";
+	}
+    }
     else {
 	push @work, "usage()";
     }
@@ -588,15 +622,12 @@ if ( 1 == $#work ) {
 # setup_vars() is always the first work to do, so now
 # parallel and double will work correctly regardless of
 # order on the command line
-foreach my $w ( @work ) {
-#    print "$w\n";
-    eval $w;
-}
+map { eval $_ } @work;
 
 if ($addversionnote > 0) {
     print << "ENDOFNOTE"
 
-Note about GROMACS refernce versions
+Note about GROMACS reference versions
 ------------------------------------
 Various different GROMACS versions are used to generate the reference
 files for these tests. Because of a known bug with Buckingham

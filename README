@@ -18,19 +18,22 @@ Update 2009-05-25: Big thanks to Mark Abraham for working through all
 the test sets and providing patches to make sure they don't generate
 bogus errors for the latest Gromacs version.
 
-Update 2009-08-08: More fixes and updates from Mark Abraham. 
+Update 2009-08-10: More fixes and updates from Mark Abraham. 
 
 * All reference states were recalculated from GROMACS installations
-configured as 
+configured using 
 
-./configure --enable-double --disable-software-sqrt CFLAGS="-O0 -ffloat-store" 
+./configure --disable-software-sqrt CFLAGS="-O0 -ffloat-store" 
 
-and run with environment variable NOASSEMBLYLOOPS set to 1. The compiler was 
-gcc 4.1.2 20070626 (Red Hat 4.1.2-13) running on Pentium III hardware. The
-following versions of GROMACS were used in generating reference states:
+(with --enable-double as appropriate) and run with environment variable 
+NOASSEMBLYLOOPS set to 1. The compiler was gcc 4.1.2 20070626 
+on Pentium III. The following versions of GROMACS were used in generating 
+reference states:
+
 ** Buckingham kernel tests were calculated with GROMACS 4.0.5 (because of the 
 Buckingham/LJ-14 bug in 3.3.x), 
 ** all other kernel tests with GROMACS 3.3, 
+** complex/acetonitrileRF with GROMACS 3.3.3 because of a relevant bug in 3.3.2
 ** most other tests with GROMACS 3.3.2, and 
 ** tests of functionality introduced in 4.0 with GROMACS 4.0.5.
 
@@ -39,3 +42,7 @@ cc5379438706044faabedbc83bd2e3b8dbecfe42) and then corrected (e.g. to remove
 non-zero nstxtcout, or a wrong -Ddefine in simple/rb1)
 
 * "tcoupl = yes" changed to "tcoupl = Berendsen"
+
+* renamed water atoms in complex/tip4p/conf.g96 to match tip4p.itp
+
+* made complex/urea use "integrator = md" like all the other complex tests
