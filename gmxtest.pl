@@ -23,6 +23,8 @@ my $ftol_sprod   = 0.001;
 
 # global variables to flag whether to explain some situations to the user
 my $addversionnote = 0;
+my $only_subdir;
+my $tightfactor = 1;
 
 # trickery for program and reference file names
 my $mdprefix = '';
@@ -51,6 +53,11 @@ sub setup_vars()
 	$prog .= $suffix;
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
+    
+    # now do -tight stuff
+    foreach my $var ( $etol, $ttol, $virtol_rel, $ftol_rel, $ftol_sprod ) {
+	$var *= $tightfactor;
+    }
 }
 
 # Wrapper function to call system(), and then perhaps a callback based on the
@@ -63,6 +70,9 @@ sub do_system
     my $callback = shift;
     $normalreturn = 0 unless(defined $normalreturn);
 
+    if ( $verbose > 2 ) {
+	print "$command\n";
+    }
     my $returnvalue = system($command) >> 8;
     if ($normalreturn != $returnvalue)
     {
@@ -185,8 +195,9 @@ sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
 	if ( -d $dir ) {
+	    next if ( defined $only_subdir && $dir !~ $only_subdir);
 	    chdir($dir);
-	    if ($verbose > 0) {
+	    if ($verbose > 1) {
 		print "Testing $dir . . . ";
 	    }
 	    
@@ -296,20 +307,18 @@ sub test_systems {
 			print "PASSED\n";
 		    }
 		    else {
-			my $nmdp = `diff grompp.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l`;
-			if ( $nmdp > 2 ) {
-			    if (-f 'grompp4.mdp') {
-				if (`diff grompp4.mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l` > 2 ) {
-				    print("PASSED but check mdp file differences\n");
-				} 
-				else {
-				    print "PASSED\n";
-				    unlink("mdout.mdp");
-				}
-			    }
+			my $mdp_result = 0;
+			foreach my $reference_mdp ( 'grompp.mdp', 'grompp4.mdp', 'grompp41.mdp' ) {
+			    if (-f $reference_mdp && `diff $reference_mdp mdout.mdp | grep -v host | grep -v date | grep -v user | grep -v generated | wc -l` > 2 ) {
+				$mdp_result++;
+			    } 
 			    else {
-				print("PASSED but check mdp file differences\n");
+				$mdp_result -= 100;
+				last;
 			    }
+			}
+			if ($mdp_result > 0) {
+			    print("PASSED but check mdp file differences\n");
 			}
 			else {
 			    print "PASSED\n";
@@ -602,6 +611,19 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    $mdparams .= "$ARGV[$kk]";
 	    print "Will test using 'mdrun $mdparams'\n";
 	}
+    }
+    elsif ($arg eq '-only' ) {
+	# only test a subdirectory if it matches the following
+	# regular expression
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    print "Will only test subdirectories matching '$ARGV[$kk]'\n";
+	    $only_subdir = qr/$ARGV[$kk]/;
+	}
+    }
+    elsif ($arg eq '-tight' ) {
+	$tightfactor *= 0.1;
+	print "Will test with tightness increased\n";
     }
     else {
 	push @work, "usage()";
