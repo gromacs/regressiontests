@@ -568,7 +568,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	push @work, "chdir('gmxtest')";
     }
     elsif ($arg eq 'help' ) {
-	push @work, "usage()";
+	usage();
     }
     elsif ($arg eq '-verbose') {
 	$verbose++;
@@ -608,7 +608,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	# this flag when they want them
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $mdparams .= "$ARGV[$kk]";
+	    $mdparams .= $ARGV[$kk];
 	    print "Will test using 'mdrun $mdparams'\n";
 	}
     }
@@ -626,13 +626,13 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	print "Will test with tightness increased\n";
     }
     else {
-	push @work, "usage()";
+	usage();
     }
 }
 
 if ($kk == 0) {
     $#work = -1;
-    push @work, "usage()";
+    usage();
 }
 
 if ( 1 == $#work ) {
