@@ -4,6 +4,7 @@ use strict;
 
 my $parallel = 0;
 my $double   = 0;
+my $bluegene = 0;
 my $verbose  = 1;
 my $etol     = 0.05;
 my $ttol     = 0.001;
@@ -44,8 +45,14 @@ sub setup_vars()
     # indicates a parallel version compiled with MPI.
     if ( $parallel > 0 ) {
 	$progs{'mdrun'} .= "_mpi";
-	# edit the next line if you need to customize the call to mpirun
-	$mdprefix = "mpirun -c $parallel";
+	if ( $bluegene > 0 )
+	{
+	    # edit the next line if you need to customize the call to mpirun
+	    $mdprefix = "mpirun -np $parallel -exp_env GMX_NO_SOLV_OPT -exp_env NOASSEMBLYLOOPS -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
+	} else {
+	    # edit the next line if you need to customize the call to mpirun
+	    $mdprefix = "mpirun -c $parallel";
+	}
     }
     foreach my $prog ( values %progs ) {
 	$prog = $prefix . $prog;
@@ -240,7 +247,14 @@ sub test_systems {
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
 		my @error_detail;
-		$nerror = do_system("$mdprefix $progs{'mdrun'} $mdparams > mdrun.out 2>&1", 0,
+		# BlueGene mpirun needs to be told the current working
+		# directory on the command line, or with env var MPIRUN_CWD,
+		# so after the chdir we need to deal with this.
+		my $local_mdprefix = $mdprefix;
+		if ($bluegene > 0 ) {
+		    $local_mdprefix .= " -cwd `pwd`";
+		}
+		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $mdparams > mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, "mdrun.out and md.log") } );
 		
 		# First check whether we have any output
@@ -514,7 +528,7 @@ sub clean_all {
 }
 
 sub usage {
-    print "Usage: ./gmxtest.pl [ -np N ] [-verbose ] [ -double ] [ -prefix xxx ]\n [ -suffix xxx ] [ -reprod ] [ simple | complex | kernel | pdb2gmx | all ]\n";
+    print "Usage: ./gmxtest.pl [ -np N ] [-verbose ] [ -double ] [ -bluegene ]\n [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]\n [ simple | complex | kernel | pdb2gmx | all ]\n";
     print "   or: ./gmxtest.pl clean | refclean | dist\n";
     exit "1";
 }
@@ -578,6 +592,10 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
     elsif ($arg eq '-double') {
 	$double = 1;
+    }
+    elsif ($arg eq '-bluegene') {
+	$bluegene = 1;
+	print "Will test BlueGene\n";
     }
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
