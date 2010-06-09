@@ -51,7 +51,7 @@ sub setup_vars()
 	    $mdprefix = "mpirun -np $parallel -exp_env GMX_NO_SOLV_OPT -exp_env NOASSEMBLYLOOPS -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "mpirun -c $parallel";
+	    $mdprefix = "mpirun -np $parallel -wdir `pwd`";
 	}
     }
     foreach my $prog ( values %progs ) {
@@ -578,8 +578,8 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'dist' ) {
 	push @work, "clean_all()";
 	push @work, "chdir('..')";
-	push @work, "system('tar --exclude CVS --exclude .git --exclude .gitattributes -czvf gmxtest.tgz gmxtest')";
-	push @work, "chdir('gmxtest')";
+	push @work, "system('tar --exclude CVS --exclude .git --exclude .gitattributes --exclude foreach.sh -czvf regressiontests.tgz regressiontests')";
+	push @work, "chdir('regressiontests')";
     }
     elsif ($arg eq 'help' ) {
 	usage();
@@ -654,7 +654,7 @@ if ($kk == 0) {
 }
 
 if ( 1 == $#work ) {
-    # there was no work added, so probably this was a gmxtest.pl clean
+    # there was no work added, so probably this was a 'gmxtest.pl clean'
     # so don't do setup either
     $#work = -1;
 }
