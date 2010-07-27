@@ -5,7 +5,7 @@ use strict;
 my $parallel = 0;
 my $double   = 0;
 my $bluegene = 0;
-my $verbose  = 1;
+my $verbose  = 5;
 my $etol     = 0.05;
 my $ttol     = 0.001;
 my $suffix   = '';
@@ -237,7 +237,7 @@ sub test_systems {
 		    if ($nerror > 0) {
 			print "topol.tpr file different from $reftpr. Check files in $dir\n";
 		    }
-		    do_system("grep 'reading tpx file (reference_[sd].tpr) version .* with version .* program' checktpr.out >& /dev/null", 1,
+		    do_system("grep 'reading tpx file (reference_[sd].tpr) version .* with version .* program' checktpr.out > /dev/null 2>&1", 1,
 			      sub {
 				  print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
 				  $addversionnote = 1;
