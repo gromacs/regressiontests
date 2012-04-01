@@ -17,7 +17,7 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
 dt                       = 0.002
-nsteps                   = 50
+nsteps                   = 20
 ; For exact run continuation or redoing part of a run
 init_step                = 0
 ; mode for center of mass motion removal
@@ -46,8 +46,8 @@ nbfgscorr                = 10
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 0
-nstvout                  = 0
+nstxout                  = 20
+nstvout                  = 20
 nstfout                  = 0
 ; Checkpointing helps you continue after crashes
 nstcheckpoint            = 1000
