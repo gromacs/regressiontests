@@ -9,6 +9,7 @@ my $verbose  = 5;
 my $etol     = 0.05;
 my $ttol     = 0.001;
 my $suffix   = '';
+my $autosuffix   = '1';
 my $prefix   = '';
 # virial - this tests the shifted force contribution.
 # However, it is a sum of very many large terms, so it is
@@ -44,7 +45,9 @@ sub setup_vars()
     # a double-precision version, and (only in the case of mdrun) "_mpi" 
     # indicates a parallel version compiled with MPI.
     if ( $parallel > 0 ) {
-	$progs{'mdrun'} .= "_mpi";
+	if ($autosuffix) {
+	    $progs{'mdrun'} .= "_mpi";
+	}
 	if ( $bluegene > 0 )
 	{
 	    # edit the next line if you need to customize the call to mpirun
@@ -56,7 +59,9 @@ sub setup_vars()
     }
     foreach my $prog ( values %progs ) {
 	$prog = $prefix . $prog;
-	$prog .= "_d" if ( $double > 0 );
+	if ($autosuffix) {
+	    $prog .= "_d" if ( $double > 0 );
+	}
 	$prog .= $suffix;
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
@@ -254,7 +259,11 @@ sub test_systems {
 		if ($bluegene > 0 ) {
 		    $local_mdprefix .= " -cwd `pwd`";
 		}
-		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $mdparams > mdrun.out 2>&1", 0,
+		my $local_mdparams = $mdparams;
+		if (system("grep ns_type.*simple grompp.mdp > /dev/null")==0) {
+		    $local_mdparams .= " -pd"
+		}
+		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams > mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, "mdrun.out and md.log") } );
 		
 		# First check whether we have any output
@@ -422,7 +431,7 @@ sub test_pdb2gmx {
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach my $ff ( "G43a1", "oplsaa", "G53a6", "encads" ) {
+	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
 	    my @water = ();
@@ -613,6 +622,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    $suffix = $ARGV[$kk];
 	    print "Will test using executable suffix $suffix\n";
 	}
+    }
+    elsif ($arg eq '-nosuffix' ) {
+	$autosuffix = 0;
     }
     elsif ($arg eq '-prefix' ) {
 	if ($kk <$#ARGV) {
