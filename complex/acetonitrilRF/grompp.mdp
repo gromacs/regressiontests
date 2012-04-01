@@ -17,7 +17,7 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
 dt                       = 0.002
-nsteps                   = 50
+nsteps                   = 20
 ; For exact run continuation or redoing part of a run
 init_step                = 0
 ; mode for center of mass motion removal
@@ -41,13 +41,13 @@ niter                    = 20
 ; Step size (ps^2) for minimization of flexible constraints
 fcstep                   = 0
 ; Frequency of steepest descents steps when doing CG
-nstcgsteep               = 1000
+nstcgsteep               = 200
 nbfgscorr                = 10
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 0
-nstvout                  = 0
+nstxout                  = 20
+nstvout                  = 20
 nstfout                  = 0
 ; Checkpointing helps you continue after crashes
 nstcheckpoint            = 0
@@ -56,7 +56,7 @@ nstlog                   = 0
 nstenergy                = 1
 ; Output frequency and precision for xtc file
 nstxtcout                = 0
-xtc_precision            = 1000
+xtc_precision            = 200
 ; This selects the subset of atoms for the xtc file. You can
 ; select multiple groups. By default all atoms will be written.
 xtc-grps                 = 
@@ -215,10 +215,10 @@ disre                    = No
 disre-weighting          = Equal
 ; Use sqrt of the time averaged times the instantaneous violation
 disre-mixed              = no
-disre_fc                 = 1000
+disre_fc                 = 200
 disre_tau                = 1.25
 ; Output frequency for pair distances to energy file
-nstdisreout              = 100
+nstdisreout              = 20
 ; Orientation restraints: No or Yes
 orire                    = no
 ; Orientation restraints force constant and tau for time averaging
