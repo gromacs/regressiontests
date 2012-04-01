@@ -17,7 +17,7 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
 dt                       = 0.0002
-nsteps                   = 50
+nsteps                   = 20
 ; For exact run continuation or redoing part of a run
 init_step                = 0
 ; mode for center of mass motion removal
@@ -41,22 +41,22 @@ niter                    = 20
 ; Step size (ps^2) for minimization of flexible constraints
 fcstep                   = 0
 ; Frequency of steepest descents steps when doing CG
-nstcgsteep               = 1000
+nstcgsteep               = 200
 nbfgscorr                = 10
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 0
-nstvout                  = 0
+nstxout                  = 20
+nstvout                  = 20
 nstfout                  = 0
 ; Checkpointing helps you continue after crashes
-nstcheckpoint            = 1000
+nstcheckpoint            = 200
 ; Output frequency for energies to log file and energy file
 nstlog                   = 0
 nstenergy                = 1
 ; Output frequency and precision for xtc file
 nstxtcout                = 0
-xtc_precision            = 1000
+xtc_precision            = 200
 ; This selects the subset of atoms for the xtc file. You can
 ; select multiple groups. By default all atoms will be written.
 xtc-grps                 = 
@@ -215,10 +215,10 @@ disre                    = No
 disre_weighting          = Equal
 ; Use sqrt of the time averaged times the instantaneous violation
 disre_mixed              = no
-disre_fc                 = 1000
+disre_fc                 = 200
 disre_tau                = 10
 ; Output frequency for pair distances to energy file
-nstdisreout              = 100
+nstdisreout              = 20
 ; Orientation restraints: No or Yes
 orire                    = no
 ; Orientation restraints force constant and tau for time averaging
@@ -226,13 +226,13 @@ orire-fc                 = 0
 orire-tau                = 0
 orire-fitgrp             = 
 ; Output frequency for trace(SD) and S to energy file
-nstorireout              = 100
+nstorireout              = 20
 ; Dihedral angle restraints: No, Simple or Ensemble
 dihre                    = No
-dihre-fc                 = 1000
+dihre-fc                 = 200
 dihre-tau                = 0
 ; Output frequency for dihedral values to energy file
-nstdihreout              = 100
+nstdihreout              = 20
 
 ; Free energy control stuff
 free_energy              = no

@@ -254,6 +254,9 @@ sub test_systems {
 		if ($bluegene > 0 ) {
 		    $local_mdprefix .= " -cwd `pwd`";
 		}
+		if (system("grep ns_type.*simple grompp.mdp > /dev/null")==0) {
+		    $mdparams .= " -pd"
+		}
 		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $mdparams > mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, "mdrun.out and md.log") } );
 		
@@ -422,7 +425,7 @@ sub test_pdb2gmx {
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach my $ff ( "G43a1", "oplsaa", "G53a6", "encads" ) {
+	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
 	    my @water = ();
