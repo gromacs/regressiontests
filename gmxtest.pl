@@ -106,10 +106,10 @@ sub check_force()
     my $tmp = "checkforce.tmp";
     my $cfor = "checkforce.out";
     my $reftrr = "${ref}.trr";
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null", 0,
-	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n" });
-    `grep "f\\[" $cfor > $tmp`;
     my $nerr_force = 0;
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null", 0,
+	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
+    `grep "f\\[" $cfor > $tmp`;
     
     open(FIN,"$tmp");
     while(my $line=<FIN>)
@@ -138,11 +138,12 @@ sub check_virial()
     my $tmp = "checkvir.tmp";
     my $cvir = "checkvir.out";
     my $refedr = "${ref}.edr";
+    my $nerr_vir = 0;
+
     do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null", 0,
-	sub { print "\ngmxcheck failed on the .edr file while checking the virial\n" });
+	sub { print "\ngmxcheck failed on the .edr file while checking the virial\n"; $nerr_vir = 1; });
     
     `grep "Vir-" $cvir > $tmp`;
-    my $nerr_vir = 0;
     
     open(VIN,"$tmp");
     while(my $line=<VIN>)
@@ -238,8 +239,8 @@ sub test_systems {
 		    link('topol.tpr', $reftpr);
 		} else {
 		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1", 0, 
-			sub { print "Comparison of input .tpr files failed!\n" });
-		    $nerror = `grep step checktpr.out | grep -v gcq | wc -l`;
+			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
+		    $nerror |= `grep step checktpr.out | grep -v gcq | wc -l`;
 		    if ($nerror > 0) {
 			print "topol.tpr file different from $reftpr. Check files in $dir\n";
 		    }
