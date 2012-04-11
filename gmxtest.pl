@@ -185,8 +185,16 @@ sub check_xvg {
 		my @tmp = split(' ',$line);
 		my $x1 = $tmp[$ndx1];
 		my $x2 = $tmp[$ndx2];
-		my $error = abs(($x1-$x2)/($x1+$x2));
-		if ($error > $etol) {
+		my $error;
+		my $tol;
+		if ($x1+$x2==0) { 
+		    $error = abs($x1-$x2);
+		    $tol = $ttol;
+		} else {
+		    $error = abs(($x1-$x2)/($x1+$x2));
+		    $tol = $etol;
+		}
+		if ($error > $tol) {
 		    $nerr++;
 		    if (!$header) {
 			$header = 1;
@@ -416,6 +424,80 @@ sub test_dirs {
     chdir("..");
 }
 
+#format for cfg files is:
+#- command line 
+#- list of output files which should be compared (one per line)
+#- emtpy line
+sub test_tools {
+    chdir("tools");
+    my $ncfg = 0;
+    my $nerror_cfg = 0;
+
+    foreach my $cfg ( glob("*.cfg") ) { #loop over config files
+	$ncfg++;
+	open(FIN,$cfg);
+	my @cfg_name = split(".cfg",$cfg);
+	my $cfg_name = $cfg_name[0];
+	mkdir($cfg_name);
+	chdir($cfg_name);
+	my $ncmd = 0;
+	my $nerror_cmd = 0;
+	if ($verbose > 1) {
+	    print "Testing $cfg_name . . . \n";
+	}
+	while(my $line=<FIN>) {  #loop over commands (seperated by empty line)
+	    $ncmd++;
+	    chomp($line);
+	    my $cmdline = $line;
+	    my @ofiles;
+	    my $error = 0;
+	    while(my $line=<FIN>) {  #add output fiels
+		chomp($line);
+		if ($line eq "") { last; }
+		push(@ofiles, $line);
+	    }
+	    mkdir($ncmd);
+	    chdir($ncmd);
+
+	    do_system("$cmdline > $cfg_name.out 2>&1", 0,
+		      sub { print "\n'".$cmdline."' failed"; $error = 1; });
+	    
+	    if ($error==0) {
+		foreach my $of (@ofiles) {
+		    if (! -f "$of.ref") {
+			print "No file $of.ref. You are not really testing $cfg_name\n";
+			link($of, "$of.ref");
+		    }
+		    else {
+			my $nerror = check_xvg("$of.ref",$of,1,3);  #TODO: check all columns
+			if ( $nerror != 0 ) {
+			    print "There were $nerror differences in $of output file\n";
+			    $error += 1;
+			}
+		    }
+		}
+	    }
+	    if ($error > 0) {
+		print "FAILED $cfg_name test $ncmd\n";
+		$nerror_cfg++;
+		$nerror_cmd++;
+	    }
+	    chdir("..");
+	}
+	if ($nerror_cmd>0) {
+	    print "$nerror_cmd out of $ncmd $cfg_name tests FAILED\n";
+	} elsif ($verbose>1) {
+	    print "All $ncmd $cfg_name tests PASSED\n";
+	}
+	chdir("..");
+    }
+    if ($nerror_cfg>0) {
+	print "$nerror_cfg out of $ncfg tools tests FAILED\n";
+    } else {
+	print "All $ncfg tools tests PASSED\n";
+    }
+}
+
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
@@ -573,11 +655,15 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'pdb2gmx' ) {
 	push @work, "test_pdb2gmx()";
     }
+    elsif ($arg eq 'tools' ) {
+	push @work, "test_tools()";
+    }
     elsif ($arg eq 'all' ) {
 	push @work, "test_dirs('simple')";
 	push @work, "test_dirs('complex')";
 	push @work, "test_dirs('kernel')";
 	push @work, "test_pdb2gmx()";
+	push @work, "test_tools()";
     }
     elsif ($arg eq 'clean' ) {
         clean_all();
