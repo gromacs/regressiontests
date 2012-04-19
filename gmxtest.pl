@@ -6,6 +6,7 @@ my $parallel = 0;
 my $double   = 0;
 my $bluegene = 0;
 my $verbose  = 5;
+my $xml      = 0;
 my $etol     = 0.05;
 my $ttol     = 0.001;
 my $suffix   = '';
@@ -186,6 +187,8 @@ sub check_xvg {
 		my $x1 = $tmp[$ndx1];
 		my $x2 = $tmp[$ndx2];
 		my $error = abs(($x1-$x2)/($x1+$x2));
+		my $hasPdb2gmx_test_name = defined $pdb2gmx_test_names && defined $$pdb2gmx_test_names[$n];
+		print XML "<testcase name=\"$$pdb2gmx_test_names[$n]\">\n" if ($xml && $hasPdb2gmx_test_name);
 		if ($error > $etol) {
 		    $nerr++;
 		    if (!$header) {
@@ -193,10 +196,12 @@ sub check_xvg {
 			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nIndex  Reference   This test       Error  Description\n");
 		    }
 		    printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
-			   defined $pdb2gmx_test_names && 
-			   defined $$pdb2gmx_test_names[$n] ? 
-			   $$pdb2gmx_test_names[$n] : 'unknown');
+			   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
+		    printf(XML "<error message=\"Reference: %g Result: %g Error: %g\"/>\n",$tmp[3],$tmp[7], $error) 
+			if ($xml && $hasPdb2gmx_test_name);
+		    
 		}
+		print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
 		$n++;
 	    }
 	}
@@ -251,9 +256,10 @@ sub test_systems {
 			      } );
 		}
 	    }
+	    my @error_detail;
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
-		my @error_detail;
+
 		# BlueGene mpirun needs to be told the current working
 		# directory on the command line, or with env var MPIRUN_CWD,
 		# so after the chdir we need to deal with this.
@@ -266,7 +272,7 @@ sub test_systems {
 		    $local_mdparams .= " -pd"
 		}
 		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams > mdrun.out 2>&1", 0,
-		    sub { push(@error_detail, "mdrun.out and md.log") } );
+		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
 		# First check whether we have any output
 		if ((-f "ener.edr" ) && (-f "traj.trr")) {
@@ -315,8 +321,26 @@ sub test_systems {
 		}
 		$error_detail = join(', ', @error_detail) . ' ';
 	    }
+	    print XML "<testcase name=\"$dir\">\n" if ($xml);
 	    if ($nerror > 0) {
 		print "FAILED. Check ${error_detail}files in $dir\n";
+		if ($xml) {
+		    print XML "<error message=\"Erorrs in ${error_detail}\">\n";
+		    print XML "<![CDATA[\n";
+		    foreach my $err (@error_detail) {
+			my @err = split(/ /, $err);
+			my $errfn = $err[0];
+			print XML "$errfn:\n";
+			open FH, $errfn or die("FAILED to open $errfn");
+			while(my $line=<FH>) {
+			    print XML $line;
+			}
+			print XML "\n--------------------------------\n";
+			close FH;
+		    }
+		    print XML "]]>\n";
+		    print XML "</error>";
+		}
 	    }
 	    else {
 		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
@@ -353,6 +377,7 @@ sub test_systems {
 		}
 		$npassed++;
 	    }
+	    print XML "</testcase>\n" if ($xml);
 	    chdir("..");
 	}
     }
@@ -406,7 +431,9 @@ sub test_dirs {
     chdir($dirs);
     my @subdirs = my_glob();
     my $nn = $#subdirs + 1;
+    print XML "<testsuite name=\"$dirs\">\n" if ($xml);
     my $npassed = test_systems(@subdirs);
+    print XML "</testsuite>\n" if ($xml);
     if ($npassed < $nn) {
 	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
     }
@@ -420,7 +447,7 @@ sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
     chdir("pdb2gmx");
-    open (LOG,">$logfn") || die("Opening $logfn for writing");
+    open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
     my $npdb_dir = 0;
     my @pdb_dirs = ();
     my $ntest    = 0;
@@ -511,8 +538,9 @@ sub test_pdb2gmx {
 	    link('ener.log', $reflog);
 	}
 	else {
+	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
 	    $nerror = check_xvg($reflog,"ener.log",3,7,\@pdb2gmx_test_names);
-
+	    print XML "</testsuite>\n" if ($xml);
 	    if ( $nerror != 0 ) {
 		print "There were $nerror/$ntest differences in final energy with the reference file\n";
 	    }
@@ -602,6 +630,10 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-noverbose') {
 	$verbose = 0;
     }
+    elsif ($arg eq '-xml') {
+	$verbose = 0;
+        $xml = 1;
+    }
     elsif ($arg eq '-double') {
 	$double = 1;
     }
@@ -680,10 +712,18 @@ if ( 1 == $#work ) {
     $#work = -1;
 }
 
+if ($xml) {
+    my $xmlfn = "gmxtest.xml";
+    open (XML,">$xmlfn") || die("FAILED: Opening $xmlfn for writing");
+    print XML '<?xml version="1.0" encoding="UTF-8"?>';
+    print XML "\n<testsuites>\n";
+}
 # setup_vars() is always the first work to do, so now
 # parallel and double will work correctly regardless of
 # order on the command line
 map { eval $_ } @work;
+
+print XML "</testsuites>\n" if ($xml);
 
 if ($addversionnote > 0) {
     print << "ENDOFNOTE"
