@@ -115,8 +115,9 @@ sub check_force()
     open(FIN,"$tmp");
     while(my $line=<FIN>)
     {
-	my @f1=split(" ",substr($line,10,38));
-	my @f2=split(" ",substr($line,53,38));
+	my @ll=split("[()]",$line);
+	my @f1=split(" ",$ll[1]);
+	my @f2=split(" ",$ll[3]);
 	
 	my $l1 = sqrt($f1[0]*$f1[0]+$f1[1]*$f1[1]+$f1[2]*$f1[2]);
 	my $l2 = sqrt($f2[0]*$f2[0]+$f2[1]*$f2[1]+$f2[2]*$f2[2]);
@@ -149,8 +150,8 @@ sub check_virial()
     open(VIN,"$tmp");
     while(my $line=<VIN>)
     {
-	my @v1=split(" ",substr($line,26,14));
-	my @v2=split(" ",substr($line,52,13));
+	my @v1=split(" ",substr($line,26,14)); #TODO replace substr with split to make more reliable
+	my @v2=split(" ",substr($line,52,13)); #if again reactiving check_virial
 	
 	my $diff = abs($v1[0]-$v2[0]);
 	
