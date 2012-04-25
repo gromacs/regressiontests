@@ -1,0 +1,14 @@
+*.xvg
+ener.edr
+traj.trr
+*#
+*.out
+*.xml
+*.cpt
+md.log
+confout.gro
+mdout.mdp
+topol.tpr
+*~
+*.orig
+*.tmp
