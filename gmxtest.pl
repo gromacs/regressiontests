@@ -30,7 +30,7 @@ my $only_subdir;
 my $tightfactor = 1;
 
 # trickery for program and reference file names
-my $mdprefix = '';
+my $mdprefix = 'valgrind --suppressions=/home/rschulz/download/gromacs5.0/cmake/legacy_and_external.supp --xml=yes --xml-file=valgrind.xml';
 my $mdparams = '';
 my $ref      = '';
 my $mpirun   = 'mpirun';
