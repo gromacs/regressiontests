@@ -807,7 +807,7 @@ if ( 1 == $#work ) {
 if ($xml) {
     my $xmlfn = "gmxtest.xml";
     open (XML,">$xmlfn") || die("FAILED: Opening $xmlfn for writing");
-    print XML '<?xml version="1.0" encoding="UTF-8"?>';
+    print XML '<?xml version="1.1" encoding="UTF-8"?>';
     print XML "\n<testsuites>\n";
 }
 # setup_vars() is always the first work to do, so now
