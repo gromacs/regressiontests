@@ -342,6 +342,7 @@ sub test_systems {
 			print XML "$errfn:\n";
 			open FH, $errfn or die("FAILED to open $errfn");
 			while(my $line=<FH>) {
+			    $line=~s/\x00//g; #remove invalid XML characters
 			    print XML $line;
 			}
 			print XML "\n--------------------------------\n";
