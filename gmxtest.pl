@@ -54,6 +54,8 @@ sub setup_vars()
 	{
 	    # edit the next line if you need to customize the call to mpirun
 	    $mdprefix = "$mpirun -np $parallel -exp_env GMX_NO_SOLV_OPT -exp_env NOASSEMBLYLOOPS -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
+	} elsif ($mpirun == "aprun" ) {
+	    $mdprefix = "$mpirun -n $parallel";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
 	    $mdprefix = "$mpirun -np $parallel -wdir `pwd`";
@@ -233,10 +235,6 @@ sub test_systems {
 	    my $ndx = "";
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
-	    }
-	    my $par = "";
-	    if ($parallel > 1) {
-		$par = "-np $parallel";
 	    }
 	    do_system("$progs{'grompp'} -maxwarn 10 $ndx > grompp.out 2>&1");
 	    

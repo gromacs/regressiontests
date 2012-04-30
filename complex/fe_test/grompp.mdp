@@ -54,6 +54,7 @@ nstcheckpoint            = 200
 ; Output frequency for energies to log file and energy file
 nstlog                   = 4
 nstenergy                = 4
+nstcalcenergy            = 4
 ; Output frequency and precision for xtc file
 nstxtcout                = 0
 xtc_precision            = 200
