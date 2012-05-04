@@ -1,0 +1,107 @@
+; VARIOUS PREPROCESSING OPTIONS = 
+include                  = 
+define                   = 
+
+; RUN CONTROL PARAMETERS = 
+integrator               = md-vv
+; start time and timestep in ps = 
+tinit                    = 0
+dt                       = 0.002
+nsteps                   = 60
+; mode for center of mass motion removal = 
+comm-mode                = None
+; number of steps for center of mass motion removal = 
+nstcomm                  = 0
+; group(s) for center of mass motion removal = 
+comm-grps                = 
+
+; OUTPUT CONTROL OPTIONS = 
+; Output frequency for coords (x), velocities (v) and forces (f) = 
+nstxout                  = 20
+nstvout                  = 0
+nstfout                  = 0
+; Output frequency for energies to log file and energy file = 
+nstlog                   = 10
+nstenergy                = 1
+; Output frequency and precision for xtc file = 
+nstxtcout                = 5000
+xtc-precision            = 60
+; This selects the subset of atoms for the xtc file. You can = 
+; select multiple groups. By default all atoms will be written. = 
+xtc-grps                 = 
+; Selection of energy groups = 
+
+; NEIGHBORSEARCHING PARAMETERS = 
+; nblist update frequency = 
+nstlist                  = -1
+; ns algorithm (simple or grid) = 
+ns_type                  = grid
+; Periodic boundary conditions: xyz or no = 
+pbc                      = xyz
+; nblist cut-off         = 
+rlist                    = 1.1
+
+; OPTIONS FOR ELECTROSTATICS AND VDW = 
+; Method for doing electrostatics = 
+coulombtype              = PME-switch
+rcoulomb                 = 0.90
+rcoulomb-switch          = 0.89
+; Dielectric constant (DC) for cut-off or DC of reaction field = 
+epsilon-r                = 1
+; Method for doing Van der Waals = 
+vdw-type                 = switch
+; cut-off lengths        = 
+rvdw                     = 0.90
+rvdw-switch              = 0.88
+; Apply long range dispersion corrections for Energy and Pressure = 
+DispCorr                 = AllEnerPres
+; Spacing for the PME/PPPM FFT grid = 
+fourierspacing           = 0.10
+; EWALD/PME/PPPM parameters = 
+pme_order                = 6
+ewald_rtol               = 1e-06
+ewald_geometry           = 3d
+
+; OPTIONS FOR WEAK COUPLING ALGORITHMS = 
+; Temperature coupling   = 
+Tcoupl                   = vrescale
+
+; Groups to couple separately = 
+tc-grps                  = system
+; Time constant (ps) and reference temperature (K) = 
+ref_t                    = 300 
+tau_t                    = 1.0 
+; Pressure coupling      = 
+Pcoupl                    = no
+Pcoupltype               = isotropic
+; Time constant (ps), compressibility (1/bar) and reference P (bar) = 
+tau_p                    = 1.67
+compressibility          = 4.5e-5
+ref_p                    = 1.01325
+
+; GENERATE VELOCITIES FOR STARTUP RUN = 
+gen_vel                  = yes
+gen_temp                 = 298
+gen_seed                 = 1
+
+; OPTIONS FOR BONDS     = 
+constraints              = h-bonds
+; Type of constraint algorithm = 
+constraint-algorithm     = shake
+; Do not constrain the start configuration = 
+unconstrained-start      = no
+; Use successive overrelaxation to reduce the number of shake iterations = 
+Shake-SOR                = yes
+; Relative tolerance of shake = 
+shake-tol                = 5e-6
+; Highest order in the expansion of the constraint coupling matrix = 
+lincs-order              = 8
+; Lincs will write a warning to the stderr if in one step a bond = 
+; rotates over more degrees than = 
+lincs-warnangle          = 45
+
+; Free energy control stuff = 
+free-energy               = yes
+init_lambda_state         = 1
+fep-lambdas               = 0.0 0.25 0.5 0.75 1.0
+nstdhdl                   = 10
