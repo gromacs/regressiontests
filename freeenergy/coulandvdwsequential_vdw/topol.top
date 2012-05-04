@@ -1,0 +1,14 @@
+#include "ffoplsaa.itp"
+
+;#include "../ffoplsaanbd.itp"
+
+#include "ana.itp"
+
+#include "spce.itp"
+
+[ system ]
+AA
+
+[ molecules ]
+ASNJ 1
+SOL 640
