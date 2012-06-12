@@ -1,0 +1,37 @@
+integrator               = md
+nsteps                   = 100
+nstlist                  = 10
+nstfout                  = 00
+nstxout                  = 50
+nstvout                  = 00
+nstxtcout                = 0
+nstenergy                = 100
+nstcalcenergy            = 100
+nstlog                   = 0
+
+dt                       = 0.005
+
+constraints              = all-bonds
+lincs_iter               = 5
+lincs_order              = 2
+
+cutoff-scheme            = verlet
+
+coulombtype              = PME
+rlist                    = 0.9
+rvdw                     = 0.9
+rcoulomb                 = 0.9
+
+tcoupl                   = v-rescale
+tc_grps                  = system
+tau_t                    = 0.1
+ref_t                    = 300
+
+fourier_nx               = 24
+fourier_ny               = 24
+fourier_nz               = 24
+
+Pcoupl                   = Berendsen
+tau_p                    = 1
+compressibility          = 4.5e-5
+ref_p                    = 1
