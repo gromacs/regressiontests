@@ -1,0 +1,6 @@
+This system tests the nonbonded NxN kernel with Lorentz-Berthelot combination
+rules (only relevant for x86 SIMD kernels), virtual sites and pressure
+coupling. This means the vsite OpenMP code is also tested.
+
+Forces and velocities are not compared because they are not reprodicible within
+tolerance. This test does not work with MPI parallelization.
