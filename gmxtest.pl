@@ -340,7 +340,8 @@ sub test_systems {
                                   ' -cwd ' :
                                   ' -wdir ') . getcwd()) :
                     ('');
-		my $local_mdparams = $mdparams;
+                # With tunepme Coul-Sr/Recip isn't reproducible
+		my $local_mdparams = $mdparams . " -notunepme"; 
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
 		    $local_mdparams .= " -pd"
 		}
