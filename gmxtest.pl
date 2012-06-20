@@ -338,10 +338,13 @@ sub test_systems {
 			my @err = split(/ /, $err);
 			my $errfn = $err[0];
 			print XML "$errfn:\n";
-			open FH, $errfn or die("FAILED to open $errfn");
-			while(my $line=<FH>) {
-			    $line=~s/\x00//g; #remove invalid XML characters
-			    print XML $line;
+			if (!open FH, $errfn) {
+			    print XML "failed to open $errfn";
+			} else {
+			    while(my $line=<FH>) {
+				$line=~s/\x00//g; #remove invalid XML characters
+				print XML $line;
+			    }
 			}
 			print XML "\n--------------------------------\n";
 			close FH;
