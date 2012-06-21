@@ -104,13 +104,14 @@ sub do_system
     return $returnvalue;
 }
 
-sub check_force()
+sub check_force
 {
+    my $traj = shift;
     my $tmp = "checkforce.tmp";
     my $cfor = "checkforce.out";
     my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null", 0,
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 $traj -tol $ftol_rel > $cfor 2> /dev/null", 0,
 	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
     `grep "f\\[" $cfor > $tmp`;
     
@@ -266,7 +267,7 @@ sub test_systems {
 	    my @error_detail;
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
-
+		
 		# BlueGene mpirun needs to be told the current working
 		# directory on the command line, or with env var MPIRUN_CWD,
 		# so after the chdir we need to deal with this.
@@ -278,20 +279,27 @@ sub test_systems {
 		if (system("grep ns_type.*simple grompp.mdp > /dev/null")==0) {
 		    $local_mdparams .= " -pd"
 		}
+		my $part = "";
+		if ( -f "continue.cpt" ) {
+		    $local_mdparams .= " -cpi continue -noappend";
+		    $part = ".part0002";
+		}
 		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams > mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
+		my $ener = "ener$part";
+		my $traj = "traj$part";
 		# First check whether we have any output
-		if ((-f "ener.edr" ) && (-f "traj.trr")) {
+		if ((-f "$ener.edr" ) && (-f "$traj.trr")) {
 		    # Now check whether we have any reference files
 		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link('ener.edr', $refedr);
+			link("$ener.edr", $refedr);
 		    } else {
 			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null", 0,
+			do_system("$progs{'gmxcheck'} -e $refedr -e2 $ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null", 0,
 				  sub {
 				      if($nerror != 0) {
 					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
@@ -310,10 +318,10 @@ sub test_systems {
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link('traj.trr', $reftrr);
+			link("$traj.trr", $reftrr);
 		    } else {
 			# Now do the real tests
-			my $nerr_force = check_force();
+			my $nerr_force = check_force($traj);
 			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
 			$nerror |= $nerr_force;
 		    }
@@ -354,7 +362,7 @@ sub test_systems {
 		}
 	    }
 	    else {
-		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
+		my @args = glob("#*# *.out topol.tpr confout.gro ener*.edr md.log traj*.trr");
 		#unlink(@args);
 		
 		if ($verbose > 0) {
@@ -410,7 +418,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* *.cpt" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc" );
 	    unlink (@args);
 	    chdir("..");
 	}
