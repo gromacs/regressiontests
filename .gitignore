@@ -16,3 +16,4 @@ topol.tpr
 *.orig
 *.tmp
 *.xtc
+grompp.warn
