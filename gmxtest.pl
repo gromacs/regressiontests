@@ -263,6 +263,21 @@ sub test_systems {
 			      } );
 		}
 	    }
+	    if ($nerror == 0) {
+		`awk '/^WARNING/,/^\$/{print}' grompp.out > grompp.warn`;
+		my $refwarn = "reference.warn";
+		if (! -f $refwarn) {
+		    print("No $refwarn file in $dir\n");
+		    print ("This means you are not really testing $dir\n");
+                    rename('grompp.warn', $refwarn);
+		} else {
+		    $nerror = `diff grompp.warn $refwarn | wc -l`;
+		    if ($nerror>0) {
+			print("Different warnings in $refwarn and grompp.warn\n");
+			$error_detail = "grompp.out ";
+		    }
+		}
+	    }
 	    my @error_detail;
 	    if ($nerror == 0) {
 		# Do the mdrun at last!

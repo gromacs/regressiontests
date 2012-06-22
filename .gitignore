@@ -12,3 +12,4 @@ topol.tpr
 *~
 *.orig
 *.tmp
+grompp.warn

@@ -1,0 +1,10 @@
+WARNING 1 [file grompp.mdp]:
+  With coulomb soft core, the reciprocal space calculation will not
+  necessarily cancel.  It may be necessary to decrease the reciprocal space
+  energy, and increase the cutoff radius to get sufficiently close matches
+  to energies with free energy turned off.
+
+WARNING 2 [file topol.top, line 71]:
+  Some parameters for bonded interaction involving perturbed atoms are
+  specified explicitly in state A, but not B - copying A to B
+

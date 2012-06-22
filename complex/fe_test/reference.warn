@@ -1,0 +1,16 @@
+WARNING 1 [file grompp.mdp]:
+  nstcalcenergy should be a multiple of nstlist, changing nstcalcenergy to 5
+
+WARNING 2 [file grompp.mdp]:
+  nstenergy should be a multiple of nstcalcenergy, changing nstenergy to 5
+
+WARNING 3 [file grompp.mdp]:
+  With coulomb soft core, the reciprocal space calculation will not
+  necessarily cancel.  It may be necessary to decrease the reciprocal space
+  energy, and increase the cutoff radius to get sufficiently close matches
+  to energies with free energy turned off.
+
+WARNING 4 [file topol.top, line 48]:
+  Some parameters for bonded interaction involving perturbed atoms are
+  specified explicitly in state A, but not B - copying A to B
+
