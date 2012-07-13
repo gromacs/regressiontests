@@ -762,6 +762,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    print "Will test using executable prefix $prefix\n";
 	}
     }
+    elsif ($arg eq '-reprod' ) {
+      $mdparams.=" -reprod"
+    }
     elsif ($arg eq '-mpirun' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
