@@ -278,6 +278,9 @@ sub test_systems {
 		if (system("grep ns_type.*simple grompp.mdp > /dev/null")==0) {
 		    $local_mdparams .= " -pd"
 		}
+		if (system("grep adress.*yes grompp.mdp > /dev/null")==0) {
+			$local_mdparams .= " -dlb no" #AdResS test is very load imbalanced
+		}
 		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams > mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
