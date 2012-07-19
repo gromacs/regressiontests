@@ -419,7 +419,11 @@ sub test_systems {
                     $local_mdprefix .= ' : ' if($bluegene);
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
-		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
+		my $local_mdparams = $mdparams . " -notunepme";
+		#adress has it's own tables
+		unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
+		    $local_mdparams .= " -table ../table -tablep ../tablep";
+		}
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
 		    $local_mdparams .= " -pd"
 		}
@@ -431,6 +435,12 @@ sub test_systems {
         if (find_in_file("cutoff-scheme.*=.*verlet","grompp.mdp") > 0 && $omp_threads > 0) {
             $ntomp_opt = " -ntomp $omp_threads";
         }
+	#sd only runs reproducable with 1 task due to random numbers for every particle
+        if (find_in_file("itegrator.*sd","grompp.mdp") > 0) {
+	  $ntmpi_opt="";
+	  $local_mdprefix="";
+	  $ntmpi_opt="";
+	}
                my $part = "";
 		if ( -f "continue.cpt" ) {
 		    $local_mdparams .= " -cpi continue -noappend";
