@@ -398,7 +398,11 @@ sub test_systems {
                                   ' -wdir ') . getcwd(); 
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
-		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
+		my $local_mdparams = $mdparams . " -notunepme";
+		#adress has it's own tables
+		unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
+		    $local_mdparams .= " -table ../table -tablep ../tablep";
+		}
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
 		    $local_mdparams .= " -pd"
 		}
