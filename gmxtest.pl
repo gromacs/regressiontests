@@ -264,7 +264,7 @@ sub test_systems {
 			      } );
 		}
 	    }
-	    if ($nerror == 0) {
+	    if ($nerror == 0 && "$^O" ne "msys") { #Warning comparison on Windows/MSYS broken
 		`awk '/^WARNING/,/^\$/{print}' grompp.out > grompp.warn`;
 		my $refwarn = "reference.warn";
 		if (! -f $refwarn) {
