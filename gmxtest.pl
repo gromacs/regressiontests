@@ -67,7 +67,7 @@ sub setup_vars()
 	    $mdprefix = "$mpirun -n $parallel";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $parallel -wdir " . getcwd();
+	    $mdprefix = "$mpirun -np $parallel";
 	}
     }
     foreach my $prog ( values %progs ) {
@@ -285,13 +285,17 @@ sub test_systems {
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
 
-		# BlueGene mpirun needs to be told the current working
-		# directory on the command line, or with env var MPIRUN_CWD,
-		# so after the chdir we need to deal with this.
-		my $local_mdprefix = $mdprefix;
-		if ($bluegene > 0 ) {
-		    $local_mdprefix .= " -cwd " . getcwd();
-		}
+		# mpirun usually needs to be told the current working
+		# directory on the command line (or with some
+		# environment variable such as MPIRUN_CWD for
+		# BlueGene), so after the chdir we need to deal with
+		# this. mpirun -wdir or -wd is right for OpenMPI, no
+		# idea about others.
+		my $local_mdprefix = $parallel > 0 ?
+                    ($mdprefix . ($bluegene > 0 ?
+                                  ' -cwd ' :
+                                  ' -wdir ') . getcwd()) :
+                    ('');
 		my $local_mdparams = $mdparams;
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
 		    $local_mdparams .= " -pd"
