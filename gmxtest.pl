@@ -9,7 +9,8 @@ use Cwd;
 #disable quotes as they could screw up pattern matching
 $ENV{GMX_NO_QUOTES}='NO';
 
-my $parallel = 0;
+my $threads = 0;
+my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
@@ -34,7 +35,7 @@ my $ftol_sprod   = 0.001;
 
 # global variables to flag whether to explain some situations to the user
 my $addversionnote = 0;
-my $only_subdir;
+my $only_subdir = qr/.*/;
 my $tightfactor = 1;
 
 # trickery for program and reference file names
@@ -55,19 +56,19 @@ sub setup_vars()
     # as defined above (oro ver-ridden on the command line), "_d" indicates 
     # a double-precision version, and (only in the case of mdrun) "_mpi" 
     # indicates a parallel version compiled with MPI.
-    if ( $parallel > 0 ) {
+    if ( $mpi_processes > 0 ) {
 	if ($autosuffix) {
 	    $progs{'mdrun'} .= "_mpi";
 	}
 	if ( $bluegene > 0 )
 	{
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $parallel -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
+	    $mdprefix = "$mpirun -np $mpi_processes -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
 	} elsif ($mpirun eq "aprun" ) {
-	    $mdprefix = "$mpirun -n $parallel";
+	    $mdprefix = "$mpirun -n $mpi_processes";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $parallel";
+	    $mdprefix = "$mpirun -np $mpi_processes";
 	}
     }
     foreach my $prog ( values %progs ) {
@@ -245,8 +246,6 @@ sub check_xvg {
 sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
-	if ( -d $dir ) {
-	    next if ( defined $only_subdir && $dir !~ $only_subdir);
 	    chdir($dir);
 	    if ($verbose > 1) {
 		print "Testing $dir . . . ";
@@ -296,7 +295,7 @@ sub test_systems {
 		# BlueGene), so after the chdir we need to deal with
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
-		my $local_mdprefix = $parallel > 0 ?
+            my $local_mdprefix = $mpi_processes > 0 ?
                     ($mdprefix . ($bluegene > 0 ?
                                   ' -cwd ' :
                                   ' -wdir ') . getcwd()) :
@@ -305,6 +304,9 @@ sub test_systems {
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
 		    $local_mdparams .= " -pd"
 		}
+                if (0 < $threads) {
+                  $local_mdparams .= " -nt $threads";
+                }
 		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams >mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
@@ -434,7 +436,6 @@ sub test_systems {
 	    print XML "</testcase>\n" if ($xml);
 	    chdir("..");
 	}
-    }
     return $npassed;
 }
 
@@ -474,7 +475,8 @@ sub refcleandir {
 sub test_dirs {
     my $dirs = shift;
     chdir($dirs);
-    my @subdirs = <*>;
+    # glob all files, but retain only directories that match the regular expression
+    my @subdirs = map { (-d $_ && $_ =~ $only_subdir) ? $_ : () } <*>;
     my $nn = $#subdirs + 1;
     print XML "<testsuite name=\"$dirs\">\n" if ($xml);
     my $npassed = test_systems(@subdirs);
@@ -687,7 +689,7 @@ sub clean_all {
 
 sub usage {
     print <<EOP;
-Usage: ./gmxtest.pl [ -np N ] [-verbose ] [ -double ] [ -bluegene ]
+Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
                     [ -crosscompile ] [ -tight ] [ -mdparam xxx ]
                     [ simple | complex | kernel | freeenergy | pdb2gmx | all ]
@@ -781,11 +783,24 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $parallel = $ARGV[$kk];
-	    if ($parallel < 0) {
-		$parallel = 0;
+	    $mpi_processes = $ARGV[$kk];
+	    if ($mpi_processes <= 0) {
+		$mpi_processes = 0;
+	    } else {
+                print "Will test on $mpi_processes MPI processors\n";
+            }
+	}
+    }
+    elsif ($arg eq '-nt' ) {
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $threads = $ARGV[$kk];
+	    if ($threads <= 0) {
+		$threads = 1;
+                # most of the tests don't scale at all well
+	    } else {
+                print "Will test on $threads threads\n";
 	    }
-	    print "Will test on $parallel processors\n";
 	}
     }
     elsif ($arg eq '-suffix' ) {
@@ -828,7 +843,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	# regular expression
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    print "Will only test subdirectories matching '$ARGV[$kk]'\n";
+	    print "Will only test subdirectories matching regular expression '$ARGV[$kk]'\n";
 	    $only_subdir = qr/$ARGV[$kk]/;
 	}
     }
