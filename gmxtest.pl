@@ -129,15 +129,16 @@ sub find_in_file($$) {
 sub check_force()
 {
     my $cfor = "checkforce.out";
+    my $cfor2 = "checkforce.err";
     my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel > $cfor 2> /dev/null", 0,
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel >$cfor 2>$cfor2", 0,
 	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
     
     open(FIN,"$cfor");
     while(my $line=<FIN>)
     {
-	next unless $line =~ /f\[/;
+	next unless $line =~ /^f\[/;
 	my @ll=split("[()]",$line);
 	my @f1=split(" ",$ll[1]);
 	my @f2=split(" ",$ll[3]);
@@ -153,7 +154,7 @@ sub check_force()
     }     
     close(FIN);
     if ($nerr_force == 0) {
-      unlink($cfor);
+      unlink($cfor,$cfor2);
     }
     return $nerr_force;
 }
@@ -161,10 +162,11 @@ sub check_force()
 sub check_virial()
 {
     my $cvir = "checkvir.out";
+    my $cvir2 = "checkvir.err";
     my $refedr = "${ref}.edr";
     my $nerr_vir = 0;
 
-    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ > $cvir 2> /dev/null", 0,
+    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
 	sub { print "\ngmxcheck failed on the .edr file while checking the virial\n"; $nerr_vir = 1; });
     
     open(VIN,"$cvir");
@@ -185,7 +187,7 @@ sub check_virial()
     }     
     close(VIN);
     if ($nerr_vir == 0) {
-      unlink($cvir);
+      unlink($cvir,$cvir2);
     }
     return $nerr_vir;
 }
@@ -255,7 +257,7 @@ sub test_systems {
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
 	    }
-	    do_system("$progs{'grompp'} -maxwarn 10 $ndx > grompp.out 2>&1");
+	    do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
 	    
 	    my $error_detail = ' ';
 	    if (! -f "topol.tpr") {
@@ -269,16 +271,19 @@ sub test_systems {
 		    print ("This means you are not really testing $dir\n");
 		    link('topol.tpr', $reftpr);
 		} else {
-		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol > checktpr.out 2>&1", 0, 
+		    my $tprout="checktpr.out";
+		    my $tprerr="checktpr.err";
+		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol >$tprout 2>$tprerr", 0, 
 			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-		    $nerror |= find_in_file("step","checktpr.out");
+		    $nerror |= find_in_file("step","$tprout");
 		    if ($nerror > 0) {
 			print "topol.tpr file different from $reftpr. Check files in $dir\n";
 		    }
-		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"checktpr.out") > 0) {
+		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
 			print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
 			$addversionnote = 1;
 		    }
+		    unlink($tprout,$tprerr);
 		}
 	    }
 	    my @error_detail;
@@ -296,7 +301,7 @@ sub test_systems {
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
 		    $local_mdparams .= " -pd"
 		}
-		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams > mdrun.out 2>&1", 0,
+		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams >mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
 		# First check whether we have any output
@@ -308,20 +313,23 @@ sub test_systems {
 			print ("This means you are not really testing $dir\n");
 			link('ener.edr', $refedr);
 		    } else {
+		        my $potout="checkpot.out";
+		        my $poterr="checkpot.err";
 			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential > checkpot.out 2> /dev/null", 0,
+			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
 				  sub {
 				      if($nerror != 0) {
 					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
 				      }
 				  });
-			my $nerr_pot = find_in_file("step","checkpot.out");
-			push(@error_detail, "checkpot.out ($nerr_pot errors)") if ($nerr_pot > 0);
+			my $nerr_pot = find_in_file("step","$potout");
+			push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
 
 			my $nerr_vir   = 0; #TODO: check_virial();
 			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
 
 			$nerror |= $nerr_pot | $nerr_vir;
+			unlink($potout,$poterr);
 		    }
 		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
@@ -511,7 +519,7 @@ sub test_tools {
 	    mkdir($ncmd);
 	    chdir($ncmd);
 
-	    do_system("$cmdline > $cfg_name.out 2>&1", 0,
+	    do_system("$cmdline >$cfg_name.out 2>&1", 0,
 		      sub { print "\n'".$cmdline."' failed"; $error = 1; });
 	    
 	    if ($error==0) {
@@ -689,7 +697,7 @@ EOP
 # check for the tool with this routine when not cross compiling
 sub test_gmx {
   foreach my $p ( values %progs ) {
-    if (system("$p -h > /dev/null 2> /dev/null") != 0) {
+    if (system("$p -h > $p.help 2>&1") != 0) {
       print("ERROR: Can not find executable $p in your path.\nPlease source GMXRC and try again.\n");
       exit 1;
     }
