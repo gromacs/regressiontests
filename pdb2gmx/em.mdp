@@ -43,14 +43,14 @@ nstcgsteep               = 1000
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 100
-nstvout                  = 100
-nstfout                  = 0
+nstxout                  = 10
+nstvout                  = 10
+nstfout                  = 10
 ; Checkpointing helps you continue after crashes
 nstcheckpoint            = 1000
 ; Output frequency for energies to log file and energy file
 nstlog                   = 100
-nstenergy                = 100
+nstenergy                = 10
 ; Output frequency and precision for xtc file
 nstxtcout                = 0
 xtc-precision            = 1000
