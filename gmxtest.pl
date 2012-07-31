@@ -14,7 +14,7 @@ my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
-my $verbose  = 5;
+my $verbose  = 0;
 my $xml      = 0;
 my $etol     = 0.05;
 my $ttol     = 0.0001;
@@ -39,8 +39,8 @@ my $only_subdir = qr/.*/;
 my $tightfactor = 1;
 
 # trickery for program and reference file names
-my $mdprefix = '';
-my $mdparams = '';
+my $mdrun_prefix = '';
+my $mdrun_params = '';
 my $ref      = '';
 my $mpirun   = 'mpirun';
 my %progs = ( 'grompp'   => 'grompp',
@@ -63,12 +63,12 @@ sub setup_vars()
 	if ( $bluegene > 0 )
 	{
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $mpi_processes -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
+	    $mdrun_prefix = "$mpirun -np $mpi_processes -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
 	} elsif ($mpirun eq "aprun" ) {
-	    $mdprefix = "$mpirun -n $mpi_processes";
+	    $mdrun_prefix = "$mpirun -n $mpi_processes";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $mpi_processes";
+	    $mdrun_prefix = "$mpirun -np $mpi_processes";
 	}
     }
     foreach my $prog ( values %progs ) {
@@ -114,22 +114,31 @@ sub do_system
     return $returnvalue;
 }
 
-#build-in replacement for grep
-#returns number of matches for pattern (1st arg) in file (2nd arg)
-sub find_in_file($$) {
-  my $return=0;
-  defined($_[1]) || die "find_in_file: Missing argument\n";
-  open(FILE,"$_[1]") || die "Could not open file '$_[1]'\n";
-  while(<FILE>) {
-    $return++ if /$_[0]/;
-  }
-  close(FILE) || die "Could not close file '$_[1]'\n";
-  return $return;
+# Built-in replacement for grep -e
+# Returns number of matches for pattern (1st arg) in file (2nd arg)
+sub find_in_file {
+    my $regexp = shift;
+    my $filename = shift;
+    my $exclude_regexp = shift;
+
+    my $foundmatch=0;
+    defined($filename) || die "find_in_file: Missing argument\n";
+    if (!open(FILE,"$filename")) {
+        print STDERR "Could not open file '$filename'\n";
+        return 0;
+    }
+    while(<FILE>) {
+        $foundmatch++ if (/$regexp/ && (!defined($exclude_regexp) || !/${exclude_regexp}/));
+    }
+    close(FILE) || die "Could not close file '$filename'\n";
+
+    return $foundmatch;
 }
 
-sub check_force($)
+sub check_force
 {
     my $traj = shift;
+    my $error_detail = shift;
     my $cfor = "checkforce.out";
     my $cfor2 = "checkforce.err";
     my $reftrr = "${ref}.trr";
@@ -156,7 +165,9 @@ sub check_force($)
     }     
     close(FIN);
     if ($nerr_force == 0) {
-      unlink($cfor,$cfor2);
+        unlink($cfor,$cfor2);
+    } else {
+        push(@$error_detail, "checkforce.out ($nerr_force errors)");
     }
     return $nerr_force;
 }
@@ -199,12 +210,11 @@ sub check_xvg {
     my $kkk  = shift;
     my $ndx1 = shift;
     my $ndx2 = shift;
-    my $pdb2gmx_test_names = shift;
+    my $pdb2gmx_test_name = shift;
 
     my $nerr = 0;
     if ((-f $refx) && (-f $kkk)) {
 	open(EEE,"paste $refx $kkk |");
-	my $n = 0;
 	my $header = 0;
 	while (my $line = <EEE>) {
 	    if ((index($line,"#") < 0) && (index($line,"\@") < 0)) {
@@ -213,8 +223,8 @@ sub check_xvg {
 		my $x1 = $tmp[$ndx1];
 		my $x2 = $tmp[$ndx2];
 		my $error;
-		my $hasPdb2gmx_test_name = defined $pdb2gmx_test_names && defined $$pdb2gmx_test_names[$n];
-		print XML "<testcase name=\"$$pdb2gmx_test_names[$n]\">\n" if ($xml && $hasPdb2gmx_test_name);
+		my $hasPdb2gmx_test_name = defined $pdb2gmx_test_name;
+		print XML "<testcase name=\"$pdb2gmx_test_name\">\n" if ($xml && $hasPdb2gmx_test_name);
 		my $tol;
 		if ($x1+$x2==0) { 
 		    $error = abs($x1-$x2);
@@ -227,16 +237,15 @@ sub check_xvg {
 		    $nerr++;
 		    if (!$header) {
 			$header = 1;
-			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nIndex  Reference   This test       Error  Description\n");
+			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nReference   This test       Error  Description\n");
 		    }
-		    printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
-			   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
+		    printf("%10g  %10g  %10g  %s\n",$tmp[3],$tmp[7], $error,
+			   $hasPdb2gmx_test_name ? $pdb2gmx_test_name : 'unknown');
 		    printf(XML "<error message=\"Reference: %g Result: %g Error: %g\"/>\n",$tmp[3],$tmp[7], $error) 
 			if ($xml && $hasPdb2gmx_test_name);
 		    
 		}
 		print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
-		$n++;
 	    }
 	}
 	close EEE;
@@ -244,88 +253,227 @@ sub check_xvg {
     return $nerr;
 }
 
+sub write_xml_failure {
+    my $xml = shift;
+    my $error_detail_str = shift;
+    my $error_detail = shift;
+    if ($xml) {
+        print XML "<error message=\"Errors in ${error_detail_str}\">\n";
+        print XML "<![CDATA[\n";
+        foreach my $err (@$error_detail) {
+            my @err = split(/ /, $err);
+            my $errfn = $err[0];
+            print XML "$errfn:\n";
+            if (!open FH, $errfn) {
+                print XML "failed to open $errfn";
+            } else {
+                while(my $line=<FH>) {
+                    $line=~s/\x00//g; #remove invalid XML characters
+                    print XML $line;
+                }
+            }
+            print XML "\n--------------------------------\n";
+            close FH;
+        }
+        print XML "]]>\n";
+        print XML "</error>";
+    }
+}
+
+sub get_tpx_versions {
+    my $tprout = shift;
+    my $first = shift;
+    my $second = shift;
+
+    my $foundmatch=0;
+    defined($tprout) || die "find_in_file: Missing argument\n";
+    open(FILE,"$tprout") || die "Could not open file '$tprout'\n";
+    $$first = undef;
+    $$second = undef;
+    while(<FILE>) {
+        if (/file_version \((.*) - (.*)\)/) {
+            $$first = $1;
+            $$second = $2;
+            $foundmatch++;
+        }
+    }
+    close(FILE) || die "Could not close file '$tprout'\n";
+
+    return $foundmatch;
+}
+
+sub accept_tprout_deviation {
+    my $tprout = shift;
+    my $firstversion = shift;
+    my $secondversion = shift;
+    my $deviation = shift;
+
+    my $nfound = 0;
+    if ($firstversion < $$deviation{'version'} && $secondversion >= $$deviation{'version'}) {
+        $nfound += find_in_file($$deviation{'first'}, $tprout);
+    }
+    if ($firstversion >= $$deviation{'version'} && $secondversion < $$deviation{'version'}) {
+        $nfound += find_in_file($$deviation{'second'}, $tprout);
+    }
+
+    return $nfound;
+}
+
+sub get_tpx_constraints {
+    my $tprout = shift;
+
+    defined($tprout) || die "find_in_file: Missing argument\n";
+    open(FILE,"$tprout") || die "Could not open file '$tprout'\n";
+    my @constraint_mismatches;
+    while(<FILE>) {
+        if (/^CONSTR->iatoms\[[0-9]+\] \(([0-9]+) - ([0-9]+)\)/) {
+            push @constraint_mismatches, [$1, $2];
+        }
+    }
+    close(FILE) || die "Could not close file '$tprout'\n";
+    return \@constraint_mismatches;
+}
+
+sub check_tpr {
+    my $reftpr = shift;
+    my $error_detail = shift;
+    my $addversionnote = shift;
+
+    my $nerror = 0;
+    my $tprout="checktpr.out";
+    my $tprerr="checktpr.err";
+
+    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol >$tprout 2>$tprerr", 0,
+              sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
+    $nerror += find_in_file(" - ", $tprout, "<new feature>|<obsolete feature>|file_version|file_generation");
+
+    # Don't flag errors associated with changes in default values
+    my ($firstversion, $secondversion);
+    get_tpx_versions $tprout, \$firstversion, \$secondversion;
+    if (defined $firstversion && defined $secondversion) {
+        my @acceptable_tpr_deviations =
+            ({'version' => 77, # from fd3ed21a
+              'first' => qr/inputrec->epsilon_rf \(1.000000e\+00 - 0.000000e\+00\)/,
+              'second' => qr/inputrec->epsilon_rf \(0.000000e\+00 - 1.000000e\+00\)/ },
+             {'version' => 77, # from 5a6eaf84
+              'first' => qr/inputrec->nstlog \(100 - 1000\)/,
+              'second' => qr/inputrec->nstlog \(1000 - 100\)/ },
+             {'version' => 77, # from 5a6eaf84
+              'first' => qr/inputrec->nst[vx]out \(100 - 0\)/,
+              'second' => qr/inputrec->nst[vx]out \(0 - 100\)/ },
+             {'version' => 79, # from c7a82654
+              'first' => qr/inputrec->fepvals->sc_power \(0 - 1\)/,
+              'second' => qr/inputrec->fepvals->sc_power \(1 - 0\)/ },
+             {'version' => 79, # from c7a82654
+              'first' => qr/inputrec->efep \(1 - 3\)/,
+              'second' => qr/inputrec->efep \(3 - 1\)/ }
+             );
+        foreach my $deviation (@acceptable_tpr_deviations) {
+            $nerror -= accept_tprout_deviation $tprout, $firstversion, $secondversion, $deviation;
+        }
+
+        if ($firstversion >= 78 || $secondversion >= 78) {
+            # Don't flag errors associated with constraint re-ordering in 080304ed
+            my $constraint_mismatches = get_tpx_constraints $tprout;
+            foreach my $constraintlist (@$constraint_mismatches) {
+                my $found = 0;
+                foreach my $testconstraintlist (@$constraint_mismatches) {
+                    $found++ if ($$testconstraintlist[0] eq $$constraintlist[1] &&
+                                 $$testconstraintlist[1] eq $$constraintlist[0]);
+                }
+                $nerror -= $found;
+            }
+        }
+    }
+
+
+    $nerror += find_in_file("^idef->iparam\\[[0-9]+\\]1:", $tprout);
+    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
+        print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
+        $$addversionnote = 1;
+    }
+    if ($nerror > 0) {
+        push @$error_detail, "topol.tpr file different from $reftpr, check $tprout ($nerror errors)";
+    } else {
+        unlink($tprout,$tprerr);
+    }
+    return $nerror
+}
+
+sub check_edr {
+    my $refedr = shift;
+    my $error_detail = shift;
+
+    my $nerror = 0;
+    my $potout="checkpot.out";
+    my $poterr="checkpot.err";
+    # Now do the real tests
+    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
+              sub {
+                  if($nerror != 0) {
+                      print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
+                  }
+              });
+    my $nerr_pot = find_in_file("step","$potout");
+    my $nerr_vir = 0;
+    my $virout = "checkvir.out";
+    my $virerr = "checkvir.err";
+#TODO: check_virial();
+#    push(@$error_detail, $virout ($nerr_vir errors)") if ($nerr_vir > 0);
+
+    if ($nerr_pot > 0) {
+        push(@$error_detail, "$potout ($nerr_pot errors)");
+    } elsif ($nerr_vir > 0) {
+        push(@$error_detail, "$virout ($nerr_vir errors)");
+    } else {
+        unlink($potout,$poterr,$virout,$virerr);
+    }
+    $nerror |= $nerr_pot | $nerr_vir;
+    return $nerror
+}
+
+sub make_mdrun_params {
+    my $mdrun_params = shift;
+    my $local_mdrun_params = '';
+    my $grompp_filename = 'grompp.mdp';
+    if (-f $grompp_filename && find_in_file("ns_type.*simple",$grompp_filename) > 0) {
+        $local_mdrun_params .= " -pd";
+    }
+    if (0 < $threads) {
+        $local_mdrun_params .= " -nt $threads";
+    }
+    return $local_mdrun_params
+}
+
 sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
 	    chdir($dir);
-	    if ($verbose > 1) {
-		print "Testing $dir . . . ";
+	    if ($verbose > 0) {
+		print "Testing $dir . . . \n";
 	    }
 	    
 	    my $nerror = 0;
+	    my @error_detail;
 	    my $ndx = "";
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
 	    }
 	    do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
 	    
-	    my $error_detail = ' ';
+	    my $error_detail_str = ' ';
 	    if (! -f "topol.tpr") {
 		print ("No topol.tpr file in $dir. grompp failed\n");	    
 		$nerror = 1;
 	    }
-	    if ($nerror == 0) {
-		my $reftpr = "${ref}.tpr";
-		if (! -f $reftpr) {
-		    print ("No $reftpr file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-		    link('topol.tpr', $reftpr);
-		} else {
-		    my $tprout="checktpr.out";
-		    my $tprerr="checktpr.err";
-		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol >$tprout 2>$tprerr", 0, 
-			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-		    $nerror |= find_in_file("step","$tprout");
-		    if ($nerror > 0) {
-			print "topol.tpr file different from $reftpr. Check files in $dir\n";
-		    }
-		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
-			print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
-			$addversionnote = 1;
-		    }
-		    unlink($tprout,$tprerr);
-		}
+            my $reftpr = "${ref}.tpr";
+            if (! -f $reftpr) {
+                print ("No $reftpr file in $dir\n");
+                print ("This means you are not really testing $dir\n");
+                link('topol.tpr', $reftpr);
+            } elsif ($nerror == 0) {
+                $nerror += check_tpr($reftpr, \@error_detail, \$addversionnote);
 	    }
-	    if ($nerror == 0) {
-	       open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
-	       open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
-	       my $p=0;
-	       while(<GROMPP>) {
-		 $p=1 if /^WARNING/;
-		 print WARN if ($p);
-		 $p=0 if /^$/;
-	       }
-	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
-	       close(WARN) || die "Could not close file 'grompp.warn'\n";
-		my $refwarn = "reference.warn";
-		if (! -f $refwarn) {
-		    print("No $refwarn file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-                    rename('grompp.warn', $refwarn);
-		} else {
-	            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
-	            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
-                    while (my $line1=<WARN1>) {
-                      my $line2=<WARN2>;
-                      if (not defined($line2)){#FILE1 has more lines
-                        $nerror++;
-                        next;
-                      }
-		      $line1 =~ s/(e[-+])0([0-9][0-9])/\1\2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
-                      $nerror++ unless ("$line2" eq "$line1");
-                    }
-                    while (my $line2=<WARN2>) {#FILE2 has more lines
-                      $nerror++
-                    }
-		    if ($nerror>0) {
-			print("Different warnings in $refwarn and grompp.warn\n");
-			$error_detail = "grompp.out ";
-		    } else {
-		      unlink("grompp.warn");
-		    }
-		}
-	    }
-	    my @error_detail;
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
 
@@ -335,24 +483,18 @@ sub test_systems {
 		# BlueGene), so after the chdir we need to deal with
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
-            my $local_mdprefix = $mpi_processes > 0 ?
-                    ($mdprefix . ($bluegene > 0 ?
+            my $local_mdrun_prefix = $mpi_processes > 0 ?
+                    ($mdrun_prefix . ($bluegene > 0 ?
                                   ' -cwd ' :
                                   ' -wdir ') . getcwd()) :
                     ('');
-		my $local_mdparams = $mdparams;
-		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
-		    $local_mdparams .= " -pd"
-		}
-                if (0 < $threads) {
-                  $local_mdparams .= " -nt $threads";
-                }
-		my $part = "";
-		if ( -f "continue.cpt" ) {
-		    $local_mdparams .= " -cpi continue -noappend";
-		    $part = ".part0002";
-		}
-		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams >mdrun.out 2>&1", 0,
+		my $local_mdrun_params = make_mdrun_params $mdrun_params;
+            my $part = "";
+            if ( -f "continue.cpt" ) {
+                $local_mdrun_params .= " -cpi continue -noappend";
+                $part = ".part0002";
+            }
+		$nerror = do_system("$local_mdrun_prefix $progs{'mdrun'} $local_mdrun_params >mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
 		my $ener = "ener$part";
@@ -366,23 +508,7 @@ sub test_systems {
 			print ("This means you are not really testing $dir\n");
 			link("$ener.edr", $refedr);
 		    } else {
-		        my $potout="checkpot.out";
-		        my $poterr="checkpot.err";
-			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 $ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
-				  sub {
-				      if($nerror != 0) {
-					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
-				      }
-				  });
-			my $nerr_pot = find_in_file("step","$potout");
-			push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
-
-			my $nerr_vir   = 0; #TODO: check_virial();
-			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
-
-			$nerror |= $nerr_pot | $nerr_vir;
-			unlink($potout,$poterr);
+                        $nerror += check_edr($refedr, \@error_detail);
 		    }
 		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
@@ -391,8 +517,7 @@ sub test_systems {
 			link("$traj.trr", $reftrr);
 		    } else {
 			# Now do the real tests
-			my $nerr_force = check_force($traj);
-			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
+			my $nerr_force = check_force($traj, \@error_detail);
 			$nerror |= $nerr_force;
 		    }
 		    # This bit below is only relevant for free energy tests
@@ -404,38 +529,18 @@ sub test_systems {
 		else {
 		    $nerror = 1;
 		}
-		$error_detail = join(', ', @error_detail) . ' ';
 	    }
+            $error_detail_str = join(', ', @error_detail) . ' ';
 	    print XML "<testcase name=\"$dir\">\n" if ($xml);
 	    if ($nerror > 0) {
-		print "FAILED. Check ${error_detail}files in $dir\n";
-		if ($xml) {
-		    print XML "<error message=\"Erorrs in ${error_detail}\">\n";
-		    print XML "<![CDATA[\n";
-		    foreach my $err (@error_detail) {
-			my @err = split(/ /, $err);
-			my $errfn = $err[0];
-			print XML "$errfn:\n";
-			if (!open FH, $errfn) {
-			    print XML "failed to open $errfn";
-			} else {
-			    while(my $line=<FH>) {
-				$line=~s/\x00//g; #remove invalid XML characters
-				print XML $line;
-			    }
-			}
-			print XML "\n--------------------------------\n";
-			close FH;
-		    }
-		    print XML "]]>\n";
-		    print XML "</error>";
-		}
+                write_xml_failure($xml, $error_detail_str, \@error_detail);
+		print "FAILED. Check ${error_detail_str}files in $dir\n";
 	    }
 	    else {
 		my @args = glob("#*# *.out topol.tpr confout.gro ener*.edr md.log traj*.trr");
 		#unlink(@args);
 		
-		if ($verbose > 0) {
+		if ($verbose > 1) {
 		    if (find_in_file(".","grompp.mdp") < 50) { 
 			# if the input .mdp file is trivially short, then 
 			# the diff test below will always fail, however this
@@ -488,14 +593,22 @@ sub test_systems {
 
 sub cleandirs {
     my $mydir = shift;
+    my $globstr = shift;
+    $globstr = "*" unless (defined $globstr);
+    my $pdbclean = shift;
+    $pdbclean = 0 unless (defined $pdbclean);
     chdir($mydir);
-    foreach my $dir ( <*> ) {
+    my $thecwd = getcwd();
+    foreach my $dir ( glob($globstr) ) {
 	if ( -d $dir ) {
 	    chdir($dir);
-	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc" );
+	    printf("Cleaning %s\n", getcwd()) if ($verbose > 0);
+	    my @args = glob("#*# *~ *.out *.err core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt" );
+            if ($pdbclean) {
+                push @args, glob("b4em.gro conf.gro pdb2gmx.log posre.itp topol.top checkpot.err");
+            }
 	    unlink (@args);
-	    chdir("..");
+	    chdir($thecwd);
 	}
     }
     chdir("..");
@@ -555,9 +668,7 @@ sub test_tools {
 	chdir($cfg_name);
 	my $ncmd = 0;
 	my $nerror_cmd = 0;
-	if ($verbose > 1) {
-	    print "Testing $cfg_name . . . \n";
-	}
+        print("Testing $cfg_name . . . \n") if ($verbose > 0);
 	while(my $line=<FIN>) {  #loop over commands (seperated by empty line)
 	    $ncmd++;
 	    chomp($line);
@@ -597,9 +708,9 @@ sub test_tools {
 	    }
 	    chdir("..");
 	}
-	if ($nerror_cmd>0) {
+	if ($nerror_cmd > 0) {
 	    print "$nerror_cmd out of $ncmd $cfg_name tests FAILED\n";
-	} elsif ($verbose>1) {
+	} elsif ($verbose > 0) {
 	    print "All $ncmd $cfg_name tests PASSED\n";
 	}
 	chdir("..");
@@ -615,12 +726,11 @@ sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
     chdir("pdb2gmx");
-    open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
     my $npdb_dir = 0;
     my @pdb_dirs = ();
     my $ntest    = 0;
-    my $nerror   = 0;
-    my @pdb2gmx_test_names;
+    my $nsuccess = 0;
+    $ref = 'reference_' . ($double > 0 ? 'd' : 's');
     foreach my $pdb ( glob("*.pdb") ) {
 	my $pdir = "pdb-$pdb";
 	my @kkk  = split('\.',$pdir);
@@ -628,15 +738,18 @@ sub test_pdb2gmx {
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6" ) {
+	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6", "charmm27" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
 	    my @water = ();
 	    my @vsite = ( "none", "h" );
-	    if ( $ff eq "oplsaa"  ) {
+	    if ( $ff =~ /oplsaa/  ) {
 		@water = ( "tip3p", "tip4p", "tip5p" );
 	    }
-	    elsif ( $ff eq "encads" ) {
+	    elsif ( $ff =~ /charmm/  ) {
+		@water = ( "tip3p", "tip4p" );
+            }
+	    elsif ( $ff =~ /encads/ ) {
 		@vsite = ( "none" );
 		@water = ( "spc" );
 	    }
@@ -647,15 +760,18 @@ sub test_pdb2gmx {
 		mkdir("$dd");
 		chdir("$dd");
 		foreach my $ww ( @water ) {
+		    mkdir("$ww");
+		    chdir("$ww");
+                    next if(getcwd() !~ $only_subdir);
+                    open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
 		    $ntest++;
-		    push @pdb2gmx_test_names, "$pdb with $ff using vsite=$dd and water=$ww";
+		    my $pdb2gmx_test_name = "$pdb with $ff using vsite=$dd and water=$ww";
+                    print "Testing $pdb2gmx_test_name\n" if ($verbose > 0);
 		    my $line = "";
 		    print(LOG "****************************************************\n");
 		    print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
 		    printf(LOG "** Working directory = %s\n", getcwd());
 		    print(LOG "****************************************************\n");
-		    mkdir("$ww");
-		    chdir("$ww");
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running pdb2gmx\n");
 		    print(LOG "****************************************************\n");
@@ -677,9 +793,63 @@ sub test_pdb2gmx {
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running mdrun\n");
 		    print(LOG "****************************************************\n");
-		    open(PIPE,"$mdprefix $progs{'mdrun'} $mdparams 2>&1 |");
+                    my $local_mdrun_params = make_mdrun_params $mdrun_params;
+                    my $local_mdrun_prefix = $mpi_processes > 0 ?
+                        ($mdrun_prefix . ($bluegene > 0 ?
+                                          ' -cwd ' :
+                                          ' -wdir ') . getcwd()) :
+                                          ('');
+		    open(PIPE,"$local_mdrun_prefix $progs{'mdrun'} $local_mdrun_params 2>&1 |");
 		    print LOG while <PIPE>;
 		    close PIPE;
+                    close LOG;
+
+                    my $nerror   = 0;
+                    my $error_detail_str = ' ';
+                    my @error_detail = ();
+                    # First check whether we have any output
+                    if (find_in_file('Potential Energy', $logfn) && (-f "ener.edr" ) && (-f "traj.trr")) {
+                        my $reftpr = "${ref}.tpr";
+                        my $refedr = "${ref}.edr";
+                        my $reftrr = "${ref}.trr";
+
+                        # Now do input file checks if we have such files
+                        if(! -f $reftpr)
+                        {
+                            print "No $reftpr file in ${pdb2gmx_test_name}.\n";
+                            print "This means you are not really testing ${pdb2gmx_test_name}\n";
+                            link('topol.tpr', $reftpr);
+                        } else {
+                            $nerror += check_tpr($reftpr, \@error_detail, \$addversionnote);
+                        }
+
+                        # Now do energy checks if we have such files
+                        if (! -f  $refedr) {
+                            print "No $refedr file in ${pdb2gmx_test_name}.\n";
+                            print "This means you are not really testing ${pdb2gmx_test_name}\n";
+                            link('ener.edr', $refedr);
+                        } else {
+                            $nerror += check_edr($refedr, \@error_detail);
+                        }
+
+                        # Now do force checks if we have such files
+                        if (! -f $reftrr ) {
+                            print ("No $reftrr file in ${pdb2gmx_test_name}.\n");
+                            print ("This means you are not really testing ${pdb2gmx_test_name}\n");
+                            link("traj.trr", $reftrr);
+                        } else {
+                            $nerror += check_force("traj", \@error_detail);
+                        }
+                        $error_detail_str = join(', ', @error_detail) . ' ';
+                    }
+                    if (0 == $nerror) {
+                        $nsuccess++;
+                    } else {
+                        write_xml_failure($xml, ${error_detail_str}, \@error_detail);
+                        print "pdb2gmx test FAILED for PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n";
+                        printf "** ${error_detail_str}files in working directory = %s\n", getcwd();
+                    }
+                } continue {
 		    chdir("..");
 		}
 		chdir("..");
@@ -688,37 +858,12 @@ sub test_pdb2gmx {
 	}
 	chdir("..");
     }
-    close LOG;
-    
-    my $nsuccess = find_in_file('Potential Energy',"pdb2gmx.log");
     
     if ( $nsuccess != $ntest ) {
-	print "Error not all $ntest pdb2gmx tests have been done successfully\n";
-	print "Only $nsuccess energies in the log file\n";
-	$nerror = 1;
-    }
-    else {
-	my $reflog = "${ref}.log";
-	if (! -f $reflog) {
-	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    link('ener.log', $reflog);
-	}
-	else {
-	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
-	    $nerror = check_xvg($reflog,"ener.log",3,7,\@pdb2gmx_test_names);
-	    print XML "</testsuite>\n" if ($xml);
-	    if ( $nerror != 0 ) {
-		print "There were $nerror/$ntest differences in final energy with the reference file\n";
-	    }
-	}
-    }
-    if (0 == $nerror) {
-	print "All $ntest pdb2gmx tests PASSED\n";
-	remove_tree(@pdb_dirs);
-	unlink("pdb2gmx.log");
-    }
-    else {
+	print "Error only $nsuccess of $ntest pdb2gmx tests have been done successfully\n";
 	print "pdb2gmx tests FAILED\n";
+    } else {
+	print "All $ntest pdb2gmx tests PASSED\n";
     }
     chdir("..");
 }
@@ -728,10 +873,8 @@ sub clean_all {
     cleandirs("complex");
     cleandirs("kernel");
     cleandirs("freeenergy");
-    chdir("pdb2gmx");
-    unlink("pdb2gmx.log");
-    remove_tree(glob "pdb-*");
-    chdir("..");
+    cleandirs("pdb2gmx", "pdb-*/*/*/*", 1);
+    unlink("gmxtest.xml");
 }
 
 sub usage {
@@ -793,9 +936,11 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         clean_all();
     }
     elsif ($arg eq 'refclean' ) {
-	push @work, "refcleandir('simple')";
-	push @work, "refcleandir('complex')";
-	push @work, "unlink('pdb2gmx/reference_s.log','pdb2gmx/reference_d.log')";
+        push @work, "refcleandir('simple')";
+        push @work, "refcleandir('complex')";
+        my @pdbfileglobs;
+        map { push @pdbfileglobs, "glob('pdb2gmx/pdb-*/*/*/*/reference_*$_')" } ("trr", "tpr", "edr");
+        push @work, "unlink(" . join(', ', @pdbfileglobs) . ")";
     }
     elsif ($arg eq 'dist' ) {
 	push @work, "clean_all()";
@@ -868,7 +1013,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	}
     }
     elsif ($arg eq '-reprod' ) {
-      $mdparams.=" -reprod"
+      $mdrun_params .= " -reprod"
     }
     elsif ($arg eq '-mpirun' ) {
 	if ($kk <$#ARGV) {
@@ -881,8 +1026,8 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	# this flag when they want them
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $mdparams .= $ARGV[$kk];
-	    print "Will test using 'mdrun $mdparams'\n";
+	    $mdrun_params .= $ARGV[$kk];
+	    print "Will test using 'mdrun $mdrun_params'\n";
 	}
     }
     elsif ($arg eq '-only' ) {
