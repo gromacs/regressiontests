@@ -14,7 +14,7 @@ my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
-my $verbose  = 5;
+my $verbose  = 0;
 my $xml      = 0;
 my $etol     = 0.05;
 my $ttol     = 0.0001;
@@ -198,12 +198,11 @@ sub check_xvg {
     my $kkk  = shift;
     my $ndx1 = shift;
     my $ndx2 = shift;
-    my $pdb2gmx_test_names = shift;
+    my $pdb2gmx_test_name = shift;
 
     my $nerr = 0;
     if ((-f $refx) && (-f $kkk)) {
 	open(EEE,"paste $refx $kkk |");
-	my $n = 0;
 	my $header = 0;
 	while (my $line = <EEE>) {
 	    if ((index($line,"#") < 0) && (index($line,"\@") < 0)) {
@@ -212,8 +211,8 @@ sub check_xvg {
 		my $x1 = $tmp[$ndx1];
 		my $x2 = $tmp[$ndx2];
 		my $error;
-		my $hasPdb2gmx_test_name = defined $pdb2gmx_test_names && defined $$pdb2gmx_test_names[$n];
-		print XML "<testcase name=\"$$pdb2gmx_test_names[$n]\">\n" if ($xml && $hasPdb2gmx_test_name);
+		my $hasPdb2gmx_test_name = defined $pdb2gmx_test_name;
+		print XML "<testcase name=\"$pdb2gmx_test_name\">\n" if ($xml && $hasPdb2gmx_test_name);
 		my $tol;
 		if ($x1+$x2==0) { 
 		    $error = abs($x1-$x2);
@@ -226,16 +225,15 @@ sub check_xvg {
 		    $nerr++;
 		    if (!$header) {
 			$header = 1;
-			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nIndex  Reference   This test       Error  Description\n");
+			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nReference   This test       Error  Description\n");
 		    }
-		    printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
-			   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
+		    printf("%10g  %10g  %10g  %s\n",$tmp[3],$tmp[7], $error,
+			   $hasPdb2gmx_test_name ? $pdb2gmx_test_name : 'unknown');
 		    printf(XML "<error message=\"Reference: %g Result: %g Error: %g\"/>\n",$tmp[3],$tmp[7], $error) 
 			if ($xml && $hasPdb2gmx_test_name);
 		    
 		}
 		print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
-		$n++;
 	    }
 	}
 	close EEE;
@@ -243,11 +241,99 @@ sub check_xvg {
     return $nerr;
 }
 
+sub write_xml_failure {
+    my $xml = shift;
+    my $error_detail_str = shift;
+    my $error_detail = shift;
+    if ($xml) {
+        print XML "<error message=\"Errors in ${error_detail_str}\">\n";
+        print XML "<![CDATA[\n";
+        foreach my $err (@$error_detail) {
+            my @err = split(/ /, $err);
+            my $errfn = $err[0];
+            print XML "$errfn:\n";
+            if (!open FH, $errfn) {
+                print XML "failed to open $errfn";
+            } else {
+                while(my $line=<FH>) {
+                    $line=~s/\x00//g; #remove invalid XML characters
+                    print XML $line;
+                }
+            }
+            print XML "\n--------------------------------\n";
+            close FH;
+        }
+        print XML "]]>\n";
+        print XML "</error>";
+    }
+}
+
+sub check_tpr {
+    my $dir = shift;
+    my $nerror = shift;
+    my $addversionnote = shift;
+    my $reftpr = "${ref}.tpr";
+    if (! -f $reftpr) {
+        print ("No $reftpr file in $dir\n");
+        print ("This means you are not really testing $dir\n");
+        link('topol.tpr', $reftpr);
+    } else {
+        my $tprout="checktpr.out";
+        my $tprerr="checktpr.err";
+        do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol >$tprout 2>$tprerr", 0,
+                  sub { print "Comparison of input .tpr files failed!\n"; $$nerror = 1; });
+        $$nerror |= find_in_file("step","$tprout");
+        if ($$nerror > 0) {
+            print "topol.tpr file different from $reftpr. Check files in $dir\n";
+        }
+        if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
+            print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
+            $$addversionnote = 1;
+        }
+        unlink($tprout,$tprerr);
+    }
+}
+
+sub check_edr {
+    my $refedr = shift;
+    my $nerror = shift;
+    my $error_detail = shift;
+
+    my $success = 0;
+    my $potout="checkpot.out";
+    my $poterr="checkpot.err";
+    # Now do the real tests
+    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
+              sub {
+                  if($nerror != 0) {
+                      print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
+                  }
+              });
+    my $nerr_pot = find_in_file("step","$potout");
+
+    my $nerr_vir   = 0;
+    my $virout = "checkvir.out";
+    my $virerr = "checkvir.err";
+#TODO: check_virial();
+#    push(@$error_detail, $virout ($nerr_vir errors)") if ($nerr_vir > 0);
+
+    if ($nerr_pot > 0) {
+        push(@$error_detail, "$potout ($nerr_pot errors)");
+    } elsif ($nerr_vir > 0) {
+        push(@$error_detail, "$virout ($nerr_vir errors)");
+    } else {
+        $success++;
+        unlink($potout,$poterr,$virout,$virerr);
+    }
+    $$nerror |= $nerr_pot | $nerr_vir;
+    return $success;
+}
+
 sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
 	    chdir($dir);
-	    if ($verbose > 1) {
+	    if ($verbose > 0) {
 		print "Testing $dir . . . ";
 	    }
 	    
@@ -258,32 +344,13 @@ sub test_systems {
 	    }
 	    do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
 	    
-	    my $error_detail = ' ';
+	    my $error_detail_str = ' ';
 	    if (! -f "topol.tpr") {
 		print ("No topol.tpr file in $dir. grompp failed\n");	    
 		$nerror = 1;
 	    }
 	    if ($nerror == 0) {
-		my $reftpr = "${ref}.tpr";
-		if (! -f $reftpr) {
-		    print ("No $reftpr file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-		    link('topol.tpr', $reftpr);
-		} else {
-		    my $tprout="checktpr.out";
-		    my $tprerr="checktpr.err";
-		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol >$tprout 2>$tprerr", 0, 
-			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-		    $nerror |= find_in_file("step","$tprout");
-		    if ($nerror > 0) {
-			print "topol.tpr file different from $reftpr. Check files in $dir\n";
-		    }
-		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
-			print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
-			$addversionnote = 1;
-		    }
-		    unlink($tprout,$tprerr);
-		}
+                check_tpr($dir, \$nerror, \$addversionnote);
 	    }
 	    my @error_detail;
 	    if ($nerror == 0) {
@@ -319,23 +386,7 @@ sub test_systems {
 			print ("This means you are not really testing $dir\n");
 			link('ener.edr', $refedr);
 		    } else {
-		        my $potout="checkpot.out";
-		        my $poterr="checkpot.err";
-			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
-				  sub {
-				      if($nerror != 0) {
-					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
-				      }
-				  });
-			my $nerr_pot = find_in_file("step","$potout");
-			push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
-
-			my $nerr_vir   = 0; #TODO: check_virial();
-			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
-
-			$nerror |= $nerr_pot | $nerr_vir;
-			unlink($potout,$poterr);
+                        check_edr($refedr, \$nerror, \@error_detail);
 		    }
 		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
@@ -357,38 +408,18 @@ sub test_systems {
 		else {
 		    $nerror = 1;
 		}
-		$error_detail = join(', ', @error_detail) . ' ';
+		$error_detail_str = join(', ', @error_detail) . ' ';
 	    }
 	    print XML "<testcase name=\"$dir\">\n" if ($xml);
 	    if ($nerror > 0) {
-		print "FAILED. Check ${error_detail}files in $dir\n";
-		if ($xml) {
-		    print XML "<error message=\"Erorrs in ${error_detail}\">\n";
-		    print XML "<![CDATA[\n";
-		    foreach my $err (@error_detail) {
-			my @err = split(/ /, $err);
-			my $errfn = $err[0];
-			print XML "$errfn:\n";
-			if (!open FH, $errfn) {
-			    print XML "failed to open $errfn";
-			} else {
-			    while(my $line=<FH>) {
-				$line=~s/\x00//g; #remove invalid XML characters
-				print XML $line;
-			    }
-			}
-			print XML "\n--------------------------------\n";
-			close FH;
-		    }
-		    print XML "]]>\n";
-		    print XML "</error>";
-		}
+                write_xml_failure($xml, $error_detail_str, \@error_detail);
+		print "FAILED. Check ${error_detail_str}files in $dir\n";
 	    }
 	    else {
 		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
 		#unlink(@args);
 		
-		if ($verbose > 0) {
+		if ($verbose > 1) {
 		    if (find_in_file(".","grompp.mdp") < 50) { 
 			# if the input .mdp file is trivially short, then 
 			# the diff test below will always fail, however this
@@ -441,14 +472,22 @@ sub test_systems {
 
 sub cleandirs {
     my $mydir = shift;
+    my $globstr = shift;
+    $globstr = "*" unless (defined $globstr);
+    my $pdbclean = shift;
+    $pdbclean = 0 unless (defined $pdbclean);
     chdir($mydir);
-    foreach my $dir ( <*> ) {
+    my $thecwd = getcwd();
+    foreach my $dir ( glob($globstr) ) {
 	if ( -d $dir ) {
 	    chdir($dir);
-	    print "Cleaning $dir\n"; 
+	    printf "Cleaning %s\n", getcwd();
 	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* *.cpt" );
+            if ($pdbclean) {
+                push @args, glob("b4em.gro conf.gro pdb2gmx.log posre.itp topol.top checkpot.err");
+            }
 	    unlink (@args);
-	    chdir("..");
+	    chdir($thecwd);
 	}
     }
     chdir("..");
@@ -508,7 +547,7 @@ sub test_tools {
 	chdir($cfg_name);
 	my $ncmd = 0;
 	my $nerror_cmd = 0;
-	if ($verbose > 1) {
+	if ($verbose > 0) {
 	    print "Testing $cfg_name . . . \n";
 	}
 	while(my $line=<FIN>) {  #loop over commands (seperated by empty line)
@@ -550,9 +589,9 @@ sub test_tools {
 	    }
 	    chdir("..");
 	}
-	if ($nerror_cmd>0) {
+	if ($nerror_cmd > 0) {
 	    print "$nerror_cmd out of $ncmd $cfg_name tests FAILED\n";
-	} elsif ($verbose>1) {
+	} elsif ($verbose > 0) {
 	    print "All $ncmd $cfg_name tests PASSED\n";
 	}
 	chdir("..");
@@ -568,12 +607,12 @@ sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
     chdir("pdb2gmx");
-    open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
     my $npdb_dir = 0;
     my @pdb_dirs = ();
     my $ntest    = 0;
     my $nerror   = 0;
-    my @pdb2gmx_test_names;
+    my $nsuccess = 0;
+    $ref = 'reference_' . ($double > 0 ? 'd' : 's');
     foreach my $pdb ( glob("*.pdb") ) {
 	my $pdir = "pdb-$pdb";
 	my @kkk  = split('\.',$pdir);
@@ -581,15 +620,18 @@ sub test_pdb2gmx {
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6" ) {
+	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6", "charmm27" ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
 	    my @water = ();
 	    my @vsite = ( "none", "h" );
-	    if ( $ff eq "oplsaa"  ) {
+	    if ( $ff =~ /oplsaa/  ) {
 		@water = ( "tip3p", "tip4p", "tip5p" );
 	    }
-	    elsif ( $ff eq "encads" ) {
+	    elsif ( $ff =~ /charmm/  ) {
+		@water = ( "tip3p", "tip4p" );
+            }
+	    elsif ( $ff =~ /encads/ ) {
 		@vsite = ( "none" );
 		@water = ( "spc" );
 	    }
@@ -600,15 +642,18 @@ sub test_pdb2gmx {
 		mkdir("$dd");
 		chdir("$dd");
 		foreach my $ww ( @water ) {
+		    mkdir("$ww");
+		    chdir("$ww");
+                    next if(getcwd() !~ $only_subdir);
+                    open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
 		    $ntest++;
-		    push @pdb2gmx_test_names, "$pdb with $ff using vsite=$dd and water=$ww";
+		    my $pdb2gmx_test_name = "$pdb with $ff using vsite=$dd and water=$ww";
+                    print "Testing $pdb2gmx_test_name\n" if ($verbose > 0);
 		    my $line = "";
 		    print(LOG "****************************************************\n");
 		    print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
 		    printf(LOG "** Working directory = %s\n", getcwd());
 		    print(LOG "****************************************************\n");
-		    mkdir("$ww");
-		    chdir("$ww");
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running pdb2gmx\n");
 		    print(LOG "****************************************************\n");
@@ -633,6 +678,42 @@ sub test_pdb2gmx {
 		    open(PIPE,"$mdprefix $progs{'mdrun'} $mdparams 2>&1 |");
 		    print LOG while <PIPE>;
 		    close PIPE;
+                    close LOG;
+
+                    my $success = 0;
+                    my $error_detail_str = ' ';
+                    my @error_detail = ();
+                    # First check whether we have any output
+                    if (find_in_file('Potential Energy',$logfn) && (-f "ener.edr" ) && (-f "traj.trr")) {
+                        # Now check whether we have any .tpr reference files
+                        my $reftpr = "${ref}.tpr";
+                        if(! -f $reftpr)
+                        {
+                            print "No $reftpr file in ${pdb2gmx_test_name}.\n";
+                            print "This means you are not really testing ${pdb2gmx_test_name}\n";
+                            link('topol.tpr', $reftpr);
+                        } else {
+                            check_tpr($dir, \$nerror, \$addversionnote);
+                        }
+                        # Now check whether we have any .edr reference files
+                        my $refedr = "${ref}.edr";
+                        if (! -f  $refedr) {
+                            print "No $refedr file in ${pdb2gmx_test_name}.\n";
+                            print "This means you are not really testing ${pdb2gmx_test_name}\n";
+                            link('ener.edr', $refedr);
+                        } else {
+                            $success++ if (check_edr($refedr, \$nerror, \@error_detail));
+                        }
+                        $error_detail_str = join(', ', @error_detail) . ' ';
+                    }
+                    if ($success) {
+                        $nsuccess++;
+                    } else {
+                        write_xml_failure($xml, ${error_detail_str}, \@error_detail);
+                        print "pdb2gmx test FAILED for PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n";
+                        printf "** Working directory = %s\n", getcwd();
+                    }
+                } continue {
 		    chdir("..");
 		}
 		chdir("..");
@@ -641,37 +722,12 @@ sub test_pdb2gmx {
 	}
 	chdir("..");
     }
-    close LOG;
-    
-    my $nsuccess = find_in_file('Potential Energy',"pdb2gmx.log");
     
     if ( $nsuccess != $ntest ) {
-	print "Error not all $ntest pdb2gmx tests have been done successfully\n";
-	print "Only $nsuccess energies in the log file\n";
-	$nerror = 1;
-    }
-    else {
-	my $reflog = "${ref}.log";
-	if (! -f $reflog) {
-	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    link('ener.log', $reflog);
-	}
-	else {
-	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
-	    $nerror = check_xvg($reflog,"ener.log",3,7,\@pdb2gmx_test_names);
-	    print XML "</testsuite>\n" if ($xml);
-	    if ( $nerror != 0 ) {
-		print "There were $nerror/$ntest differences in final energy with the reference file\n";
-	    }
-	}
-    }
-    if (0 == $nerror) {
-	print "All $ntest pdb2gmx tests PASSED\n";
-	remove_tree(@pdb_dirs);
-	unlink("pdb2gmx.log");
-    }
-    else {
+	print "Error only $nsuccess of $ntest pdb2gmx tests have been done successfully\n";
 	print "pdb2gmx tests FAILED\n";
+    } else {
+	print "All $ntest pdb2gmx tests PASSED\n";
     }
     chdir("..");
 }
@@ -681,10 +737,7 @@ sub clean_all {
     cleandirs("complex");
     cleandirs("kernel");
     cleandirs("freeenergy");
-    chdir("pdb2gmx");
-    unlink("pdb2gmx.log");
-    remove_tree(glob "pdb-*");
-    chdir("..");
+    cleandirs("pdb2gmx", "pdb-*/*/*/*", 1);
 }
 
 sub usage {

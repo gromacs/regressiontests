@@ -1,0 +1,2 @@
+The reference .tpr and .edr files were made with release-4-5-patches
+commit ea899188f11b0, plus a hack to add TIP4P support to charmm27.
