@@ -127,13 +127,14 @@ sub find_in_file($$) {
   return $return;
 }
 
-sub check_force()
+sub check_force($)
 {
+    my $traj = shift;
     my $cfor = "checkforce.out";
     my $cfor2 = "checkforce.err";
     my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 traj -tol $ftol_rel >$cfor 2>$cfor2", 0,
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 $traj -tol $ftol_rel >$cfor 2>$cfor2", 0,
 	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
     
     open(FIN,"$cfor");
@@ -285,6 +286,45 @@ sub test_systems {
 		    unlink($tprout,$tprerr);
 		}
 	    }
+	    if ($nerror == 0) {
+	       open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
+	       open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
+	       my $p=0;
+	       while(<GROMPP>) {
+		 $p=1 if /^WARNING/;
+		 print WARN if ($p);
+		 $p=0 if /^$/;
+	       }
+	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
+	       close(WARN) || die "Could not close file 'grompp.warn'\n";
+		my $refwarn = "reference.warn";
+		if (! -f $refwarn) {
+		    print("No $refwarn file in $dir\n");
+		    print ("This means you are not really testing $dir\n");
+                    rename('grompp.warn', $refwarn);
+		} else {
+	            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
+	            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
+                    while (my $line1=<WARN1>) {
+                      my $line2=<WARN2>;
+                      if (not defined($line2)){#FILE1 has more lines
+                        $nerror++;
+                        next;
+                      }
+		      $line1 =~ s/(e[-+])0([0-9][0-9])/\1\2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
+                      $nerror++ unless ("$line2" eq "$line1");
+                    }
+                    while (my $line2=<WARN2>) {#FILE2 has more lines
+                      $nerror++
+                    }
+		    if ($nerror>0) {
+			print("Different warnings in $refwarn and grompp.warn\n");
+			$error_detail = "grompp.out ";
+		    } else {
+		      unlink("grompp.warn");
+		    }
+		}
+	    }
 	    my @error_detail;
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
@@ -307,22 +347,29 @@ sub test_systems {
                 if (0 < $threads) {
                   $local_mdparams .= " -nt $threads";
                 }
+		my $part = "";
+		if ( -f "continue.cpt" ) {
+		    $local_mdparams .= " -cpi continue -noappend";
+		    $part = ".part0002";
+		}
 		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams >mdrun.out 2>&1", 0,
 		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
 		
+		my $ener = "ener$part";
+		my $traj = "traj$part";
 		# First check whether we have any output
-		if ((-f "ener.edr" ) && (-f "traj.trr")) {
+		if ((-f "$ener.edr" ) && (-f "$traj.trr")) {
 		    # Now check whether we have any reference files
 		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link('ener.edr', $refedr);
+			link("$ener.edr", $refedr);
 		    } else {
 		        my $potout="checkpot.out";
 		        my $poterr="checkpot.err";
 			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
+			do_system("$progs{'gmxcheck'} -e $refedr -e2 $ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
 				  sub {
 				      if($nerror != 0) {
 					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
@@ -341,10 +388,10 @@ sub test_systems {
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link('traj.trr', $reftrr);
+			link("$traj.trr", $reftrr);
 		    } else {
 			# Now do the real tests
-			my $nerr_force = check_force();
+			my $nerr_force = check_force($traj);
 			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
 			$nerror |= $nerr_force;
 		    }
@@ -385,7 +432,7 @@ sub test_systems {
 		}
 	    }
 	    else {
-		my @args = glob("#*# *.out topol.tpr confout.gro ener.edr md.log traj.trr");
+		my @args = glob("#*# *.out topol.tpr confout.gro ener*.edr md.log traj*.trr");
 		#unlink(@args);
 		
 		if ($verbose > 0) {
@@ -446,7 +493,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener.edr md.log traj.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* *.cpt" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc" );
 	    unlink (@args);
 	    chdir("..");
 	}
