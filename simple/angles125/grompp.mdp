@@ -48,7 +48,7 @@ nbfgscorr                = 10
 ; Output frequency for coords (x), velocities (v) and forces (f)
 nstxout                  = 20
 nstvout                  = 20
-nstfout                  = 0
+nstfout                  = 20
 ; Checkpointing helps you continue after crashes
 nstcheckpoint            = 200
 ; Output frequency for energies to log file and energy file
