@@ -311,7 +311,7 @@ sub test_systems {
                         $nerror++;
                         next;
                       }
-		      $line1 =~ s/(e[-+])0([0-9][0-9])/\1\2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
+		      $line1 =~ s/(e[-+])0([0-9][0-9])/$1$2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
                       $nerror++ unless ("$line2" eq "$line1");
                     }
                     while (my $line2=<WARN2>) {#FILE2 has more lines
