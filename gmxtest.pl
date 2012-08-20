@@ -382,7 +382,7 @@ sub test_systems {
 			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
 
 			$nerror |= $nerr_pot | $nerr_vir;
-			unlink($potout,$poterr);
+			unlink($potout,$poterr) unless $nerr_pot;
 		    }
 		    my $reftrr = "${ref}.trr";
 		    if (! -f $reftrr ) {
