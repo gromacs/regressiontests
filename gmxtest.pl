@@ -402,6 +402,7 @@ sub test_systems {
 		    $nerror |= $nerr_xvg;
 		}
 		else {
+		    print "No mdrun output files.\n";
 		    $nerror = 1;
 		}
 		$error_detail = join(', ', @error_detail) . ' ';
