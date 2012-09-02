@@ -9,9 +9,9 @@ nstcomm                  = 100
 
 ; OUTPUT CONTROL OPTIONS =
 ; Output frequency for coords (x), velocities (v) and forces (f) =
-nstxout                  = 100
-nstvout                  = 100
-nstfout                  = 0
+nstxout                  = 60
+nstvout                  = 60
+nstfout                  = 60
 ; Output frequency for energies to log file and energy file =
 nstlog                   = 100
 nstenergy                = 10
