@@ -200,7 +200,7 @@ constraints              = all-bonds
 ; Type of constraint algorithm
 constraint_algorithm     = Lincs
 ; Do not constrain the start configuration
-continuation             = yes
+continuation             = no
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = yes
 ; Relative tolerance of shake
