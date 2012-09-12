@@ -12,9 +12,9 @@ ld_seed                  = 1
 
 ; OUTPUT CONTROL OPTIONS = 
 ; Output frequency for coords (x), velocities (v) and forces (f) = 
-nstxout                  = 1000
-nstvout                  = 1000
-nstfout                  = 0
+nstxout                  = 60
+nstvout                  = 60
+nstfout                  = 60
 ; Output frequency for energies to log file and energy file = 
 nstlog                   = 60
 nstenergy                = 1
