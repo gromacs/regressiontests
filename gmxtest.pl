@@ -44,6 +44,7 @@ my $mdprefix = '';
 my $mdparams = '';
 my $ref      = '';
 my $mpirun   = 'mpirun';
+my $mpiforall = 0;
 my %progs = ( 'grompp'   => 'grompp',
 	      'mdrun'    => 'mdrun',
 	      'pdb2gmx'  => 'pdb2gmx',
@@ -57,9 +58,15 @@ sub setup_vars()
     # as defined above (oro ver-ridden on the command line), "_d" indicates 
     # a double-precision version, and (only in the case of mdrun) "_mpi" 
     # indicates a parallel version compiled with MPI.
-    if ( $mpi_processes > 0 ) {
+    if ( $mpi_processes > 0 || $mpiforall ) {
 	if ($autosuffix) {
-	    $progs{'mdrun'} .= "_mpi";
+	    if ($mpiforall) {
+		foreach my $prog ( values %progs ) {
+		    $prog .= "_mpi";
+		}
+	    } else {
+		$progs{'mdrun'} .= "_mpi";
+	    }
 	}
 	if ( $bluegene > 0 )
 	{
@@ -887,6 +894,10 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
     elsif ($arg eq '-reprod' ) {
       $mdparams.=" -reprod"
+    }
+    elsif ($arg eq '-mpiforall' ) {
+	print "Using mpi suffix for all binaries. Assuming it is possible to execute binaries without launcher (e.g. mpirun).\n";
+	$mpiforall=1;
     }
     elsif ($arg eq '-mpirun' ) {
 	if ($kk <$#ARGV) {
