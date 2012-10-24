@@ -10,6 +10,7 @@ use Cwd;
 $ENV{GMX_NO_QUOTES}='NO';
 
 my $threads = 0;
+my $omp_threads = 0;
 my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
@@ -346,8 +347,11 @@ sub test_systems {
 		    $local_mdparams .= " -pd"
 		}
                 if (0 < $threads) {
-                  $local_mdparams .= " -nt $threads";
+		    $local_mdparams .= " -nt $threads";
                 }
+	        if (find_in_file("cutoff-scheme.*=.*verlet","grompp.mdp") > 0 && $omp_threads > 0) {
+		    $local_mdparams .= " -ntomp $omp_threads";
+		}
 		my $part = "";
 		if ( -f "continue.cpt" ) {
 		    $local_mdparams .= " -cpi continue -noappend";
@@ -844,11 +848,23 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	if ($kk <$#ARGV) {
 	    $kk++;
 	    $threads = $ARGV[$kk];
-	    if ($threads <= 0) {
+	    if ($threads <= 1) {
 		$threads = 1;
                 # most of the tests don't scale at all well
 	    } else {
                 print "Will test on $threads threads\n";
+	    }
+	}
+    }
+    elsif ($arg eq '-ntomp' ) {
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $omp_threads = $ARGV[$kk];
+	    if ($omp_threads <= 1) {
+		$omp_threads = 1;
+                # most of the tests don't scale at all well
+	    } else {
+                print "Will test on $omp_threads OpenMP threads\n";
 	    }
 	}
     }
