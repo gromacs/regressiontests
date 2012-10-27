@@ -156,7 +156,21 @@ sub check_force($)
     open(FIN,"$cfor");
     while(my $line=<FIN>)
     {
-	next unless $line =~ /^f\[/;
+	if ($line =~ /^b([^ ]*) .*TRUE/) {
+	    print("Existence of $1 doesn't match!\n");
+	    $nerr_force++;
+	    next;
+	}elsif ($line =~ /^End of file on/) {
+	    print("Different number of frames!\n");
+	    $nerr_force++;
+	    next;
+	}elsif ($line =~ /^$/ || $line =~ /^[xv]\[/ || $line =~ /Both files read correctly/ ) {
+	    next;
+	}elsif (!($line =~ /^f\[/)) {
+	    print("Unknown Error: $line!\n");
+	    $nerr_force++;
+	    next;
+	}
 	my @ll=split("[()]",$line);
 	my @f1=split(" ",$ll[1]);
 	my @f2=split(" ",$ll[3]);
@@ -414,16 +428,16 @@ sub test_systems {
 		    }
 		}
 		
-		my $ener = "ener$part";
-		my $traj = "traj$part";
+		my $ener = "ener${part}.edr";
+		my $traj = "traj${part}.trr";
 		# First check whether we have any output
-		if ((-f "$ener.edr" ) && (-f "$traj.trr")) {
+		if ((-f "$ener" ) && (-f "$traj")) {
 		    # Now check whether we have any reference files
 		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link("$ener.edr", $refedr);
+			link("$ener", $refedr);
 		    } else {
 		        my $potout="checkpot.out";
 		        my $poterr="checkpot.err";
@@ -447,7 +461,7 @@ sub test_systems {
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link("$traj.trr", $reftrr);
+			link("$traj", $reftrr);
 		    } else {
 			# Now do the real tests
 			my $nerr_force = check_force($traj);
