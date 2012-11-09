@@ -1,0 +1,9 @@
+Code-Review+2: Kasson <kasson@gmail.com>
+Code-Review+1: Christoph Junghans <junghans@votca.org>
+Code-Review+1: Szilárd Páll <pszilard@kth.se>
+Verified+1: Jenkins Buildbot
+Submitted-by: Kasson <kasson@gmail.com>
+Submitted-at: Fri, 09 Nov 2012 03:45:18 +0100
+Reviewed-on: https://gerrit.gromacs.org/1547
+Project: regressiontests
+Branch: refs/heads/master
