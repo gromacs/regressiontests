@@ -45,6 +45,7 @@ my $mdparams = '';
 my $ref      = '';
 my $mpirun   = 'mpirun';
 my $mpiforall = 0;
+my $parse_cmd = '';
 my %progs = ( 'grompp'   => 'grompp',
 	      'mdrun'    => 'mdrun',
 	      'pdb2gmx'  => 'pdb2gmx',
@@ -364,8 +365,16 @@ sub test_systems {
 		    $local_mdparams .= " -cpi continue -noappend";
 		    $part = ".part0002";
 		}
-		$nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams >mdrun.out 2>&1", 0,
-		    sub { push(@error_detail, ("mdrun.out", "md.log")); } );
+	        $nerror = do_system("$local_mdprefix $progs{'mdrun'} $local_mdparams >mdrun.out 2>&1");
+	        
+	        if ($nerror != 0) {
+		    if ($parse_cmd eq '') {
+			push(@error_detail, ("mdrun.out", "md.log"));
+		    } else {
+			do_system("$parse_cmd <mdrun.out >mdrun_parsed.out");
+			push(@error_detail, ("mdrun_parsed.out", "md.log"));
+		    }
+		}
 		
 		my $ener = "ener$part";
 		my $traj = "traj$part";
@@ -926,6 +935,13 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-tight' ) {
 	$tightfactor *= 0.1;
 	print "Will test with tightness increased\n";
+    }
+    elsif ($arg eq '-parse' ) {
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $parse_cmd = $ARGV[$kk];
+	}
+	print "Will parse mdrun output with $parse_cmd\n";
     }
     else {
 	usage();
