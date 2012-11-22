@@ -17,8 +17,12 @@ my $crosscompiling = 0;
 my $bluegene = 0;
 my $verbose  = 5;
 my $xml      = 0;
-my $etol     = 0.05;
-my $ttol     = 0.0001;
+# energy file comparision tolerance (potentials, not virials or pressure)
+my $etol_rel = 0.001;
+my $etol_abs = 0.01;
+# topology comparision tolerance
+my $ttol_rel = 0.0001;
+my $ttol_abs = 0.001;
 my $suffix   = '';
 my $autosuffix   = '1';
 my $prefix   = '';
@@ -32,12 +36,13 @@ my $virtol_abs   = 0.1;
 # tolerance 0.001 means the scalar product between the two
 # compared forces should be at least 0.999.
 my $ftol_rel     = 0.001;
+my $ftol_abs     = 0.01;
 my $ftol_sprod   = 0.001;
 
 # global variables to flag whether to explain some situations to the user
 my $addversionnote = 0;
 my $only_subdir = qr/.*/;
-my $tightfactor = 1;
+my $tolerance_factor = 1;
 
 # trickery for program and reference file names
 my $mdprefix = '';
@@ -89,9 +94,9 @@ sub setup_vars()
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
     
-    # now do -tight stuff
-    foreach my $var ( $etol, $ttol, $virtol_rel, $ftol_rel, $ftol_sprod ) {
-	$var *= $tightfactor;
+    # now do -tight or -relaxed stuff
+    foreach my $var ( $etol_rel, $etol_abs, $ttol_rel, $ttol_abs, $virtol_rel, $virtol_abs, $ftol_rel, $ftol_abs, $ftol_sprod ) {
+	$var *= $tolerance_factor;
     }
 }
 
@@ -143,7 +148,7 @@ sub check_force($)
     my $cfor2 = "checkforce.err";
     my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 $traj -tol $ftol_rel >$cfor 2>$cfor2", 0,
+    do_system("$progs{'gmxcheck'} -f $reftrr -f2 $traj -tol $ftol_rel -abstol $ftol_abs >$cfor 2>$cfor2", 0,
 	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
     
     open(FIN,"$cfor");
@@ -177,7 +182,7 @@ sub check_virial()
     my $refedr = "${ref}.edr";
     my $nerr_vir = 0;
 
-    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
+    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -abstol $virtol_abs -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
 	sub { print "\ngmxcheck failed on the .edr file while checking the virial\n"; $nerr_vir = 1; });
     
     open(VIN,"$cvir");
@@ -227,16 +232,16 @@ sub check_xvg {
 		my $tol;
 		if ($x1+$x2==0) { 
 		    $error = abs($x1-$x2);
-		    $tol = $ttol;
+		    $tol = $etol_abs;
 		} else {
 		    $error = abs(($x1-$x2)/($x1+$x2));
-		    $tol = $etol;
+		    $tol = $etol_rel;
 		}
 		if ($error > $tol) {
 		    $nerr++;
 		    if (!$header) {
 			$header = 1;
-			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol\nIndex  Reference   This test       Error  Description\n");
+			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol_rel\nIndex  Reference   This test       Error  Description\n");
 		    }
 		    printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
 			   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
@@ -282,7 +287,7 @@ sub test_systems {
 		} else {
 		    my $tprout="checktpr.out";
 		    my $tprerr="checktpr.err";
-		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol >$tprout 2>$tprerr", 0, 
+		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0, 
 			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
 		    $nerror |= find_in_file("step","$tprout");
 		    if ($nerror > 0) {
@@ -390,7 +395,7 @@ sub test_systems {
 		        my $potout="checkpot.out";
 		        my $poterr="checkpot.err";
 			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 $ener -tol $etol -lastener Potential >$potout 2>$poterr", 0,
+			do_system("$progs{'gmxcheck'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
 				  sub {
 				      if($nerror != 0) {
 					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
@@ -760,7 +765,7 @@ sub usage {
     print <<EOP;
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
-                    [ -crosscompile ] [ -tight ] [ -mdparam xxx ]
+                    [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
                     [ simple | complex | kernel | freeenergy | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
@@ -932,9 +937,13 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    $only_subdir = qr/$ARGV[$kk]/;
 	}
     }
+    elsif ($arg eq '-relaxed' ) {
+	$tolerance_factor *= 10.0;
+	print "Will run tests with 10x larger variations allowed\n";
+    }
     elsif ($arg eq '-tight' ) {
-	$tightfactor *= 0.1;
-	print "Will test with tightness increased\n";
+        $tolerance_factor *= 0.1;
+        print "Will run tests with 10x smaller variations allowed\n";
     }
     elsif ($arg eq '-parse' ) {
 	if ($kk <$#ARGV) {
@@ -973,31 +982,3 @@ map { eval $_ } @work;
 
 print XML "</testsuites>\n" if ($xml);
 
-if ($addversionnote > 0) {
-    print << "ENDOFNOTE"
-
-Note about GROMACS reference versions
-------------------------------------
-Various different GROMACS versions are used to generate the reference
-files for these tests. Because of a known bug with Buckingham
-interactions in combination with LJ 1-4 interactions in GROMACS 3.3.x, 
-the kernel_[0-3]2[0-4] test references are generated with GROMACS 4.0.5. All 
-other kernel test references are generated with GROMACS 3.3. Most non-kernel
-test references are generated with GROMACS 3.3.2. See the README file for
-more detail.
-
-If you are trying to test a version that precedes some of the above, then
-this test set will not achieve your aim.
-
-If you are testing a 3.3/3.3.1/3.3.2/3.3.3 version, then it is expected that 
-all kernel_[0-3]2[0-4] tests fail, because of the known bug. This is only a 
-problem if you wish to use Buckingham interactions with LJ 1-4 interactions, 
-which is very rare. Most users can ignore this - or install GROMACS 4 
-instead!
-
-If you are seeing this message and neither of the above conditions is true, 
-then you have another problem. If you post to the GROMACS mailing lists,
-you must include the version number of GROMACS that you were testing, and
-which tests failed and what they reported.
-ENDOFNOTE
-}

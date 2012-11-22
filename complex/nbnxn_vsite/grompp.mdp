@@ -1,9 +1,9 @@
 integrator               = md
-nsteps                   = 50
+nsteps                   = 20
 nstlist                  = 10
-nstfout                  = 50
-nstxout                  = 50
-nstvout                  = 50
+nstfout                  = 20
+nstxout                  = 20
+nstvout                  = 20
 nstxtcout                = 0
 nstenergy                = 100
 nstcalcenergy            = 100
