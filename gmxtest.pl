@@ -17,27 +17,28 @@ my $crosscompiling = 0;
 my $bluegene = 0;
 my $verbose  = 5;
 my $xml      = 0;
-my $etol     = 0.05;
-my $ttol     = 0.0001;
+my $etol     = 0.001;
+my $ttol     = 0.00001;
 my $suffix   = '';
 my $autosuffix   = '1';
 my $prefix   = '';
 # virial - this tests the shifted force contribution.
 # However, it is a sum of very many large terms, so it is
 # often numerically imprecise.
-my $virtol_rel   = 0.01;
+my $virtol_rel   = 0.001;
 my $virtol_abs   = 0.1;
 
 # force tolerance is measured by calculating scalar products.
 # tolerance 0.001 means the scalar product between the two
 # compared forces should be at least 0.999.
 my $ftol_rel     = 0.001;
+my $ftol_abs     = 0.001;
 my $ftol_sprod   = 0.001;
 
 # global variables to flag whether to explain some situations to the user
 my $addversionnote = 0;
 my $only_subdir = qr/.*/;
-my $tightfactor = 1;
+my $relaxfactor = 1;
 
 # trickery for program and reference file names
 my $mdprefix = '';
@@ -89,9 +90,9 @@ sub setup_vars()
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
     
-    # now do -tight stuff
-    foreach my $var ( $etol, $ttol, $virtol_rel, $ftol_rel, $ftol_sprod ) {
-	$var *= $tightfactor;
+    # now do -relax stuff
+    foreach my $var ( $etol, $ttol, $virtol_rel, $ftol_rel, $ftol_abs, $ftol_sprod ) {
+	$var *= $relaxfactor;
     }
 }
 
@@ -760,7 +761,7 @@ sub usage {
     print <<EOP;
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
-                    [ -crosscompile ] [ -tight ] [ -mdparam xxx ]
+                    [ -crosscompile ] [ -relaxed ] [ -mdparam xxx ]
                     [ simple | complex | kernel | freeenergy | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
@@ -932,9 +933,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    $only_subdir = qr/$ARGV[$kk]/;
 	}
     }
-    elsif ($arg eq '-tight' ) {
-	$tightfactor *= 0.1;
-	print "Will test with tightness increased\n";
+    elsif ($arg eq '-relaxed' ) {
+	$relaxfactor *= 10.0;
+	print "Will run tests with 10x larger variations allowed\n";
     }
     elsif ($arg eq '-parse' ) {
 	if ($kk <$#ARGV) {
