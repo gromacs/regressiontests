@@ -37,7 +37,7 @@ my $ftol_sprod   = 0.001;
 # global variables to flag whether to explain some situations to the user
 my $addversionnote = 0;
 my $only_subdir = qr/.*/;
-my $tightfactor = 1;
+my $tightfactor = .1;
 
 # trickery for program and reference file names
 my $mdprefix = '';
@@ -760,7 +760,7 @@ sub usage {
     print <<EOP;
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
-                    [ -crosscompile ] [ -tight ] [ -mdparam xxx ]
+                    [ -crosscompile ] [ -notight ] [ -mdparam xxx ]
                     [ simple | complex | kernel | freeenergy | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
@@ -932,9 +932,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    $only_subdir = qr/$ARGV[$kk]/;
 	}
     }
-    elsif ($arg eq '-tight' ) {
-	$tightfactor *= 0.1;
-	print "Will test with tightness increased\n";
+    elsif ($arg eq '-notight' ) {
+	$tightfactor *= 10;
+	print "Will test with tightness decreased\n";
     }
     elsif ($arg eq '-parse' ) {
 	if ($kk <$#ARGV) {
