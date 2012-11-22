@@ -773,11 +773,11 @@ EOP
 # check for the tool with this routine when not cross compiling
 sub test_gmx {
   foreach my $p ( values %progs ) {
-    if (system("$p -h > $p.help 2>&1") != 0) {
+    if (system("$p -h > help 2>&1") != 0) {
       print("ERROR: Can not find executable $p in your path.\nPlease source GMXRC and try again.\n");
       exit 1;
     }
-    unlink("$p.help");
+    unlink("help");
   }
 }
 
