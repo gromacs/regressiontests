@@ -24,7 +24,7 @@ simulation_part          = 1
 init_step                = 0
 ; mode for center of mass motion removal
 comm-mode                = Linear
-; number of steps for center of mass motion removal
+s; number of steps for center of mass motion removal
 nstcomm                  = 1
 ; group(s) for center of mass motion removal
 comm-grps                = 
@@ -70,18 +70,18 @@ energygrps               = Protein
 ; nblist update frequency
 nstlist                  = 10
 ; ns algorithm (simple or grid)
-ns_type                  = simple
+ns_type                  = grid
 ; Periodic boundary conditions: xyz, no, xy
-pbc                      = xyz
+pbc                      = no
 periodic_molecules       = no
 ; nblist cut-off        
-rlist                    = 1
+rlist                    = 10
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
 coulombtype              = Cut-off
 rcoulomb-switch          = 0
-rcoulomb                 = 1
+rcoulomb                 = 10
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
 epsilon_rf               = 1
@@ -89,7 +89,7 @@ epsilon_rf               = 1
 vdw-type                 = Cut-off
 ; cut-off lengths       
 rvdw-switch              = 0
-rvdw                     = 1
+rvdw                     = 10
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
@@ -196,7 +196,7 @@ gen_temp                 = 300.000000
 gen_seed                 = 1993
 
 ; OPTIONS FOR BONDS    
-constraints              = none
+constraints              = all-bonds
 ; Type of constraint algorithm
 constraint-algorithm     = Lincs
 ; Do not constrain the start configuration
