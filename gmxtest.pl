@@ -412,6 +412,14 @@ sub test_systems {
                                         $rerun = 1;
                                         last;
                                     }
+                                    elsif ($line =~ /OpenMP threads were requested/) {
+                                        print ("Mdrun cannot use the requested (or automatic) number of OpenMP threads, retrying with 8.\n");
+                                        # This one we change permanently.
+                                        $omp_threads = 8;
+                                        $ntomp_opt = " -ntomp $omp_threads";
+                                        $rerun = 1;
+                                        last;
+                                    }
                                 }
                                 if ($rerun == 1) {   
                                     $retval = do_system("$local_mdprefix $progs{'mdrun'} $alt_ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1");
