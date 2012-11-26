@@ -1,0 +1,7 @@
+Code-Review+2: Berk Hess <hess@kth.se>
+Verified+1: Jenkins Buildbot
+Submitted-by: Berk Hess <hess@kth.se>
+Submitted-at: Mon, 26 Nov 2012 11:35:29 +0100
+Reviewed-on: https://gerrit.gromacs.org/1746
+Project: regressiontests
+Branch: refs/heads/master
