@@ -3,7 +3,7 @@
 use strict;
 
 #this is a core module
-use File::Path qw(remove_tree);
+use gmxFile::Path qw(remove_tree);
 use Cwd;
 
 #disable quotes as they could screw up pattern matching
