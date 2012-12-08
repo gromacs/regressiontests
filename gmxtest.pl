@@ -80,7 +80,7 @@ sub setup_vars()
 	{
 	    # edit the next line if you need to customize the call to mpirun
 	    $mdprefix = "$mpirun -np $mpi_processes -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
-	} elsif ($mpirun eq "aprun" ) {
+	} elsif ( $mpirun =~ /aprun/ ) {
 	    $mdprefix = "$mpirun -n $mpi_processes";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
@@ -365,11 +365,12 @@ sub test_systems {
 		# BlueGene), so after the chdir we need to deal with
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
-            my $local_mdprefix = $mpi_processes > 0 ?
-                    ($mdprefix . ($bluegene > 0 ?
+		my $local_mdprefix = $mdprefix;
+		if ( $mpi_processes > 0 && !($mpirun =~ /aprun/) ) {
+                    $local_mdprefix .= ($bluegene > 0 ?
                                   ' -cwd ' :
-                                  ' -wdir ') . getcwd()) :
-                    ('');
+                                  ' -wdir ') . getcwd(); 
+	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme"; 
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
