@@ -1,8 +1,8 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: lindahl (501)
-;	On host: Eriks-MacBook-Air-2.local
-;	At date: Sat Oct 20 22:22:36 2012
+;	By user: mark (1302)
+;	On host: amd2
+;	At date: Wed Dec 19 13:44:10 2012
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
@@ -84,6 +84,7 @@ verlet-buffer-drift      = 0.005
 rlist                    = 0.9
 ; long-range cut-off for switched potentials
 rlistlong                = -1
+nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics

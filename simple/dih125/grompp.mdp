@@ -1,15 +1,15 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: onbekend (0)
-;	On host: onbekend
-;	At date: Mon Aug 10 15:52:29 2009
+;	By user: mark (1302)
+;	On host: amd2
+;	At date: Wed Dec 19 13:43:12 2012
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
-title                    = 
-; Preprocessor - specify a full path if necessary.
-cpp                      = cpp
+; Preprocessor information: use cpp syntax.
+; e.g.: -I/home/joe/doe -I/home/mary/roe
 include                  = 
+; e.g.: -DPOSRES -DFLEXIBLE (note these variable names are case sensitive)
 define                   = -DDIHS -DBONDS
 
 ; RUN CONTROL PARAMETERS
@@ -20,6 +20,8 @@ dt                       = 0.0002
 nsteps                   = 20
 ; For exact run continuation or redoing part of a run
 init_step                = 0
+; Part index is updated automatically on checkpointing (keeps files separate)
+simulation-part          = 1
 ; mode for center of mass motion removal
 comm-mode                = Linear
 ; number of steps for center of mass motion removal
@@ -36,7 +38,7 @@ ld-seed                  = 1993
 ; Force tolerance and initial step-size
 emtol                    = 0.001
 emstep                   = 0.1
-; Max number of iterations in relax_shells
+; Max number of iterations in relax-shells
 niter                    = 20
 ; Step size (ps^2) for minimization of flexible constraints
 fcstep                   = 0
@@ -44,41 +46,50 @@ fcstep                   = 0
 nstcgsteep               = 200
 nbfgscorr                = 10
 
+; TEST PARTICLE INSERTION OPTIONS
+rtpi                     = 0.05
+
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
 nstxout                  = 20
 nstvout                  = 20
 nstfout                  = 20
-; Checkpointing helps you continue after crashes
-nstcheckpoint            = 200
 ; Output frequency for energies to log file and energy file
 nstlog                   = 0
-nstenergy                = 1
 nstcalcenergy            = 1
-; Output frequency and precision for xtc file
+nstenergy                = 1
+; Output frequency and precision for .xtc file
 nstxtcout                = 0
 xtc_precision            = 200
-; This selects the subset of atoms for the xtc file. You can
+; This selects the subset of atoms for the .xtc file. You can
 ; select multiple groups. By default all atoms will be written.
 xtc-grps                 = 
 ; Selection of energy groups
 energygrps               = 
 
 ; NEIGHBORSEARCHING PARAMETERS
+; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
+cutoff-scheme            = Group
 ; nblist update frequency
 nstlist                  = 10
 ; ns algorithm (simple or grid)
 ns_type                  = grid
-; Periodic boundary conditions: xyz (default), no (vacuum)
-; or full (infinite systems only)
+; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
+periodic-molecules       = no
+; Allowed energy drift due to the Verlet buffer in kJ/mol/ps per atom,
+; a value of -1 means: use rlist
+verlet-buffer-drift      = 0.005
 ; nblist cut-off        
 rlist                    = 0.8
-domain-decomposition     = no
+; long-range cut-off for switched potentials
+rlistlong                = -1
+nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
 coulombtype              = Cut-off
+coulomb-modifier         = Potential-shift-Verlet
 rcoulomb_switch          = 0
 rcoulomb                 = 0.8
 ; Relative dielectric constant for the medium and the reaction field
@@ -86,6 +97,7 @@ epsilon_r                = 1
 epsilon_rf               = 1
 ; Method for doing Van der Waals
 vdw-type                 = Cut-off
+vdw-modifier             = Potential-shift-Verlet
 ; cut-off lengths       
 rvdw_switch              = 0
 rvdw                     = 0.8
@@ -94,7 +106,7 @@ DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
 table-extension          = 1
 ; Seperate tables between energy group pairs
-energygrp_table          = 
+energygrp-table          = 
 ; Spacing for the PME/PPPM FFT grid
 fourierspacing           = 0.12
 ; FFT grid size, when a value is 0 fourierspacing will be used
@@ -108,6 +120,9 @@ ewald_geometry           = 3d
 epsilon_surface          = 0
 optimize_fft             = no
 
+; IMPLICIT SOLVENT ALGORITHM
+implicit_solvent         = No
+
 ; GENERALIZED BORN ELECTROSTATICS
 ; Algorithm for calculating Born radii
 gb_algorithm             = Still
@@ -116,29 +131,41 @@ nstgbradii               = 1
 ; Cutoff for Born radii calculation; the contribution from atoms
 ; between rlist and rgbradii is updated every nstlist steps
 rgbradii                 = 2
+; Dielectric coefficient of the implicit solvent
+gb-epsilon-solvent       = 80
 ; Salt concentration in M for Generalized Born models
 gb_saltconc              = 0
-
-; IMPLICIT SOLVENT (for use with Generalized Born electrostatics)
-implicit_solvent         = No
+; Scaling factors used in the OBC GB model. Default values are OBC(II)
+gb-obc-alpha             = 1
+gb-obc-beta              = 0.8
+gb-obc-gamma             = 4.85
+gb-dielectric-offset     = 0.009
+sa-algorithm             = Ace-approximation
+; Surface tension (kJ/mol/nm^2) for the SA (nonpolar surface) part of GBSA
+; The value -1 will set default value for Still/HCT/OBC GB-models.
+sa-surface-tension       = -1
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
 Tcoupl                   = no
+nsttcouple               = -1
+nh-chain-length          = 10
+print-nose-hoover-chain-variables = no
 ; Groups to couple separately
 tc-grps                  = BUT
 ; Time constant (ps) and reference temperature (K)
 tau_t                    = 0.1
 ref_t                    = 270
-; Pressure coupling     
+; pressure coupling     
 Pcoupl                   = no
 Pcoupltype               = Isotropic
+nstpcouple               = -1
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
 tau_p                    = 0.5
 compressibility          = 
 ref_p                    = 1.0
-; Random seed for Andersen thermostat
-andersen_seed            = 815131
+; Scaling of reference coordinates, No, All or COM
+refcoord-scaling         = No
 
 ; OPTIONS FOR QMMM calculations
 QMMM                     = no
@@ -172,11 +199,11 @@ bTS                      =
 ; Type of annealing for each temperature group (no/single/periodic)
 annealing                = no
 ; Number of time points to use for specifying annealing in each group
-annealing_npoints        = 
+annealing-npoints        = 
 ; List of times at the annealing points for each group
-annealing_time           = 
+annealing-time           = 
 ; Temp. at each annealing point, for each group.
-annealing_temp           = 
+annealing-temp           = 
 
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
@@ -188,7 +215,7 @@ constraints              = none
 ; Type of constraint algorithm
 constraint_algorithm     = Lincs
 ; Do not constrain the start configuration
-unconstrained_start      = no
+continuation             = no
 ; Use successive overrelaxation to reduce the number of shake iterations
 Shake-SOR                = no
 ; Relative tolerance of shake
@@ -207,7 +234,24 @@ morse                    = no
 
 ; ENERGY GROUP EXCLUSIONS
 ; Pairs of energy groups for which all non-bonded interactions are excluded
-energygrp_excl           = 
+energygrp-excl           = 
+
+; WALLS                
+; Number of walls, type, atom types, densities and box-z scale factor for Ewald
+nwall                    = 0
+wall-type                = 9-3
+wall-r-linpot            = -1
+wall-atomtype            = 
+wall-density             = 
+wall-ewald-zfac          = 3
+
+; COM PULLING          
+; Pull type: no, umbrella, constraint or constant-force
+pull                     = no
+
+; ENFORCED ROTATION    
+; Enforced rotation: No or Yes
+rotation                 = no
 
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
@@ -228,20 +272,35 @@ orire-tau                = 0
 orire-fitgrp             = 
 ; Output frequency for trace(SD) and S to energy file
 nstorireout              = 20
-; Dihedral angle restraints: No, Simple or Ensemble
-dihre                    = No
-dihre-fc                 = 200
-dihre-tau                = 0
-; Output frequency for dihedral values to energy file
-nstdihreout              = 20
 
-; Free energy control stuff
+; Free energy variables
 free_energy              = no
+couple-moltype           = 
+couple-lambda0           = vdw-q
+couple-lambda1           = vdw-q
+couple-intramol          = no
 init_lambda              = 0
+init-lambda-state        = 0
 delta_lambda             = 0
+nstdhdl                  = 100
+fep-lambdas              = 
+mass-lambdas             = 
+coul-lambdas             = 
+vdw-lambdas              = 
+bonded-lambdas           = 
+restraint-lambdas        = 
+temperature-lambdas      = 
+init-lambda-weights      = 
+dhdl-print-energy        = no
 sc-alpha                 = 0
 sc-power                 = 0
+sc-r-power               = 6
 sc-sigma                 = 0.3
+sc-coul                  = no
+separate-dhdl-file       = yes
+dhdl-derivatives         = yes
+dh_hist_size             = 0
+dh_hist_spacing          = 0.1
 
 ; Non-equilibrium MD stuff
 acc-grps                 = 
@@ -250,6 +309,12 @@ freezegrps               =
 freezedim                = 
 cos-acceleration         = 0
 deform                   = 
+
+; simulated tempering variables
+simulated-tempering      = no
+simulated-tempering-scaling = geometric
+sim-temp-low             = 300
+sim-temp-high            = 300
 
 ; Electric fields      
 ; Format is number of terms (int) and for all terms an amplitude (real)
@@ -260,6 +325,9 @@ E-y                      =
 E-yt                     = 
 E-z                      = 
 E-zt                     = 
+
+; AdResS parameters    
+adress                   = no
 
 ; User defined thingies
 user1-grps               = 

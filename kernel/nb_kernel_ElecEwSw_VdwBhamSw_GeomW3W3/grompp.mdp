@@ -1,8 +1,8 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: lindahl (501)
-;	On host: Eriks-MacBook-Air-2.local
-;	At date: Fri Oct 19 11:55:38 2012
+;	By user: mark (1302)
+;	On host: amd2
+;	At date: Wed Dec 19 13:44:03 2012
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
@@ -84,6 +84,7 @@ verlet-buffer-drift      = 0.005
 rlist                    = 0.99
 ; long-range cut-off for switched potentials
 rlistlong                = -1
+nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
@@ -304,8 +305,8 @@ dh_hist_spacing          = 0.1
 ; Non-equilibrium MD stuff
 acc-grps                 = 
 accelerate               = 
-freezegrps               = system 
-freezedim                = y y y 
+freezegrps               = system
+freezedim                = y y y
 cos-acceleration         = 0
 deform                   = 
 
