@@ -1,33 +1,33 @@
-Log file opened on Sun Nov 25 12:24:47 2012
-Host: tcbs06  pid: 18021  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-dev-20121124-6e1d465-dirty
-GIT SHA1 hash:      6e1d46575eef5fbf043f62c0c8c7ce961889d115 (dirty)
-Branched from:      31e68351b028af5d2618969685938510ed40a455 (1 newer local commits)
-Precision:          single
+Log file opened on Wed Dec 19 15:27:29 2012
+Host: amd2  pid: 34852  nodeid: 0  nnodes:  1
+Gromacs version:    VERSION 4.6-beta2-dev-20121219-b435e81
+GIT SHA1 hash:      b435e811505a62e1f8123c0748df3e517eca9cb1
+Branched from:      ce44eb34e8e485f24ac7f05bc48119908f9e5f5a (1 newer local commits)
+Precision:          double
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
-Software invsqrt:   disabled
+invsqrt routine:    (1.0/sqrt(x))
 CPU acceleration:   None
 FFT library:        fftpack (built-in)
 Large file support: enabled
 RDTSCP usage:       enabled
-Built on:           Sun Nov 25 11:59:01 CET 2012
-Built by:           lindahl@tcbs06 [CMAKE]
+Built on:           Wed Dec 19 15:13:27 CET 2012
+Built by:           mark@amd2 [CMAKE]
 Build OS/arch:      Linux 3.2.0-29-generic x86_64
 Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(TM) Processor 6274
-Build CPU family:   21   Model: 1   Stepping: 2
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Build CPU brand:    AMD Opteron(tm) Processor 6176
+Build CPU family:   16   Model: 9   Stepping: 1
+Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
 C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value  
+C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
 
                          :-)  G  R  O  M  A  C  S  (-:
 
                    Groningen Machine for Chemical Simulation
 
-                :-)  VERSION 4.6-dev-20121124-6e1d465-dirty  (-:
+                :-)  VERSION 4.6-beta2-dev-20121219-b435e81  (-:
 
         Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
       Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
@@ -43,11 +43,11 @@ C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -
             check out http://www.gromacs.org for more information.
 
          This program is free software; you can redistribute it and/or
-          modify it under the terms of the GNU General Public License
-         as published by the Free Software Foundation; either version 2
+       modify it under the terms of the GNU Lesser General Public License
+        as published by the Free Software Foundation; either version 2.1
              of the License, or (at your option) any later version.
 
-                                :-)  mdrun  (-:
+                      :-)  mdrun_d (double precision)  (-:
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -244,24 +244,27 @@ qm-opts:
 Detecting CPU-specific acceleration.
 Present hardware specification:
 Vendor: AuthenticAMD
-Brand:  AMD Opteron(TM) Processor 6274                 
-Family: 21  Model:  1  Stepping:  2
-Features: aes apic avx clfsh cmov cx8 cx16 fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-Acceleration most likely to fit this hardware: AVX_128_FMA
+Brand:  AMD Opteron(tm) Processor 6176
+Family: 16  Model:  9  Stepping:  1
+Features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
+Acceleration most likely to fit this hardware: SSE2
 Acceleration selected at GROMACS compile time: None
 
-WARNING! Binary not matching hardware - you are likely losing performance.
+
+Binary not matching hardware - you might be losing performance.
+Acceleration most likely to fit this hardware: SSE2
+Acceleration selected at GROMACS compile time: None
 
 Table routines are used for coulomb: FALSE
 Table routines are used for vdw:     FALSE
 Cut-off's:   NS: 5   Coulomb: 5   LJ: 5
 System total charge: 0.000
-Generated table with 3000 data points for 1-4 COUL.
-Tabscale = 500 points/nm
-Generated table with 3000 data points for 1-4 LJ6.
-Tabscale = 500 points/nm
-Generated table with 3000 data points for 1-4 LJ12.
-Tabscale = 500 points/nm
+Generated table with 12000 data points for 1-4 COUL.
+Tabscale = 2000 points/nm
+Generated table with 12000 data points for 1-4 LJ6.
+Tabscale = 2000 points/nm
+Generated table with 12000 data points for 1-4 LJ12.
+Tabscale = 2000 points/nm
 Potential shift: LJ r^-12: 0.000 r^-6 0.000, Coulomb 0.000
 
 Initializing LINear Constraint Solver
@@ -288,111 +291,41 @@ There are: 1007 Atoms
 Constraining the starting coordinates (step 0)
 
 Constraining the coordinates at t0-dt (step 0)
-RMS relative constraint deviation after constraining: 7.15e-07
+RMS relative constraint deviation after constraining: 7.97e-09
 Initial temperature: 306.146 K
 
-Started mdrun on node 0 Sun Nov 25 12:24:47 2012
+Started mdrun on node 0 Wed Dec 19 15:27:29 2012
 
            Step           Time         Lambda
               0        0.00000        0.00000
-
-NB kernel nb_kernel_ElecCoul_VdwLJ_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCoul_VdwLJ_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecNone_VdwLJ_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'None', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecNone_VdwLJ_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'None', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCoul_VdwNone_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCoul_VdwNone_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCoul_VdwLJ_GeomW3P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCoul_VdwLJ_GeomW3P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCoul_VdwNone_GeomW3P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCoul_VdwNone_GeomW3P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCoul_VdwLJ_GeomW3W3_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCoul_VdwLJ_GeomW3W3_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'Lennard-Jones', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCoul_VdwNone_GeomW3W3_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCoul_VdwNone_GeomW3W3_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Coulomb', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'Force'
 
 
 Grid: 6 x 5 x 5 cells
    Energies (kJ/mol)
            Bond            U-B    Proper Dih.  Improper Dih.      CMAP Dih.
-    8.49566e+02    2.38781e+03    1.86324e+03    1.57601e+02   -3.65167e+02
+    8.49569e+02    2.38782e+03    1.86323e+03    1.57600e+02   -3.65167e+02
           LJ-14     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential
-    9.32331e+02    1.40818e+04   -1.22302e+03   -2.00907e+04   -1.40654e+03
+    9.32331e+02    1.40818e+04   -1.22302e+03   -2.00907e+04   -1.40652e+03
     Kinetic En.   Total Energy  Conserved En.    Temperature Pressure (bar)
-    3.19548e+03    1.78894e+03    1.78894e+03    3.03695e+02    0.00000e+00
+    3.19548e+03    1.78896e+03    1.78896e+03    3.03695e+02    0.00000e+00
    Constr. rmsd
-    7.98527e-07
+    6.76727e-09
 
            Step           Time         Lambda
              10        0.02000        0.00000
 
-Writing checkpoint, step 10 at Sun Nov 25 12:24:48 2012
+Writing checkpoint, step 10 at Wed Dec 19 15:27:30 2012
 
 
    Energies (kJ/mol)
            Bond            U-B    Proper Dih.  Improper Dih.      CMAP Dih.
-    9.52801e+02    2.26980e+03    1.85549e+03    1.51026e+02   -3.94483e+02
+    9.52808e+02    2.26981e+03    1.85550e+03    1.51026e+02   -3.94483e+02
           LJ-14     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential
-    8.95510e+02    1.40928e+04   -1.26246e+03   -2.00035e+04   -1.44300e+03
+    8.95511e+02    1.40928e+04   -1.26246e+03   -2.00035e+04   -1.44297e+03
     Kinetic En.   Total Energy  Conserved En.    Temperature Pressure (bar)
-    3.14913e+03    1.70613e+03    1.78286e+03    2.99290e+02    0.00000e+00
+    3.14912e+03    1.70615e+03    1.78288e+03    2.99289e+02    0.00000e+00
    Constr. rmsd
-    8.00863e-07
+    1.11930e-08
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -402,18 +335,18 @@ Writing checkpoint, step 10 at Sun Nov 25 12:24:48 2012
 
    Energies (kJ/mol)
            Bond            U-B    Proper Dih.  Improper Dih.      CMAP Dih.
-    9.01184e+02    2.32881e+03    1.85936e+03    1.54313e+02   -3.79825e+02
+    9.01188e+02    2.32881e+03    1.85936e+03    1.54313e+02   -3.79825e+02
           LJ-14     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential
-    9.13920e+02    1.40873e+04   -1.24274e+03   -2.00471e+04   -1.42477e+03
+    9.13921e+02    1.40873e+04   -1.24274e+03   -2.00471e+04   -1.42475e+03
     Kinetic En.   Total Energy  Conserved En.    Temperature Pressure (bar)
-    3.17231e+03    1.74753e+03    1.78590e+03    3.01492e+02    0.00000e+00
+    3.17230e+03    1.74755e+03    1.78592e+03    3.01492e+02    0.00000e+00
    Constr. rmsd
     0.00000e+00
 
    Total Virial (kJ/mol)
-    1.07720e+03    1.09242e+02   -6.18400e+01
-    1.09255e+02    1.64394e+03    4.66307e+01
-   -6.18355e+01    4.66359e+01    1.16956e+03
+    1.07730e+03    1.09243e+02   -6.18524e+01
+    1.09243e+02    1.64393e+03    4.66431e+01
+   -6.18524e+01    4.66431e+01    1.16957e+03
 
    Pressure (bar)
     0.00000e+00    0.00000e+00    0.00000e+00
@@ -423,8 +356,8 @@ Writing checkpoint, step 10 at Sun Nov 25 12:24:48 2012
 
 	M E G A - F L O P S   A C C O U N T I N G
 
- NB=Group-cutoff nonbonded kernels    NxN=N-by-N tile Verlet kernels
- RF=Reaction-Field  VdW=Van der Waals  CSTab=Cubic-spline table
+ NB=Group-cutoff nonbonded kernels    NxN=N-by-N cluster Verlet kernels
+ RF=Reaction-Field  VdW=Van der Waals  QSTab=quadratic-spline table
  W3=SPC/TIP3p  W4=TIP4p (single or pairs)
  V&F=Potential and force  V=Potential only  F=Force only
 
@@ -457,18 +390,18 @@ Writing checkpoint, step 10 at Sun Nov 25 12:24:48 2012
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          2       0.103        0.227    12.3
- Force                  1    1         11       0.712        1.569    84.8
- Write traj.            1    1          2       0.017        0.037     2.0
+ Neighbor search        1    1          2       0.103        0.238    12.9
+ Force                  1    1         11       0.669        1.542    83.6
+ Write traj.            1    1          2       0.019        0.044     2.4
  Update                 1    1         11       0.001        0.002     0.1
  Constraints            1    1         11       0.005        0.010     0.6
- Rest                   1                       0.003        0.006     0.3
+ Rest                   1                       0.003        0.007     0.4
 -----------------------------------------------------------------------------
- Total                  1                       0.840        1.851   100.0
+ Total                  1                       0.800        1.843   100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.830        0.840       98.8
+       Time:        0.800        0.800      100.0
                  (ns/day)    (hour/ns)
-Performance:        2.263       10.607
-Finished mdrun on node 0 Sun Nov 25 12:24:48 2012
+Performance:        2.376       10.100
+Finished mdrun on node 0 Wed Dec 19 15:27:30 2012
