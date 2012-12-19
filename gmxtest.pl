@@ -130,17 +130,36 @@ sub do_system
     return $returnvalue;
 }
 
-#build-in replacement for grep
-#returns number of matches for pattern (1st arg) in file (2nd arg)
-sub find_in_file($$) {
-  my $return=0;
-  defined($_[1]) || die "find_in_file: Missing argument\n";
-  open(FILE,"$_[1]") || die "Could not open file '$_[1]'\n";
-  while(<FILE>) {
-    $return++ if /$_[0]/;
-  }
-  close(FILE) || die "Could not close file '$_[1]'\n";
-  return $return;
+# Built-in replacement for some of grep
+# Returns number of matches for pattern (1st arg) in file (2nd arg)
+# Optionally writes matching lines to file named in 3rd arg, which
+#  simulates "grep pattern file > redirectfile"
+
+sub find_in_file {
+    my $pattern = shift;
+    my $filename_to_search = shift;
+    my $filename_for_redirect = shift;
+    my $return=0;
+
+    defined($filename_to_search) || die "find_in_file: Missing argument\n";
+    my $do_redirect = defined $filename_for_redirect;
+    if ($do_redirect) {
+        print "Got redirect\n";
+        open(REDIRECT, ">$filename_for_redirect") || die "Could not open redirect file '$filename_for_redirect'\n";
+    }
+    open(FILE,$filename_to_search) || die "Could not open file '$filename_to_search'\n";
+
+    while(<FILE>) {
+        if (/$pattern/) {
+            $return++;
+            if ($do_redirect) {
+                print REDIRECT $_;
+            }
+        }
+    }
+    close(FILE) || die "Could not close file '$filename_to_search'\n";
+    close(REDIRECT) || die "Could not close file '$filename_for_redirect'\n";
+    return $return;
 }
 
 sub check_force($)
@@ -439,6 +458,7 @@ sub test_systems {
 		
 		my $ener = "ener${part}.edr";
 		my $traj = "traj${part}.trr";
+		my $log = "md${part}.log";
 		# First check whether we have any output
 		if ((-f "$ener" ) && (-f "$traj")) {
 		    # Now check whether we have any reference files
@@ -477,6 +497,11 @@ sub test_systems {
 			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
 			$nerror |= $nerr_force;
 		    }
+		    my $reflog = "${ref}.log";
+		    if (! -f $reflog ) {
+                        link($log, $reflog);
+                    }
+
 		    # This bit below is only relevant for free energy tests
 		    my $refxvg = "${ref}.xvg";
 		    my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1,3);
@@ -773,8 +798,9 @@ sub test_pdb2gmx {
     }
     close LOG;
     
-    my $nsuccess = find_in_file('Potential Energy',"pdb2gmx.log");
-    
+    my $only_energies_filename = 'ener.log';
+    my $nsuccess = find_in_file('Potential Energy',$logfn,$only_energies_filename);
+
     if ( $nsuccess != $ntest ) {
 	print "Error not all $ntest pdb2gmx tests have been done successfully\n";
 	print "Only $nsuccess energies in the log file\n";
@@ -784,11 +810,11 @@ sub test_pdb2gmx {
 	my $reflog = "${ref}.log";
 	if (! -f $reflog) {
 	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    link('ener.log', $reflog);
+	    link($only_energies_filename, $reflog);
 	}
 	else {
 	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
-	    $nerror = check_xvg($reflog,"ener.log",3,7,\@pdb2gmx_test_names);
+	    $nerror = check_xvg($reflog,$only_energies_filename,3,7,\@pdb2gmx_test_names);
 	    print XML "</testsuite>\n" if ($xml);
 	    if ( $nerror != 0 ) {
 		print "There were $nerror/$ntest differences in final energy with the reference file\n";
@@ -798,7 +824,7 @@ sub test_pdb2gmx {
     if (0 == $nerror) {
 	print "All $ntest pdb2gmx tests PASSED\n";
 	remove_tree(@pdb_dirs);
-	unlink("pdb2gmx.log");
+	unlink($logfn,$only_energies_filename);
     }
     else {
 	print "pdb2gmx tests FAILED\n";
