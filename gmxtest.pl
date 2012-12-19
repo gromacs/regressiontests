@@ -247,49 +247,59 @@ sub check_virial()
 sub check_xvg {
     my $refx = shift;
     my $kkk  = shift;
-    my $ndx1 = shift;
-    my $ndx2 = shift;
+    my $ndx = shift;
     my $pdb2gmx_test_names = shift;
 
     my $nerr = 0;
     if ((-f $refx) && (-f $kkk)) {
-	open(EEE,"paste $refx $kkk |");
+	open(REF,"$refx") || die "Could not open file '$refx'\n";
+	open(KKK,"$kkk") || die "Could not open file '$kkk'\n";
 	my $n = 0;
 	my $header = 0;
-	while (my $line = <EEE>) {
-	    if ((index($line,"#") < 0) && (index($line,"\@") < 0)) {
-		chomp($line);
-		my @tmp = split(' ',$line);
-		my $x1 = $tmp[$ndx1];
-		my $x2 = $tmp[$ndx2];
-		my $error;
-		my $hasPdb2gmx_test_name = defined $pdb2gmx_test_names && defined $$pdb2gmx_test_names[$n];
-		print XML "<testcase name=\"$$pdb2gmx_test_names[$n]\">\n" if ($xml && $hasPdb2gmx_test_name);
-		my $tol;
-		if ($x1+$x2==0) { 
-		    $error = abs($x1-$x2);
-		    $tol = $etol_abs;
-		} else {
-		    $error = abs(($x1-$x2)/($x1+$x2));
-		    $tol = $etol_rel;
-		}
-		if ($error > $tol) {
-		    $nerr++;
-		    if (!$header) {
-			$header = 1;
-			print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol_rel\nIndex  Reference   This test       Error  Description\n");
-		    }
-		    printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
-			   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
-		    printf(XML "<error message=\"Reference: %g Result: %g Error: %g\"/>\n",$tmp[3],$tmp[7], $error) 
-			if ($xml && $hasPdb2gmx_test_name);
-		    
-		}
-		print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
-		$n++;
-	    }
+	while (my $line = <REF>) {
+	    my $line2=<KKK>;
+            if (not defined($line2)){#REF has more lines
+                $nerr++;
+                next;
+            }
+	    next if $line =~ /^[@#]/;
+	    chomp($line);
+	    chomp($line2);
+	    my @tmp = split(' ',$line);
+	    my @tmp2 = split(' ',$line2);
+	    my $x1 = $tmp[$ndx];
+	    my $x2 = $tmp2[$ndx];
+            my $error;
+            my $hasPdb2gmx_test_name = defined $pdb2gmx_test_names && defined $$pdb2gmx_test_names[$n];
+            print XML "<testcase name=\"$$pdb2gmx_test_names[$n]\">\n" if ($xml && $hasPdb2gmx_test_name);
+            my $tol;
+            if ($x1+$x2==0) { 
+              $error = abs($x1-$x2);
+              $tol = $etol_abs;
+            } else {
+              $error = abs(($x1-$x2)/($x1+$x2));
+              $tol = $etol_rel;
+            }
+            if ($error > $tol) {
+                $nerr++;
+                if (!$header) {
+            	$header = 1;
+            	print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol_rel\nIndex  Reference   This test       Error  Description\n");
+                }
+                printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$tmp[3],$tmp[7], $error, 
+            	   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
+                printf(XML "<error message=\"Reference: %g Result: %g Error: %g\"/>\n",$tmp[3],$tmp[7], $error) 
+            	if ($xml && $hasPdb2gmx_test_name);
+                
+            }
+            print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
+            $n++;
 	}
-	close EEE;
+        while (my $line2=<KKK>) {#KKK has more lines
+          $nerr++
+        }
+	close REF;
+	close KKK;
     }
     return $nerr;
 }
@@ -505,7 +515,7 @@ sub test_systems {
 
 		    # This bit below is only relevant for free energy tests
 		    my $refxvg = "${ref}.xvg";
-		    my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1,3);
+		    my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1);
 		    push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
 		    $nerror |= $nerr_xvg;
 		}
@@ -691,7 +701,7 @@ sub test_tools {
 			link($of, "$of.ref");
 		    }
 		    else {
-			my $nerror = check_xvg("$of.ref",$of,1,3);  #TODO: check all columns
+			my $nerror = check_xvg("$of.ref",$of,1);  #TODO: check all columns
 			if ( $nerror != 0 ) {
 			    print "There were $nerror differences in $of output file\n";
 			    $error += 1;
@@ -815,7 +825,7 @@ sub test_pdb2gmx {
 	}
 	else {
 	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
-	    $nerror = check_xvg($reflog,$only_energies_filename,3,7,\@pdb2gmx_test_names);
+	    $nerror = check_xvg($reflog,$only_energies_filename,3,\@pdb2gmx_test_names);
 	    print XML "</testsuite>\n" if ($xml);
 	    if ( $nerror != 0 ) {
 		print "There were $nerror/$ntest differences in final energy with the reference file\n";
