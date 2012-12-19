@@ -1,33 +1,33 @@
-Log file opened on Sun Nov 25 12:19:03 2012
-Host: tcbs06  pid: 15876  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-dev-20121124-6e1d465-dirty
-GIT SHA1 hash:      6e1d46575eef5fbf043f62c0c8c7ce961889d115 (dirty)
-Branched from:      31e68351b028af5d2618969685938510ed40a455 (1 newer local commits)
+Log file opened on Thu Dec 20 14:14:39 2012
+Host: amd2  pid: 32283  nodeid: 0  nnodes:  1
+Gromacs version:    VERSION 4.6-beta2-dev-20121220-4d3a2d4
+GIT SHA1 hash:      4d3a2d48d7bdde9d1297230221ea2d088af0e8cc
+Branched from:      66ba29b16bd066b88f06813f62f43a5233723780 (1 newer local commits)
 Precision:          single
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
-Software invsqrt:   disabled
+invsqrt routine:    (1.0/sqrt(x))
 CPU acceleration:   None
 FFT library:        fftpack (built-in)
 Large file support: enabled
 RDTSCP usage:       enabled
-Built on:           Sun Nov 25 11:59:01 CET 2012
-Built by:           lindahl@tcbs06 [CMAKE]
+Built on:           Thu Dec 20 14:02:47 CET 2012
+Built by:           mark@amd2 [CMAKE]
 Build OS/arch:      Linux 3.2.0-29-generic x86_64
 Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(TM) Processor 6274
-Build CPU family:   21   Model: 1   Stepping: 2
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Build CPU brand:    AMD Opteron(tm) Processor 6176
+Build CPU family:   16   Model: 9   Stepping: 1
+Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
 C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value  
+C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
 
                          :-)  G  R  O  M  A  C  S  (-:
 
                    Groningen Machine for Chemical Simulation
 
-                :-)  VERSION 4.6-dev-20121124-6e1d465-dirty  (-:
+                :-)  VERSION 4.6-beta2-dev-20121220-4d3a2d4  (-:
 
         Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
       Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
@@ -43,8 +43,8 @@ C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -
             check out http://www.gromacs.org for more information.
 
          This program is free software; you can redistribute it and/or
-          modify it under the terms of the GNU General Public License
-         as published by the Free Software Foundation; either version 2
+       modify it under the terms of the GNU Lesser General Public License
+        as published by the Free Software Foundation; either version 2.1
              of the License, or (at your option) any later version.
 
                                 :-)  mdrun  (-:
@@ -214,7 +214,7 @@ temperature-lambdas =            0         0.2         0.4         0.8          
    init-wl-delta        = 1
    wl-ratio             = 0.8
    bWLoneovert          = FALSE
-   lmc-seed             = 15872
+   lmc-seed             = 32279
    mc-temperature       = 298
    lmc-weights-equil    = wl-delta
    weight-equil-wl-delta = 0.001
@@ -302,13 +302,16 @@ qm-opts:
 Detecting CPU-specific acceleration.
 Present hardware specification:
 Vendor: AuthenticAMD
-Brand:  AMD Opteron(TM) Processor 6274                 
-Family: 21  Model:  1  Stepping:  2
-Features: aes apic avx clfsh cmov cx8 cx16 fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-Acceleration most likely to fit this hardware: AVX_128_FMA
+Brand:  AMD Opteron(tm) Processor 6176
+Family: 16  Model:  9  Stepping:  1
+Features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
+Acceleration most likely to fit this hardware: SSE2
 Acceleration selected at GROMACS compile time: None
 
-WARNING! Binary not matching hardware - you are likely losing performance.
+
+Binary not matching hardware - you might be losing performance.
+Acceleration most likely to fit this hardware: SSE2
+Acceleration selected at GROMACS compile time: None
 
 Table routines are used for coulomb: TRUE
 Table routines are used for vdw:     TRUE
@@ -375,80 +378,10 @@ Total number of graph edges is 3592
 Constraining the starting coordinates (step 0)
 Initial temperature: 294.228 K
 
-Started mdrun on node 0 Sun Nov 25 12:19:03 2012
+Started mdrun on node 0 Thu Dec 20 14:14:39 2012
 
            Step           Time         Lambda
               0        0.00000        0.00000
-
-NB kernel nb_kernel_ElecCSTab_VdwCSTab_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCSTab_VdwCSTab_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecNone_VdwCSTab_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'None', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecNone_VdwCSTab_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'None', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCSTab_VdwNone_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCSTab_VdwNone_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCSTab_VdwCSTab_GeomW3P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCSTab_VdwCSTab_GeomW3P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCSTab_VdwNone_GeomW3P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCSTab_VdwNone_GeomW3P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCSTab_VdwCSTab_GeomW3W3_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCSTab_VdwCSTab_GeomW3W3_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'Cubic-Spline-Table', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecCSTab_VdwNone_GeomW3W3_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecCSTab_VdwNone_GeomW3W3_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Cubic-Spline-Table', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'Force'
 
 
 Grid: 4 x 4 x 4 cells
@@ -458,7 +391,7 @@ Grid: 4 x 4 x 4 cells
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
    -3.58609e+04    6.58560e+03   -2.92753e+04   -2.92753e+04    2.94228e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -1.88410e+02
+   -2.53230e+02   -1.88411e+02
 
            Step           Time         Lambda
              20        0.02000        0.00000
@@ -474,11 +407,11 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    4.74391e+00    5.62037e+03   -4.09860e+02   -3.07440e+04   -1.04341e+04
+    4.74414e+00    5.62037e+03   -4.09860e+02   -3.07440e+04   -1.04341e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
    -3.59628e+04    6.43545e+03   -2.95274e+04   -2.95542e+04    2.87519e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -2.27319e+02
+   -2.53230e+02   -2.25591e+02
 
            Step           Time         Lambda
              40        0.04000        0.00000
@@ -494,11 +427,11 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    1.32347e+01    5.65096e+03   -4.09860e+02   -3.06841e+04   -1.04737e+04
+    1.32338e+01    5.65095e+03   -4.09860e+02   -3.06841e+04   -1.04737e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
    -3.59034e+04    6.41193e+03   -2.94915e+04   -2.95313e+04    2.86469e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -1.38081e+02
+   -2.53230e+02   -1.40147e+02
 
            Step           Time         Lambda
              60        0.06000        0.00000
@@ -514,11 +447,11 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    8.55083e+00    5.67455e+03   -4.09860e+02   -3.07778e+04   -1.04487e+04
+    8.55121e+00    5.67455e+03   -4.09860e+02   -3.07778e+04   -1.04487e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
    -3.59533e+04    6.46250e+03   -2.94908e+04   -2.95261e+04    2.88728e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -8.86583e+00
+   -2.53230e+02   -1.34274e+01
 
            Step           Time         Lambda
              80        0.08000        0.00000
@@ -534,16 +467,16 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    7.04492e+00    5.69782e+03   -4.09860e+02   -3.08340e+04   -1.04451e+04
+    7.04390e+00    5.69781e+03   -4.09860e+02   -3.08340e+04   -1.04451e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59841e+04    6.47885e+03   -2.95052e+04   -2.95154e+04    2.89458e+02
+   -3.59841e+04    6.47883e+03   -2.95052e+04   -2.95154e+04    2.89457e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -8.27419e+01
+   -2.53230e+02   -7.68175e+01
 
            Step           Time         Lambda
             100        0.10000        0.00000
 
-Writing checkpoint, step 100 at Sun Nov 25 12:19:11 2012
+Writing checkpoint, step 100 at Thu Dec 20 14:14:47 2012
 
 
              MC-lambda information
@@ -557,11 +490,11 @@ Writing checkpoint, step 100 at Sun Nov 25 12:19:11 2012
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    1.03945e+01    5.78951e+03   -4.09860e+02   -3.10756e+04   -1.04835e+04
+    1.03944e+01    5.78951e+03   -4.09860e+02   -3.10757e+04   -1.04835e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.61691e+04    6.65689e+03   -2.95122e+04   -2.95322e+04    2.97413e+02
+   -3.61692e+04    6.65690e+03   -2.95122e+04   -2.95322e+04    2.97413e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02    5.37462e+01
+   -2.53230e+02    5.07901e+01
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -571,27 +504,27 @@ Writing checkpoint, step 100 at Sun Nov 25 12:19:11 2012
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    9.35611e+00    5.66423e+03   -4.09860e+02   -3.07687e+04   -1.04502e+04
+    9.35584e+00    5.66422e+03   -4.09860e+02   -3.07686e+04   -1.04502e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
    -3.59552e+04    6.49610e+03   -2.94591e+04   -2.94830e+04    2.90229e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -1.08538e+02
+   -2.53230e+02   -1.08918e+02
 
    Total Virial (kJ/mol)
-    1.83325e+03   -1.93229e+02    1.81882e+02
-   -1.95112e+02    2.31884e+03   -3.68995e+02
-    1.81366e+02   -3.68708e+02    2.60752e+03
+    1.83385e+03   -1.94398e+02    1.81701e+02
+   -1.94262e+02    2.31809e+03   -3.67705e+02
+    1.82707e+02   -3.68607e+02    2.60858e+03
 
    Pressure (bar)
-    4.13438e+02    2.55240e+02   -2.69594e+02
-    2.57568e+02   -2.31410e+02    5.21454e+02
-   -2.68956e+02    5.21100e+02   -5.07642e+02
+    4.12686e+02    2.56687e+02   -2.69371e+02
+    2.56518e+02   -2.30483e+02    5.19863e+02
+   -2.70615e+02    5.20977e+02   -5.08955e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
 
- NB=Group-cutoff nonbonded kernels    NxN=N-by-N tile Verlet kernels
- RF=Reaction-Field  VdW=Van der Waals  CSTab=Cubic-spline table
+ NB=Group-cutoff nonbonded kernels    NxN=N-by-N cluster Verlet kernels
+ RF=Reaction-Field  VdW=Van der Waals  QSTab=quadratic-spline table
  W3=SPC/TIP3p  W4=TIP4p (single or pairs)
  V&F=Potential and force  V=Potential only  F=Force only
 
@@ -603,8 +536,8 @@ Writing checkpoint, step 100 at Sun Nov 25 12:19:11 2012
  NB VdW & Elec. [F]                       1.626090           1.626     0.1
  NB VdW & Elec. [W3,V&F]                  0.378623           0.379     0.0
  NB VdW & Elec. [W3,F]                    2.698250           2.698     0.1
- NB VdW & Elec. [W3-W3,V&F]             199.207184         199.207     6.5
- NB VdW & Elec. [W3-W3,F]              1450.802240        1450.802    47.2
+ NB VdW & Elec. [W3-W3,V&F]             199.206384         199.206     6.5
+ NB VdW & Elec. [W3-W3,F]              1450.795832        1450.796    47.2
  Calc Weights                             0.815979          29.375     1.0
  Spread Q Bspline                        58.750488         117.501     3.8
  Gather F Bspline                        58.750488         352.503    11.5
@@ -618,13 +551,13 @@ Writing checkpoint, step 100 at Sun Nov 25 12:19:11 2012
  Virial                                   0.030118           0.542     0.0
  Stop-CM                                  0.018851           0.189     0.0
  Calc-Ekin                                0.271993           7.344     0.2
- Shake                                    0.002316           0.069     0.0
+ Shake                                    0.002300           0.069     0.0
  Constraint-V                             0.272296           2.178     0.1
  Shake-Init                               0.000816           0.008     0.0
  Constraint-Vir                           0.029656           0.712     0.0
  Settle                                   0.182784          59.039     1.9
 -----------------------------------------------------------------------------
- Total                                                    3073.419   100.0
+ Total                                                    3073.411   100.0
 -----------------------------------------------------------------------------
 
 
@@ -632,24 +565,24 @@ Writing checkpoint, step 100 at Sun Nov 25 12:19:11 2012
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1         11       0.164        0.361     2.0
- Force                  1    1        101       4.337        9.545    53.9
- PME mesh               1    1        101       3.306        7.276    41.1
- Write traj.            1    1          2       0.031        0.069     0.4
- Update                 1    1        101       0.045        0.099     0.6
- Constraints            1    1        202       0.084        0.185     1.0
- Rest                   1                       0.077        0.170     1.0
+ Neighbor search        1    1         11       0.158        0.363     1.8
+ Force                  1    1        101       4.865       11.193    56.1
+ PME mesh               1    1        101       3.410        7.846    39.3
+ Write traj.            1    1          2       0.032        0.074     0.4
+ Update                 1    1        101       0.044        0.101     0.5
+ Constraints            1    1        202       0.084        0.194     1.0
+ Rest                   1                       0.082        0.189     0.9
 -----------------------------------------------------------------------------
- Total                  1                       8.046       17.706   100.0
+ Total                  1                       8.676       19.959   100.0
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
- PME spread/gather      1    1        202       2.101        4.623    26.1
- PME 3D-FFT             1    1        202       1.028        2.263    12.8
- PME solve              1    1        101       0.177        0.390     2.2
+ PME spread/gather      1    1        202       2.035        4.682    23.5
+ PME 3D-FFT             1    1        202       1.199        2.758    13.8
+ PME solve              1    1        101       0.176        0.404     2.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        8.040        8.046       99.9
+       Time:        8.670        8.676       99.9
                  (ns/day)    (hour/ns)
-Performance:        1.085       22.127
-Finished mdrun on node 0 Sun Nov 25 12:19:11 2012
+Performance:        1.006       23.860
+Finished mdrun on node 0 Thu Dec 20 14:14:47 2012
