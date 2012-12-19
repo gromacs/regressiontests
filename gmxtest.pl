@@ -541,7 +541,7 @@ sub test_systems {
 		}
 	    }
 	    else {
-		my @args = glob("#*# *.out topol.tpr confout.gro ener*.edr md.log traj*.trr");
+		my @args = glob("#*# *.out topol.tpr confout*.gro ener*.edr md.log traj*.trr");
 		#unlink(@args);
 		
 		if ($verbose > 0) {
@@ -602,7 +602,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err" );
 	    unlink (@args);
 	    chdir("..");
 	}
