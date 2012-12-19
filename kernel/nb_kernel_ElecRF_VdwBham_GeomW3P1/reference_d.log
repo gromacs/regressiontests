@@ -1,33 +1,33 @@
-Log file opened on Sun Nov 25 14:24:28 2012
-Host: tcbs06  pid: 57011  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-dev-20121124-6e1d465-dirty
-GIT SHA1 hash:      6e1d46575eef5fbf043f62c0c8c7ce961889d115 (dirty)
-Branched from:      31e68351b028af5d2618969685938510ed40a455 (1 newer local commits)
+Log file opened on Wed Dec 19 15:28:22 2012
+Host: amd2  pid: 35370  nodeid: 0  nnodes:  1
+Gromacs version:    VERSION 4.6-beta2-dev-20121219-b435e81
+GIT SHA1 hash:      b435e811505a62e1f8123c0748df3e517eca9cb1
+Branched from:      ce44eb34e8e485f24ac7f05bc48119908f9e5f5a (1 newer local commits)
 Precision:          double
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
-Software invsqrt:   disabled
+invsqrt routine:    (1.0/sqrt(x))
 CPU acceleration:   None
 FFT library:        fftpack (built-in)
 Large file support: enabled
 RDTSCP usage:       enabled
-Built on:           Sun Nov 25 12:26:25 CET 2012
-Built by:           lindahl@tcbs06 [CMAKE]
+Built on:           Wed Dec 19 15:13:27 CET 2012
+Built by:           mark@amd2 [CMAKE]
 Build OS/arch:      Linux 3.2.0-29-generic x86_64
 Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(TM) Processor 6274
-Build CPU family:   21   Model: 1   Stepping: 2
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Build CPU brand:    AMD Opteron(tm) Processor 6176
+Build CPU family:   16   Model: 9   Stepping: 1
+Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
 C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value  
+C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
 
                          :-)  G  R  O  M  A  C  S  (-:
 
                    Groningen Machine for Chemical Simulation
 
-                :-)  VERSION 4.6-dev-20121124-6e1d465-dirty  (-:
+                :-)  VERSION 4.6-beta2-dev-20121219-b435e81  (-:
 
         Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
       Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
@@ -43,8 +43,8 @@ C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -
             check out http://www.gromacs.org for more information.
 
          This program is free software; you can redistribute it and/or
-          modify it under the terms of the GNU General Public License
-         as published by the Free Software Foundation; either version 2
+       modify it under the terms of the GNU Lesser General Public License
+        as published by the Free Software Foundation; either version 2.1
              of the License, or (at your option) any later version.
 
                       :-)  mdrun_d (double precision)  (-:
@@ -247,13 +247,16 @@ qm-opts:
 Detecting CPU-specific acceleration.
 Present hardware specification:
 Vendor: AuthenticAMD
-Brand:  AMD Opteron(TM) Processor 6274                 
-Family: 21  Model:  1  Stepping:  2
-Features: aes apic avx clfsh cmov cx8 cx16 fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-Acceleration most likely to fit this hardware: AVX_128_FMA
+Brand:  AMD Opteron(tm) Processor 6176
+Family: 16  Model:  9  Stepping:  1
+Features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
+Acceleration most likely to fit this hardware: SSE2
 Acceleration selected at GROMACS compile time: None
 
-WARNING! Binary not matching hardware - you are likely losing performance.
+
+Binary not matching hardware - you might be losing performance.
+Acceleration most likely to fit this hardware: SSE2
+Acceleration selected at GROMACS compile time: None
 
 Table routines are used for coulomb: FALSE
 Table routines are used for vdw:     FALSE
@@ -285,80 +288,10 @@ Max number of graph edges per atom is 4
 Total number of graph edges is 848
 Initial temperature: 0 K
 
-Started mdrun on node 0 Sun Nov 25 14:24:28 2012
+Started mdrun on node 0 Wed Dec 19 15:28:23 2012
 
            Step           Time         Lambda
               0        0.00000        0.00000
-
-NB kernel nb_kernel_ElecRF_VdwBham_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecRF_VdwBham_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecNone_VdwBham_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'None', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecNone_VdwBham_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'None', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecRF_VdwNone_GeomP1P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecRF_VdwNone_GeomP1P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Particle-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecRF_VdwBham_GeomW3P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecRF_VdwBham_GeomW3P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecRF_VdwNone_GeomW3P1_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecRF_VdwNone_GeomW3P1_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Particle', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecRF_VdwBham_GeomW3W3_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecRF_VdwBham_GeomW3W3_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'Buckingham', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'Force'
-
-NB kernel nb_kernel_ElecRF_VdwNone_GeomW3W3_VF_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'PotentialAndForce'
-
-NB kernel nb_kernel_ElecRF_VdwNone_GeomW3W3_F_c() with architecture 'c' used for neighborlist with
-    Elec: 'Reaction-Field', Modifier: 'None'
-    Vdw:  'None', Modifier: 'None'
-    Geom: 'Water3-Water3', Other: '', Calc: 'Force'
 
 
 Grid: 3 x 3 x 3 cells
@@ -375,7 +308,7 @@ Grid: 3 x 3 x 3 cells
            Step           Time         Lambda
               2        0.00400        0.00000
 
-Writing checkpoint, step 2 at Sun Nov 25 14:24:28 2012
+Writing checkpoint, step 2 at Wed Dec 19 15:28:23 2012
 
 
    Energies (kJ/mol)
@@ -429,8 +362,8 @@ Protein_both-sol2    4.64690e+01   -5.82847e+00    0.00000e+00    0.00000e+00
 
 	M E G A - F L O P S   A C C O U N T I N G
 
- NB=Group-cutoff nonbonded kernels    NxN=N-by-N tile Verlet kernels
- RF=Reaction-Field  VdW=Van der Waals  CSTab=Cubic-spline table
+ NB=Group-cutoff nonbonded kernels    NxN=N-by-N cluster Verlet kernels
+ RF=Reaction-Field  VdW=Van der Waals  QSTab=quadratic-spline table
  W3=SPC/TIP3p  W4=TIP4p (single or pairs)
  V&F=Potential and force  V=Potential only  F=Force only
 
@@ -459,17 +392,17 @@ Protein_both-sol2    4.64690e+01   -5.82847e+00    0.00000e+00    0.00000e+00
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.008        0.018    24.5
- Force                  1    1          3       0.003        0.007     9.4
- Write traj.            1    1          3       0.019        0.044    58.3
- Update                 1    1          3       0.000        0.001     0.7
- Rest                   1                       0.002        0.005     7.1
+ Neighbor search        1    1          3       0.012        0.029    36.2
+ Force                  1    1          3       0.004        0.009    11.5
+ Write traj.            1    1          3       0.014        0.033    41.7
+ Update                 1    1          3       0.000        0.001     1.0
+ Rest                   1                       0.003        0.008     9.6
 -----------------------------------------------------------------------------
- Total                  1                       0.033        0.075   100.0
+ Total                  1                       0.034        0.080   100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.020        0.033       60.9
+       Time:        0.030        0.034       89.4
                  (ns/day)    (hour/ns)
-Performance:       15.787        1.520
-Finished mdrun on node 0 Sun Nov 25 14:24:28 2012
+Performance:       15.448        1.554
+Finished mdrun on node 0 Wed Dec 19 15:28:23 2012
