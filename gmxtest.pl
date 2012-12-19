@@ -158,7 +158,9 @@ sub find_in_file {
         }
     }
     close(FILE) || die "Could not close file '$filename_to_search'\n";
-    close(REDIRECT) || die "Could not close file '$filename_for_redirect'\n";
+    if ($do_redirect) {
+        close(REDIRECT) || die "Could not close file '$filename_for_redirect'\n";
+    }
     return $return;
 }
 
