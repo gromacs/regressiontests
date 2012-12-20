@@ -1,0 +1,9 @@
+Code-Review+1: Roland Schulz <roland@rschulz.eu>
+Verified+1: Roland Schulz <roland@rschulz.eu>
+Verified+1: Mark Abraham <mark.j.abraham@gmail.com>
+Code-Review+2: Szilárd Páll <pszilard@kth.se>
+Submitted-by: Szilárd Páll <pszilard@kth.se>
+Submitted-at: Thu, 20 Dec 2012 20:27:07 +0100
+Reviewed-on: https://gerrit.gromacs.org/1929
+Project: regressiontests
+Branch: refs/heads/master
