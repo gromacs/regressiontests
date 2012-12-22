@@ -4,6 +4,7 @@ use strict;
 
 #this is a core module
 use gmxFile::Path qw(remove_tree);
+use List::Util qw(sum);
 use Cwd;
 
 #disable quotes as they could screw up pattern matching
@@ -476,6 +477,9 @@ sub test_systems {
 				  sub {
 				      if($nerror != 0) {
 					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
+				      } else {
+					  print "\ngmxcheck FAILED on the .edr file"; 
+					  $nerror = 1;
 				      }
 				  });
 			my $nerr_pot = find_in_file("step","$potout");
@@ -637,13 +641,16 @@ sub test_dirs {
     print XML "<testsuite name=\"$dirs\">\n" if ($xml);
     my $npassed = test_systems(@subdirs);
     print XML "</testsuite>\n" if ($xml);
+    my $nerror=0;
     if ($npassed < $nn) {
 	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
+	$nerror=1;
     }
     else {
 	print("All $nn $dirs tests PASSED\n");
     }
     chdir("..");
+    return $nerror;
 }
 
 #format for cfg files is:
@@ -718,6 +725,7 @@ sub test_tools {
     } else {
 	print "All $ncfg tools tests PASSED\n";
     }
+    return $nerror_cfg;
 }
 
 sub test_pdb2gmx {
@@ -831,6 +839,7 @@ sub test_pdb2gmx {
 	print "pdb2gmx tests FAILED\n";
     }
     chdir("..");
+    return $nerror;
 }
 
 sub clean_all {
@@ -1061,7 +1070,6 @@ if ($xml) {
 # setup_vars() is always the first work to do, so now
 # parallel and double will work correctly regardless of
 # order on the command line
-map { eval $_ } @work;
-
+my $nerror = sum (map { eval $_ } @work);
 print XML "</testsuites>\n" if ($xml);
-
+exit $nerror>0
