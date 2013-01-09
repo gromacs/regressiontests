@@ -2,10 +2,15 @@
 
 use strict;
 
-#this is a core module
+use Cwd qw(getcwd);
+use File::Basename;
+
+#change directory to script location
+chdir(dirname(__FILE__));
+use lib dirname(__FILE__);
+
 use gmxFile::Path qw(remove_tree);
 use List::Util qw(sum);
-use Cwd;
 
 #disable quotes as they could screw up pattern matching
 $ENV{GMX_NO_QUOTES}='NO';
