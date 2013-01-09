@@ -84,8 +84,8 @@ sub setup_vars()
 	}
 	if ( $bluegene > 0 )
 	{
-	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $mpi_processes -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
+	    # edit the next line if you need to customize the call to runjob
+	    $mdprefix = "runjob -n $mpi_processes";
 	} elsif ( $mpirun =~ /aprun/ ) {
 	    $mdprefix = "$mpirun -n $mpi_processes";
 	} else {
@@ -392,27 +392,29 @@ sub test_systems {
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
 		my $local_mdprefix = $mdprefix;
+                my $arg_prefix = $bluegene ? ' --args' : '';
 		if ( $mpi_processes > 0 && !($mpirun =~ /aprun/) ) {
                     $local_mdprefix .= ($bluegene > 0 ?
-                                  ' -cwd ' :
+                                  ' --cwd ' :
                                   ' -wdir ') . getcwd(); 
+                    $local_mdprefix .= ' --exe' if($bluegene);
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
-		my $local_mdparams = $mdparams . " -notunepme"; 
+		my $local_mdparams = "$mdparams ${arg_prefix} -notunepme";
 		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
-		    $local_mdparams .= " -pd"
+		    $local_mdparams .= " ${arg_prefix} -pd";
 		}
         $ntmpi_opt = '';
         $ntomp_opt = '';
         if (0 < $mpi_threads) {
-            $ntmpi_opt = " -ntmpi $mpi_threads";
+            $ntmpi_opt = " ${arg_prefix} -ntmpi $mpi_threads";
         }
         if (find_in_file("cutoff-scheme.*=.*verlet","grompp.mdp") > 0 && $omp_threads > 0) {
-            $ntomp_opt = " -ntomp $omp_threads";
+            $ntomp_opt = " ${arg_prefix} -ntomp $omp_threads";
         }
                my $part = "";
 		if ( -f "continue.cpt" ) {
-		    $local_mdparams .= " -cpi continue -noappend";
+		    $local_mdparams .= " ${arg_prefix} -cpi continue ${arg_prefix} -noappend";
 		    $part = ".part0002";
 		}
         # Semi-temporary work-around for modern systems with lots of cores
@@ -429,7 +431,7 @@ sub test_systems {
                                 foreach my $line (@lines) {
                                     if ($line =~ /There is no domain decomposition for/) {
                                         print ("Mdrun cannot use the requested (or automatic) number of cores, retrying with 8.\n");
-                                        $alt_ntmpi_opt = '-ntmpi 8';
+                                        $alt_ntmpi_opt = " ${arg_prefix} -ntmpi 8";
                                         $rerun = 1;
                                         last;
                                     }
@@ -443,7 +445,7 @@ sub test_systems {
                                         print ("Mdrun cannot use the requested (or automatic) number of OpenMP threads, retrying with 8.\n");
                                         # This one we change permanently.
                                         $omp_threads = 8;
-                                        $ntomp_opt = " -ntomp $omp_threads";
+                                        $ntomp_opt = " ${arg_prefix} -ntomp $omp_threads";
                                         $rerun = 1;
                                         last;
                                     }
