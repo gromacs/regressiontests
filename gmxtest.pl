@@ -84,8 +84,8 @@ sub setup_vars()
 	}
 	if ( $bluegene > 0 )
 	{
-	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $mpi_processes -exp_env GMX_NO_SOLV_OPT -exp_env GMX_NOOPTIMIZEDKERNELS -exp_env GMX_NB_GENERIC";
+	    # edit the next line if you need to customize the call to runjob
+	    $mdprefix = "runjob -n $mpi_processes";
 	} elsif ( $mpirun =~ /aprun/ ) {
 	    $mdprefix = "$mpirun -n $mpi_processes";
 	} else {
@@ -394,8 +394,9 @@ sub test_systems {
 		my $local_mdprefix = $mdprefix;
 		if ( $mpi_processes > 0 && !($mpirun =~ /aprun/) ) {
                     $local_mdprefix .= ($bluegene > 0 ?
-                                  ' -cwd ' :
+                                  ' --cwd ' :
                                   ' -wdir ') . getcwd(); 
+                    $local_mdprefix .= ' : ' if($bluegene);
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
