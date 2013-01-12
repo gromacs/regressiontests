@@ -280,7 +280,6 @@ couple_lambda0           = none
 couple_lambda1           = vdw-q
 couple-intramol          = no
 init-lambda              = 0.5
-init-lambda-state        = 0
 delta-lambda             = 0
 nstdhdl                  = 100
 fep-lambdas              = 
