@@ -886,6 +886,7 @@ sub test_gmx {
 
 my $kk = 0;
 my @work = ();
+my $did_clean = 0;
 
 for ($kk=0; ($kk <= $#ARGV); $kk++) {
     my $arg = $ARGV[$kk];
@@ -921,6 +922,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
     elsif ($arg eq 'clean' ) {
         clean_all();
+        $did_clean = 1;
     }
     elsif ($arg eq 'refclean' ) {
 	push @work, "refcleandir('simple')";
@@ -1060,11 +1062,6 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
 }
 
-if ($kk == 0) {
-    $#work = -1;
-    usage();
-}
-
 # Set up to write XML output if wanted
 
 if ($xml) {
@@ -1074,6 +1071,9 @@ if ($xml) {
     print XML "\n<testsuites>\n";
 }
 
+# Set up the initial state for doing actual testing when we are, and
+# print the usage statement if the command line was unsuitable
+
 if (scalar(@work)) {
   # Prepend standard things to do to the list of real work,
   # which would be empty in the case of 'gmxtest.pl clean', etc.
@@ -1082,6 +1082,11 @@ if (scalar(@work)) {
   # setup_vars() is always the first work to do, so now
   # command line options will work correctly regardless of
   # order on the command line
+}
+elsif (!$did_clean) {
+    # There's multiple reasons why @work might be empty; only print
+    # the usage if it's warranted.
+    usage();
 }
 
 # Now do the work, if there is any
