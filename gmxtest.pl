@@ -1083,6 +1083,8 @@ if (scalar(@work)) {
   # command line options will work correctly regardless of
   # order on the command line
 }
-my $nerror = sum (map { eval $_ } @work);
+
+# Now do the work, if there is any
+my $nerror = sum 0, map { eval $_ } @work;
 print XML "</testsuites>\n" if ($xml);
 exit ($nerror>0);
