@@ -1065,12 +1065,7 @@ if ($kk == 0) {
     usage();
 }
 
-if (scalar(@work)) {
-  # Prepend standard things to do to the list of real work,
-  # which would be empty in the case of 'gmxtest.pl clean', etc.
-  unshift(@work, "test_gmx()") unless ($crosscompiling);
-  unshift(@work, "setup_vars()");
-}
+# Set up to write XML output if wanted
 
 if ($xml) {
     my $xmlfn = "gmxtest.xml";
@@ -1078,9 +1073,16 @@ if ($xml) {
     print XML '<?xml version="1.1" encoding="UTF-8"?>';
     print XML "\n<testsuites>\n";
 }
-# setup_vars() is always the first work to do, so now
-# parallel and double will work correctly regardless of
-# order on the command line
+
+if (scalar(@work)) {
+  # Prepend standard things to do to the list of real work,
+  # which would be empty in the case of 'gmxtest.pl clean', etc.
+  unshift(@work, "test_gmx()") unless ($crosscompiling);
+  unshift(@work, "setup_vars()");
+  # setup_vars() is always the first work to do, so now
+  # command line options will work correctly regardless of
+  # order on the command line
+}
 my $nerror = sum (map { eval $_ } @work);
 print XML "</testsuites>\n" if ($xml);
 exit ($nerror>0);
