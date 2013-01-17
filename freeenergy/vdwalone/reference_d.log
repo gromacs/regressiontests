@@ -168,7 +168,7 @@ Input Parameters:
    bSimTemp             = FALSE
    free-energy          = yes
    nstdhdl              = 20
-   init-lambda-state    = 0
+   init-lambda-state    = -1
    init-lambda          = 0.25
    delta-lambda         = 0
    n-lambdas            = 0
