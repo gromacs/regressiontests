@@ -203,6 +203,22 @@ sub check_force($)
 	
 	my $l1 = sqrt($f1[0]*$f1[0]+$f1[1]*$f1[1]+$f1[2]*$f1[2]);
 	my $l2 = sqrt($f2[0]*$f2[0]+$f2[1]*$f2[1]+$f2[2]*$f2[2]);
+        my $denominator = $l1 * $l2;
+        if (0.0 == $denominator) {
+            # Hopefully this means there was an error somewhere,
+            # rather than an atomic force that was binary identical to
+            # zero... not sure if this works with freeze groups,
+            # but I don't think we test any of that anyway.
+            $nerr_force++;
+        } else {
+            my $sprod = ($f1[0]*$f2[0]+$f1[1]*$f2[1]+$f1[2]*$f2[2])/($l1*$l2);
+
+            if( $sprod < (1.0-$ftol_sprod))
+            {
+                $nerr_force = $nerr_force + 1;
+            }
+        }
+
 	my $sprod = ($f1[0]*$f2[0]+$f1[1]*$f2[1]+$f1[2]*$f2[2])/($l1*$l2);
 	
 	if( $sprod < (1.0-$ftol_sprod))
