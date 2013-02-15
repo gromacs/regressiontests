@@ -3,12 +3,6 @@ WARNING 1 [file grompp.mdp, line 342]:
   should be used
 
 WARNING 2 [file grompp.mdp]:
-  With coulomb soft core, the reciprocal space calculation will not
-  necessarily cancel.  It may be necessary to decrease the reciprocal space
-  energy, and increase the cutoff radius to get sufficiently close matches
-  to energies with free energy turned off.
-
-WARNING 3 [file grompp.mdp]:
   The sum of the two largest charge group radii (0.208298) is larger than
   rlist (1.000000) - rvdw (0.850000)
 
