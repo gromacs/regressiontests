@@ -6,5 +6,7 @@ WARNING 1 [file topol.top, line 197]:
 
 WARNING 2 [file grompp.mdp]:
   The sum of the two largest charge group radii (0.160742) is larger than
-  rlist (0.990000) - rcoulomb (0.900000)
+  rlist (0.990000) - rcoulomb (0.900000).
+  With exact cut-offs, better performance can be obtained with
+  cutoff-scheme = Verlet, because it does not use charge groups at all.
 
