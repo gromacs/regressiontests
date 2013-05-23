@@ -872,6 +872,7 @@ sub clean_all {
     cleandirs("complex");
     cleandirs("kernel");
     cleandirs("freeenergy");
+    cleandirs("rotation");
     cleandirs("extra");
     chdir("pdb2gmx");
     unlink("pdb2gmx.log");
@@ -884,7 +885,7 @@ sub usage {
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
-                    [ simple | complex | kernel | freeenergy | extra | pdb2gmx | all ]
+                    [ simple | complex | kernel | freeenergy | rotation | extra | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
     exit 1;
@@ -921,6 +922,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'freeenergy' ) {
 	push @work, "test_dirs('freeenergy')";
     }
+    elsif ($arg eq 'rotation' ) {
+	push @work, "test_dirs('rotation')";
+    }
     elsif ($arg eq 'extra' ) {
 	push @work, "test_dirs('extra')";
     }
@@ -935,6 +939,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	push @work, "test_dirs('complex')";
 	push @work, "test_dirs('kernel')";
 	push @work, "test_dirs('freeenergy')";
+	push @work, "test_dirs('rotation')";
 	push @work, "test_dirs('extra')";
 	push @work, "test_pdb2gmx()";
 	#push @work, "test_tools()";
