@@ -86,7 +86,7 @@ sub setup_vars()
 	{
 	    # edit the next line if you need to customize the call to runjob
 	    $mdprefix = "runjob -n $mpi_processes";
-	} elsif ( $mpirun =~ /aprun/ ) {
+	} elsif ( $mpirun =~ /(ap|s)run/ ) {
 	    $mdprefix = "$mpirun -n $mpi_processes";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
@@ -411,7 +411,7 @@ sub test_systems {
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
 		my $local_mdprefix = $mdprefix;
-		if ( $mpi_processes > 0 && !($mpirun =~ /aprun/) ) {
+		if ( $mpi_processes > 0 && !($mpirun =~ /(ap|s)run/) ) {
                     $local_mdprefix .= ($bluegene > 0 ?
                                   ' --cwd ' :
                                   ' -wdir ') . getcwd(); 
