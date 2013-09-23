@@ -1,0 +1,9 @@
+Verified+1: Mark Abraham <mark.j.abraham@gmail.com>
+Code-Review+2: Teemu Murtola <teemu.murtola@gmail.com>
+Code-Review+1: Justin Lemkul <jalemkul@vt.edu>
+Verified+2: Jenkins Buildbot
+Submitted-by: Teemu Murtola <teemu.murtola@gmail.com>
+Submitted-at: Mon, 23 Sep 2013 20:22:08 +0200
+Reviewed-on: https://gerrit.gromacs.org/2610
+Project: regressiontests
+Branch: refs/heads/release-4-6
