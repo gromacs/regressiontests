@@ -73,7 +73,7 @@ cutoff-scheme            = Group
 ; nblist update frequency
 nstlist                  = 5
 ; ns algorithm (simple or grid)
-ns_type                  = simple
+ns_type                  = grid
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
