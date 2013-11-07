@@ -9,7 +9,7 @@ traj.part*.trr
 state*.cpt
 md.log
 md.part*.log
-confout.gro
+confout*.gro
 mdout.mdp
 topol.tpr
 *~
