@@ -65,6 +65,10 @@ my %progs = ( 'grompp'   => 'grompp',
 	      'gmxcheck' => 'gmxcheck',
 	      'editconf' => 'editconf' );
 
+# List of all the generic subdirectories of tests; pdb2gmx is treated
+# separately.
+my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'extra');
+
 sub setup_vars()
 {
     # We assume that the name of executables match the pattern 
@@ -372,7 +376,7 @@ sub test_systems {
 	       }
 	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
 	       close(WARN) || die "Could not close file 'grompp.warn'\n";
-		my $refwarn = "reference.warn";
+		my $refwarn = "${ref}.warn";
 		if (! -f $refwarn) {
 		    print("No $refwarn file in $dir\n");
 		    print ("This means you are not really testing $dir\n");
@@ -631,7 +635,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -649,7 +653,8 @@ sub refcleandir {
 	    if ( -d $dir ) {
 		chdir($dir);
 		print "Removing reference files in $dir\n"; 
-		unlink ("${ref}.edr","${ref}.tpr","${ref}.trr");
+                my @extensions = ('log', 'warn', 'edr', 'tpr', 'trr');
+                map { unlink("${ref}.$_") } @extensions;
 		chdir("..");
 	    }
 	}
@@ -868,12 +873,7 @@ sub test_pdb2gmx {
 }
 
 sub clean_all {
-    cleandirs("simple");
-    cleandirs("complex");
-    cleandirs("kernel");
-    cleandirs("freeenergy");
-    cleandirs("rotation");
-    cleandirs("extra");
+    map { cleandirs("$_") } @all_dirs;
     chdir("pdb2gmx");
     unlink("pdb2gmx.log");
     remove_tree(glob "pdb-*");
@@ -881,11 +881,12 @@ sub clean_all {
 }
 
 sub usage {
+    my $dirs = join(' | ', @all_dirs);
     print <<EOP;
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
-                    [ simple | complex | kernel | freeenergy | rotation | extra | pdb2gmx | all ]
+                    [ $dirs | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
     exit 1;
@@ -910,38 +911,18 @@ my $did_clean = 0;
 
 for ($kk=0; ($kk <= $#ARGV); $kk++) {
     my $arg = $ARGV[$kk];
-    if ($arg eq 'simple') {
-	push @work, "test_dirs('simple')";
-    }
-    elsif ($arg eq 'complex') {
-	push @work, "test_dirs('complex')";
-    }
-    elsif ($arg eq 'kernel' ) {
-	push @work, "test_dirs('kernel')";
-    }
-    elsif ($arg eq 'freeenergy' ) {
-	push @work, "test_dirs('freeenergy')";
-    }
-    elsif ($arg eq 'rotation' ) {
-	push @work, "test_dirs('rotation')";
-    }
-    elsif ($arg eq 'extra' ) {
-	push @work, "test_dirs('extra')";
+    # If $arg is a subdirectory of tests, test that subdirectory
+    if (grep(/^$arg$/, @all_dirs)) {
+        push @work, "test_dirs('$arg')";
     }
     elsif ($arg eq 'pdb2gmx' ) {
 	push @work, "test_pdb2gmx()";
     }
-    elsif ($arg eq 'tools' ) {
-	push @work, "test_tools()";
-    }
+#    elsif ($arg eq 'tools' ) {
+#	push @work, "test_tools()";
+#    }
     elsif ($arg eq 'all' ) {
-	#if adding a new folder also add it to tests/CMakeLists.txt, so that it is being run by ctest
-	push @work, "test_dirs('simple')";
-	push @work, "test_dirs('complex')";
-	push @work, "test_dirs('kernel')";
-	push @work, "test_dirs('freeenergy')";
-	push @work, "test_dirs('rotation')";
-	push @work, "test_dirs('extra')";
+        map { push @work, "test_dirs('$_')" } @all_dirs;
 	push @work, "test_pdb2gmx()";
 	#push @work, "test_tools()";
     }
@@ -950,8 +931,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         $did_clean = 1;
     }
     elsif ($arg eq 'refclean' ) {
-	push @work, "refcleandir('simple')";
-	push @work, "refcleandir('complex')";
+        map { push @work, "refcleandir('$_')" } @all_dirs;
 	push @work, "unlink('pdb2gmx/reference_s.log','pdb2gmx/reference_d.log')";
     }
     elsif ($arg eq 'dist' ) {
