@@ -1,53 +1,56 @@
-Log file opened on Thu Dec 20 14:12:33 2012
-Host: amd2  pid: 25824  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-beta2-dev-20121220-4d3a2d4
-GIT SHA1 hash:      4d3a2d48d7bdde9d1297230221ea2d088af0e8cc
-Branched from:      66ba29b16bd066b88f06813f62f43a5233723780 (1 newer local commits)
+Log file opened on Thu Nov  7 20:50:36 2013
+Host: amd2  pid: 58479  nodeid: 0  nnodes:  1
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+
+GROMACS is written by:
+Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
+Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra,
+Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff,
+Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz,
+Michael Shirts, Alfons Sijbers, Peter Tieleman,
+
+Berk Hess, David van der Spoel, and Erik Lindahl.
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2013, The GROMACS development team at
+Uppsala University & The Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+Executable: mdrun
+Command line:
+  mdrun -notunepme -table ../table -tablep ../tablep
+
+Gromacs version:    VERSION 5.0-dev-20131107-3b3032c
+GIT SHA1 hash:      3b3032ca1ef8984abf99ad3fe7555e099523c05e
+Branched from:      2a1ebb16bdfd40b7f89a58dabc4bf8d2d9fd8f34 (3 newer local commits)
 Precision:          single
+Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
-CPU acceleration:   None
+CPU acceleration:   NONE
 FFT library:        fftpack (built-in)
-Large file support: enabled
+Large file support: disabled
 RDTSCP usage:       enabled
-Built on:           Thu Dec 20 14:02:47 CET 2012
+Built on:           Sun Oct 13 16:14:06 CEST 2013
 Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.2.0-29-generic x86_64
+Build OS/arch:      Linux 3.5.0-41-generic x86_64
 Build CPU vendor:   AuthenticAMD
 Build CPU brand:    AMD Opteron(tm) Processor 6176
 Build CPU family:   16   Model: 9   Stepping: 1
 Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
-C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU g++-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C++ compiler flags:   -std=c++0x  -Wextra -Wno-missing-field-initializers -Wnon-virtual-dtor -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
-
-                         :-)  G  R  O  M  A  C  S  (-:
-
-                   Groningen Machine for Chemical Simulation
-
-                :-)  VERSION 4.6-beta2-dev-20121220-4d3a2d4  (-:
-
-        Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
-      Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
-        Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff, 
-           Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz, 
-                Michael Shirts, Alfons Sijbers, Peter Tieleman,
-
-               Berk Hess, David van der Spoel, and Erik Lindahl.
-
-       Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-            Copyright (c) 2001-2010, The GROMACS development team at
-        Uppsala University & The Royal Institute of Technology, Sweden.
-            check out http://www.gromacs.org for more information.
-
-         This program is free software; you can redistribute it and/or
-       modify it under the terms of the GNU Lesser General Public License
-        as published by the Free Software Foundation; either version 2.1
-             of the License, or (at your option) any later version.
-
-                                :-)  mdrun  (-:
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -310,7 +313,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 1.11e-06
 Initial temperature: 296.114 K
 
-Started mdrun on node 0 Thu Dec 20 14:12:33 2012
+Started mdrun on node 0 Thu Nov  7 20:50:36 2013
 
            Step           Time         Lambda
               0        0.00000        0.00000
@@ -326,16 +329,16 @@ Started mdrun on node 0 Thu Dec 20 14:12:33 2012
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Thu Dec 20 14:12:35 2012
+Writing checkpoint, step 20 at Thu Nov  7 20:50:38 2013
 
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.02697e+03    9.24448e+02   -4.33534e+02    0.00000e+00   -1.38288e+03
+    1.02697e+03    9.24448e+02   -4.33535e+02    0.00000e+00   -1.38288e+03
   Disper. corr.   Coulomb (SR)      Potential    Kinetic En.   Total Energy
    -1.73672e+03   -2.12340e+04   -2.28357e+04    6.14474e+03   -1.66910e+04
   Conserved En.    Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-   -1.66524e+04    2.95792e+02   -5.25950e+02   -9.19692e+01    1.06555e-06
+   -1.66524e+04    2.95793e+02   -5.25950e+02   -9.21130e+01    1.05933e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -345,21 +348,21 @@ Writing checkpoint, step 20 at Thu Dec 20 14:12:35 2012
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.03458e+03    9.30621e+02   -4.26810e+02    0.00000e+00   -1.36718e+03
+    1.03458e+03    9.30622e+02   -4.26810e+02    0.00000e+00   -1.36718e+03
   Disper. corr.   Coulomb (SR)      Potential    Kinetic En.   Total Energy
    -1.73672e+03   -2.12502e+04   -2.28157e+04    6.14292e+03   -1.66728e+04
   Conserved En.    Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-   -1.66535e+04    2.95705e+02   -5.25950e+02   -1.01175e+02    0.00000e+00
+   -1.66535e+04    2.95705e+02   -5.25950e+02   -1.01246e+02    0.00000e+00
 
    Total Virial (kJ/mol)
-    2.51419e+03   -3.27257e+02   -7.93411e+01
-   -3.27768e+02    2.20127e+03    2.66951e+02
-   -7.98069e+01    2.67178e+02    1.92859e+03
+    2.51414e+03   -3.27206e+02   -7.93849e+01
+   -3.27716e+02    2.20138e+03    2.66986e+02
+   -7.98509e+01    2.67213e+02    1.92887e+03
 
    Pressure (bar)
-   -2.56507e+02    1.96096e+02    7.75683e+01
-    1.96405e+02   -1.05024e+02   -1.61190e+02
-    7.78503e+01   -1.61328e+02    5.80057e+01
+   -2.56479e+02    1.96065e+02    7.75946e+01
+    1.96374e+02   -1.05094e+02   -1.61211e+02
+    7.78769e+01   -1.61349e+02    5.78340e+01
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -372,12 +375,12 @@ Writing checkpoint, step 20 at Thu Dec 20 14:12:35 2012
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
  Pair Search distance check               1.248920          11.240     2.8
- NxN RF Elec. + VdW [F]                   3.815216         144.978    35.6
- NxN RF Elec. + VdW [V&F]                 0.405176          21.880     5.4
- NxN VdW [F]                              2.934576          96.841    23.8
- NxN VdW [V&F]                            0.301472          12.963     3.2
- NxN RF Electrostatics [F]                3.061536          94.908    23.3
- NxN RF Electrostatics [V&F]              0.321784          11.584     2.8
+ NxN RF Elec. + VdW [F]                   3.476744         132.116    32.6
+ NxN RF Elec. + VdW [V&F]                 0.370024          19.981     4.9
+ NxN VdW [F]                              3.274192         108.048    26.6
+ NxN VdW [V&F]                            0.339872          14.614     3.6
+ NxN RF Electrostatics [F]                3.060392          94.872    23.4
+ NxN RF Electrostatics [V&F]              0.318536          11.467     2.8
  1,4 nonbonded interactions               0.012600           1.134     0.3
  Shift-X                                  0.007200           0.043     0.0
  Angles                                   0.016800           2.822     0.7
@@ -391,7 +394,7 @@ Writing checkpoint, step 20 at Thu Dec 20 14:12:35 2012
  Constraint-Vir                           0.004400           0.106     0.0
  Settle                                   0.009200           2.972     0.7
 -----------------------------------------------------------------------------
- Total                                                     407.732   100.0
+ Total                                                     405.678   100.0
 -----------------------------------------------------------------------------
 
 
@@ -399,19 +402,19 @@ Writing checkpoint, step 20 at Thu Dec 20 14:12:35 2012
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.062        0.142     3.6
- Force                  1    1         21       1.587        3.653    92.6
+ Neighbor search        1    1          3       0.061        0.141     3.5
+ Force                  1    1         21       1.587        3.656    92.3
  NB X/F buffer ops.     1    1         39       0.002        0.006     0.1
- Write traj.            1    1          2       0.025        0.058     1.5
- Update                 1    1         21       0.004        0.010     0.2
- Constraints            1    1         21       0.028        0.064     1.6
- Rest                   1                       0.006        0.014     0.4
+ Write traj.            1    1          2       0.028        0.064     1.6
+ Update                 1    1         21       0.004        0.010     0.3
+ Constraints            1    1         21       0.030        0.070     1.8
+ Rest                   1                       0.007        0.017     0.4
 -----------------------------------------------------------------------------
- Total                  1                       1.714        3.946   100.0
+ Total                  1                       1.721        3.963   100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.710        1.714       99.8
+       Time:        1.711        1.721       99.4
                  (ns/day)    (hour/ns)
-Performance:        2.117       11.337
-Finished mdrun on node 0 Thu Dec 20 14:12:35 2012
+Performance:        2.109       11.380
+Finished mdrun on node 0 Thu Nov  7 20:50:36 2013

@@ -1,53 +1,56 @@
-Log file opened on Thu Dec 20 14:12:56 2012
-Host: amd2  pid: 30786  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-beta2-dev-20121220-4d3a2d4
-GIT SHA1 hash:      4d3a2d48d7bdde9d1297230221ea2d088af0e8cc
-Branched from:      66ba29b16bd066b88f06813f62f43a5233723780 (1 newer local commits)
+Log file opened on Thu Nov  7 20:50:54 2013
+Host: amd2  pid: 58621  nodeid: 0  nnodes:  1
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+
+GROMACS is written by:
+Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
+Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra,
+Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff,
+Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz,
+Michael Shirts, Alfons Sijbers, Peter Tieleman,
+
+Berk Hess, David van der Spoel, and Erik Lindahl.
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2013, The GROMACS development team at
+Uppsala University & The Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+Executable: mdrun
+Command line:
+  mdrun -notunepme -table ../table -tablep ../tablep
+
+Gromacs version:    VERSION 5.0-dev-20131107-3b3032c
+GIT SHA1 hash:      3b3032ca1ef8984abf99ad3fe7555e099523c05e
+Branched from:      2a1ebb16bdfd40b7f89a58dabc4bf8d2d9fd8f34 (3 newer local commits)
 Precision:          single
+Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
-CPU acceleration:   None
+CPU acceleration:   NONE
 FFT library:        fftpack (built-in)
-Large file support: enabled
+Large file support: disabled
 RDTSCP usage:       enabled
-Built on:           Thu Dec 20 14:02:47 CET 2012
+Built on:           Sun Oct 13 16:14:06 CEST 2013
 Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.2.0-29-generic x86_64
+Build OS/arch:      Linux 3.5.0-41-generic x86_64
 Build CPU vendor:   AuthenticAMD
 Build CPU brand:    AMD Opteron(tm) Processor 6176
 Build CPU family:   16   Model: 9   Stepping: 1
 Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
-C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU g++-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C++ compiler flags:   -std=c++0x  -Wextra -Wno-missing-field-initializers -Wnon-virtual-dtor -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
-
-                         :-)  G  R  O  M  A  C  S  (-:
-
-                   Groningen Machine for Chemical Simulation
-
-                :-)  VERSION 4.6-beta2-dev-20121220-4d3a2d4  (-:
-
-        Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
-      Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
-        Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff, 
-           Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz, 
-                Michael Shirts, Alfons Sijbers, Peter Tieleman,
-
-               Berk Hess, David van der Spoel, and Erik Lindahl.
-
-       Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-            Copyright (c) 2001-2010, The GROMACS development team at
-        Uppsala University & The Royal Institute of Technology, Sweden.
-            check out http://www.gromacs.org for more information.
-
-         This program is free software; you can redistribute it and/or
-       modify it under the terms of the GNU Lesser General Public License
-        as published by the Free Software Foundation; either version 2.1
-             of the License, or (at your option) any later version.
-
-                                :-)  mdrun  (-:
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -261,9 +264,9 @@ Table routines are used for coulomb: TRUE
 Table routines are used for vdw:     TRUE
 Cut-off's:   NS: 0.99   Coulomb: 0.99   LJ: 0.99
 System total charge: 0.000
-Read user tables from table.xvg with 12001 data points.
+Read user tables from ../table.xvg with 12001 data points.
 Tabscale = 2000 points/nm
-Read user tables from tablep.xvg with 12001 data points.
+Read user tables from ../tablep.xvg with 12001 data points.
 Tabscale = 2000 points/nm
 
 Enabling SPC-like water optimization for 196 molecules.
@@ -280,7 +283,7 @@ Max number of graph edges per atom is 4
 Total number of graph edges is 848
 Initial temperature: 0 K
 
-Started mdrun on node 0 Thu Dec 20 14:12:56 2012
+Started mdrun on node 0 Thu Nov  7 20:50:55 2013
 
            Step           Time         Lambda
               0        0.00000        0.00000
@@ -298,7 +301,7 @@ Grid: 3 x 3 x 3 cells
            Step           Time         Lambda
               2        0.00400        0.00000
 
-Writing checkpoint, step 2 at Thu Dec 20 14:12:56 2012
+Writing checkpoint, step 2 at Thu Nov  7 20:50:55 2013
 
 
    Energies (kJ/mol)
@@ -374,17 +377,17 @@ Protein_both-SOL    0.00000e+00    0.00000e+00    0.00000e+00    0.00000e+00
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.003        0.006    17.9
- Force                  1    1          3       0.002        0.004    11.4
- Write traj.            1    1          3       0.008        0.019    54.5
+ Neighbor search        1    1          3       0.001        0.003     9.7
+ Force                  1    1          3       0.001        0.002     7.0
+ Write traj.            1    1          3       0.009        0.023    64.6
  Update                 1    1          3       0.000        0.001     1.5
- Rest                   1                       0.002        0.005    14.7
+ Rest                   1                       0.002        0.006    17.2
 -----------------------------------------------------------------------------
- Total                  1                       0.015        0.036   100.0
+ Total                  1                       0.014        0.035   100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.020        0.015      135.6
+       Time:        0.010        0.014       70.4
                  (ns/day)    (hour/ns)
-Performance:       35.150        0.683
-Finished mdrun on node 0 Thu Dec 20 14:12:56 2012
+Performance:       37.883        0.634
+Finished mdrun on node 0 Thu Nov  7 20:50:55 2013

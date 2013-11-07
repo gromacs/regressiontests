@@ -1,53 +1,56 @@
-Log file opened on Thu Dec 20 14:14:39 2012
-Host: amd2  pid: 32283  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-beta2-dev-20121220-4d3a2d4
-GIT SHA1 hash:      4d3a2d48d7bdde9d1297230221ea2d088af0e8cc
-Branched from:      66ba29b16bd066b88f06813f62f43a5233723780 (1 newer local commits)
+Log file opened on Thu Nov  7 20:52:28 2013
+Host: amd2  pid: 59162  nodeid: 0  nnodes:  1
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+
+GROMACS is written by:
+Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
+Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra,
+Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff,
+Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz,
+Michael Shirts, Alfons Sijbers, Peter Tieleman,
+
+Berk Hess, David van der Spoel, and Erik Lindahl.
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2013, The GROMACS development team at
+Uppsala University & The Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+Executable: mdrun
+Command line:
+  mdrun -notunepme -table ../table -tablep ../tablep
+
+Gromacs version:    VERSION 5.0-dev-20131107-3b3032c
+GIT SHA1 hash:      3b3032ca1ef8984abf99ad3fe7555e099523c05e
+Branched from:      2a1ebb16bdfd40b7f89a58dabc4bf8d2d9fd8f34 (3 newer local commits)
 Precision:          single
+Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
-CPU acceleration:   None
+CPU acceleration:   NONE
 FFT library:        fftpack (built-in)
-Large file support: enabled
+Large file support: disabled
 RDTSCP usage:       enabled
-Built on:           Thu Dec 20 14:02:47 CET 2012
+Built on:           Sun Oct 13 16:14:06 CEST 2013
 Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.2.0-29-generic x86_64
+Build OS/arch:      Linux 3.5.0-41-generic x86_64
 Build CPU vendor:   AuthenticAMD
 Build CPU brand:    AMD Opteron(tm) Processor 6176
 Build CPU family:   16   Model: 9   Stepping: 1
 Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
-C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU g++-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C++ compiler flags:   -std=c++0x  -Wextra -Wno-missing-field-initializers -Wnon-virtual-dtor -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
-
-                         :-)  G  R  O  M  A  C  S  (-:
-
-                   Groningen Machine for Chemical Simulation
-
-                :-)  VERSION 4.6-beta2-dev-20121220-4d3a2d4  (-:
-
-        Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
-      Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
-        Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff, 
-           Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz, 
-                Michael Shirts, Alfons Sijbers, Peter Tieleman,
-
-               Berk Hess, David van der Spoel, and Erik Lindahl.
-
-       Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-            Copyright (c) 2001-2010, The GROMACS development team at
-        Uppsala University & The Royal Institute of Technology, Sweden.
-            check out http://www.gromacs.org for more information.
-
-         This program is free software; you can redistribute it and/or
-       modify it under the terms of the GNU Lesser General Public License
-        as published by the Free Software Foundation; either version 2.1
-             of the License, or (at your option) any later version.
-
-                                :-)  mdrun  (-:
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -181,7 +184,15 @@ Input Parameters:
    init-lambda          = -1
    delta-lambda         = 0
    n-lambdas            = 5
-   all-lambdas:
+   separate-dvdl:
+       fep-lambdas =   FALSE
+      mass-lambdas =   FALSE
+      coul-lambdas =   FALSE
+       vdw-lambdas =   FALSE
+    bonded-lambdas =   FALSE
+ restraint-lambdas =   FALSE
+temperature-lambdas =   FALSE
+all-lambdas:
        fep-lambdas =            0           0           0           0           0
       mass-lambdas =            0           0           0           0           0
       coul-lambdas =            0           0           0           0           0
@@ -189,6 +200,7 @@ Input Parameters:
     bonded-lambdas =            0           0           0           0           0
  restraint-lambdas =            0           0           0           0           0
 temperature-lambdas =            0         0.2         0.4         0.8           1
+   calc-lambda-neighbors = 1
    sc-alpha             = 0
    bScCoul              = FALSE
    bScPrintEnergy       = TRUE
@@ -214,7 +226,7 @@ temperature-lambdas =            0         0.2         0.4         0.8          
    init-wl-delta        = 1
    wl-ratio             = 0.8
    bWLoneovert          = FALSE
-   lmc-seed             = 32279
+   lmc-seed             = 59159
    mc-temperature       = 298
    lmc-weights-equil    = wl-delta
    weight-equil-wl-delta = 0.001
@@ -315,7 +327,7 @@ Acceleration selected at GROMACS compile time: None
 
 Table routines are used for coulomb: TRUE
 Table routines are used for vdw:     TRUE
-Will do PME sum in reciprocal space.
+Will do PME sum in reciprocal space for electrostatic interactions.
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
 U. Essmann, L. Perera, M. L. Berkowitz, T. Darden, H. Lee and L. G. Pedersen 
@@ -378,7 +390,7 @@ Total number of graph edges is 3592
 Constraining the starting coordinates (step 0)
 Initial temperature: 294.228 K
 
-Started mdrun on node 0 Thu Dec 20 14:14:39 2012
+Started mdrun on node 0 Thu Nov  7 20:52:28 2013
 
            Step           Time         Lambda
               0        0.00000        0.00000
@@ -407,11 +419,11 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    4.74414e+00    5.62037e+03   -4.09860e+02   -3.07440e+04   -1.04341e+04
+    4.74393e+00    5.62032e+03   -4.09860e+02   -3.07443e+04   -1.04342e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59628e+04    6.43545e+03   -2.95274e+04   -2.95542e+04    2.87519e+02
+   -3.59633e+04    6.43465e+03   -2.95286e+04   -2.95258e+04    2.87483e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -2.25591e+02
+   -2.53230e+02   -2.36192e+02
 
            Step           Time         Lambda
              40        0.04000        0.00000
@@ -427,11 +439,11 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    1.32338e+01    5.65095e+03   -4.09860e+02   -3.06841e+04   -1.04737e+04
+    1.32325e+01    5.65074e+03   -4.09860e+02   -3.06844e+04   -1.04737e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59034e+04    6.41193e+03   -2.94915e+04   -2.95313e+04    2.86469e+02
+   -3.59040e+04    6.41128e+03   -2.94927e+04   -2.95257e+04    2.86440e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -1.40147e+02
+   -2.53230e+02   -1.44624e+02
 
            Step           Time         Lambda
              60        0.06000        0.00000
@@ -447,11 +459,11 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    8.55121e+00    5.67455e+03   -4.09860e+02   -3.07778e+04   -1.04487e+04
+    8.55081e+00    5.67439e+03   -4.09860e+02   -3.07782e+04   -1.04488e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59533e+04    6.46250e+03   -2.94908e+04   -2.95261e+04    2.88728e+02
+   -3.59539e+04    6.46191e+03   -2.94920e+04   -2.95257e+04    2.88702e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -1.34274e+01
+   -2.53230e+02   -1.66081e+01
 
            Step           Time         Lambda
              80        0.08000        0.00000
@@ -467,16 +479,16 @@ Grid: 4 x 4 x 4 cells
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    7.04390e+00    5.69781e+03   -4.09860e+02   -3.08340e+04   -1.04451e+04
+    7.04343e+00    5.69774e+03   -4.09860e+02   -3.08345e+04   -1.04451e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59841e+04    6.47883e+03   -2.95052e+04   -2.95154e+04    2.89457e+02
+   -3.59847e+04    6.47829e+03   -2.95064e+04   -2.95257e+04    2.89433e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -7.68175e+01
+   -2.53230e+02   -7.94250e+01
 
            Step           Time         Lambda
             100        0.10000        0.00000
 
-Writing checkpoint, step 100 at Thu Dec 20 14:14:47 2012
+Writing checkpoint, step 100 at Thu Nov  7 20:52:37 2013
 
 
              MC-lambda information
@@ -490,11 +502,11 @@ Writing checkpoint, step 100 at Thu Dec 20 14:14:47 2012
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    1.03944e+01    5.78951e+03   -4.09860e+02   -3.10757e+04   -1.04835e+04
+    1.03935e+01    5.78954e+03   -4.09860e+02   -3.10763e+04   -1.04836e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.61692e+04    6.65690e+03   -2.95122e+04   -2.95322e+04    2.97413e+02
+   -3.61698e+04    6.65636e+03   -2.95134e+04   -2.95259e+04    2.97389e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02    5.07901e+01
+   -2.53230e+02    4.48858e+01
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -504,21 +516,21 @@ Writing checkpoint, step 100 at Thu Dec 20 14:14:47 2012
 
    Energies (kJ/mol)
           Angle        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    9.35584e+00    5.66422e+03   -4.09860e+02   -3.07686e+04   -1.04502e+04
+    9.35533e+00    5.66414e+03   -4.09860e+02   -3.07690e+04   -1.04503e+04
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59552e+04    6.49610e+03   -2.94591e+04   -2.94830e+04    2.90229e+02
+   -3.59556e+04    6.49559e+03   -2.94600e+04   -2.94802e+04    2.90206e+02
  Pres. DC (bar) Pressure (bar)
-   -2.53230e+02   -1.08918e+02
+   -2.53230e+02   -1.13276e+02
 
    Total Virial (kJ/mol)
-    1.83385e+03   -1.94398e+02    1.81701e+02
-   -1.94262e+02    2.31809e+03   -3.67705e+02
-    1.82707e+02   -3.68607e+02    2.60858e+03
+    1.83726e+03   -1.91181e+02    1.82469e+02
+   -1.91607e+02    2.32310e+03   -3.67647e+02
+    1.84106e+02   -3.65874e+02    2.61023e+03
 
    Pressure (bar)
-    4.12686e+02    2.56687e+02   -2.69371e+02
-    2.56518e+02   -2.30483e+02    5.19863e+02
-   -2.70615e+02    5.20977e+02   -5.08955e+02
+    4.08264e+02    2.52709e+02   -2.70314e+02
+    2.53236e+02   -2.36882e+02    5.19780e+02
+   -2.72338e+02    5.17590e+02   -5.11209e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -536,28 +548,28 @@ Writing checkpoint, step 100 at Thu Dec 20 14:14:47 2012
  NB VdW & Elec. [F]                       1.626090           1.626     0.1
  NB VdW & Elec. [W3,V&F]                  0.378623           0.379     0.0
  NB VdW & Elec. [W3,F]                    2.698250           2.698     0.1
- NB VdW & Elec. [W3-W3,V&F]             199.206384         199.206     6.5
- NB VdW & Elec. [W3-W3,F]              1450.795832        1450.796    47.2
+ NB VdW & Elec. [W3-W3,V&F]             199.205584         199.206     6.5
+ NB VdW & Elec. [W3-W3,F]              1450.792984        1450.793    47.3
  Calc Weights                             0.815979          29.375     1.0
  Spread Q Bspline                        58.750488         117.501     3.8
  Gather F Bspline                        58.750488         352.503    11.5
- 3D-FFT                                  99.287040         794.296    25.8
+ 3D-FFT                                  99.287040         794.296    25.9
  Solve PME                                0.103424           6.619     0.2
- NS-Pairs                                 2.015408          42.324     1.4
+ NS-Pairs                                 2.015416          42.324     1.4
  Reset In Box                             0.009867           0.030     0.0
  Shift-X                                  0.543986           3.264     0.1
  CG-CoM                                   0.029623           0.089     0.0
  Angles                                   0.000606           0.102     0.0
  Virial                                   0.030118           0.542     0.0
- Stop-CM                                  0.018851           0.189     0.0
- Calc-Ekin                                0.271993           7.344     0.2
- Shake                                    0.002300           0.069     0.0
+ Stop-CM                                  0.002693           0.027     0.0
+ Calc-Ekin                                0.056553           1.527     0.0
+ Shake                                    0.002308           0.069     0.0
  Constraint-V                             0.272296           2.178     0.1
  Shake-Init                               0.000816           0.008     0.0
  Constraint-Vir                           0.029656           0.712     0.0
  Settle                                   0.182784          59.039     1.9
 -----------------------------------------------------------------------------
- Total                                                    3073.411   100.0
+ Total                                                    3067.429   100.0
 -----------------------------------------------------------------------------
 
 
@@ -565,24 +577,24 @@ Writing checkpoint, step 100 at Thu Dec 20 14:14:47 2012
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1         11       0.158        0.363     1.8
- Force                  1    1        101       4.865       11.193    56.1
- PME mesh               1    1        101       3.410        7.846    39.3
- Write traj.            1    1          2       0.032        0.074     0.4
+ Neighbor search        1    1         11       0.156        0.359     1.8
+ Force                  1    1        101       5.042       11.601    57.1
+ PME mesh               1    1        101       3.416        7.859    38.7
+ Write traj.            1    1          2       0.032        0.075     0.4
  Update                 1    1        101       0.044        0.101     0.5
- Constraints            1    1        202       0.084        0.194     1.0
- Rest                   1                       0.082        0.189     0.9
+ Constraints            1    1        202       0.085        0.196     1.0
+ Rest                   1                       0.049        0.114     0.6
 -----------------------------------------------------------------------------
- Total                  1                       8.676       19.959   100.0
+ Total                  1                       8.825       20.304   100.0
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
- PME spread/gather      1    1        202       2.035        4.682    23.5
- PME 3D-FFT             1    1        202       1.199        2.758    13.8
- PME solve              1    1        101       0.176        0.404     2.0
+ PME spread/gather      1    1        202       2.040        4.694    23.1
+ PME 3D-FFT             1    1        202       1.196        2.751    13.5
+ PME solve Elec         1    1        101       0.180        0.414     2.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        8.670        8.676       99.9
+       Time:        8.807        8.825       99.8
                  (ns/day)    (hour/ns)
-Performance:        1.006       23.860
-Finished mdrun on node 0 Thu Dec 20 14:14:47 2012
+Performance:        0.989       24.271
+Finished mdrun on node 0 Thu Nov  7 20:52:28 2013

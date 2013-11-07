@@ -1,53 +1,56 @@
-Log file opened on Thu Dec 20 14:13:31 2012
-Host: amd2  pid: 32146  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-beta2-dev-20121220-4d3a2d4
-GIT SHA1 hash:      4d3a2d48d7bdde9d1297230221ea2d088af0e8cc
-Branched from:      66ba29b16bd066b88f06813f62f43a5233723780 (1 newer local commits)
+Log file opened on Thu Nov  7 20:51:21 2013
+Host: amd2  pid: 59099  nodeid: 0  nnodes:  1
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+
+GROMACS is written by:
+Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
+Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra,
+Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff,
+Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz,
+Michael Shirts, Alfons Sijbers, Peter Tieleman,
+
+Berk Hess, David van der Spoel, and Erik Lindahl.
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2013, The GROMACS development team at
+Uppsala University & The Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:    mdrun, VERSION 5.0-dev-20131107-3b3032c
+Executable: mdrun
+Command line:
+  mdrun -notunepme -table ../table -tablep ../tablep
+
+Gromacs version:    VERSION 5.0-dev-20131107-3b3032c
+GIT SHA1 hash:      3b3032ca1ef8984abf99ad3fe7555e099523c05e
+Branched from:      2a1ebb16bdfd40b7f89a58dabc4bf8d2d9fd8f34 (3 newer local commits)
 Precision:          single
+Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
-CPU acceleration:   None
+CPU acceleration:   NONE
 FFT library:        fftpack (built-in)
-Large file support: enabled
+Large file support: disabled
 RDTSCP usage:       enabled
-Built on:           Thu Dec 20 14:02:47 CET 2012
+Built on:           Sun Oct 13 16:14:06 CEST 2013
 Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.2.0-29-generic x86_64
+Build OS/arch:      Linux 3.5.0-41-generic x86_64
 Build CPU vendor:   AuthenticAMD
 Build CPU brand:    AMD Opteron(tm) Processor 6176
 Build CPU family:   16   Model: 9   Stepping: 1
 Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
-C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU g++-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C++ compiler flags:   -std=c++0x  -Wextra -Wno-missing-field-initializers -Wnon-virtual-dtor -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
-
-                         :-)  G  R  O  M  A  C  S  (-:
-
-                   Groningen Machine for Chemical Simulation
-
-                :-)  VERSION 4.6-beta2-dev-20121220-4d3a2d4  (-:
-
-        Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
-      Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
-        Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff, 
-           Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz, 
-                Michael Shirts, Alfons Sijbers, Peter Tieleman,
-
-               Berk Hess, David van der Spoel, and Erik Lindahl.
-
-       Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-            Copyright (c) 2001-2010, The GROMACS development team at
-        Uppsala University & The Royal Institute of Technology, Sweden.
-            check out http://www.gromacs.org for more information.
-
-         This program is free software; you can redistribute it and/or
-       modify it under the terms of the GNU Lesser General Public License
-        as published by the Free Software Foundation; either version 2.1
-             of the License, or (at your option) any later version.
-
-                                :-)  mdrun  (-:
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -172,7 +175,15 @@ Input Parameters:
    init-lambda          = -1
    delta-lambda         = 0
    n-lambdas            = 9
-   all-lambdas:
+   separate-dvdl:
+       fep-lambdas =   FALSE
+      mass-lambdas =   FALSE
+      coul-lambdas =   TRUE
+       vdw-lambdas =   TRUE
+    bonded-lambdas =   FALSE
+ restraint-lambdas =   FALSE
+temperature-lambdas =   FALSE
+all-lambdas:
        fep-lambdas =            0           0           0           0           0           0           0           0           0
       mass-lambdas =            0           0           0           0           0           0           0           0           0
       coul-lambdas =            0           0           0           0           0           0         0.4         0.8           1
@@ -180,6 +191,7 @@ Input Parameters:
     bonded-lambdas =            0           0           0           0           0           0           0           0           0
  restraint-lambdas =            0           0           0           0           0           0           0           0           0
 temperature-lambdas =            0           0           0           0           0           0           0           0           0
+   calc-lambda-neighbors = 1
    sc-alpha             = 0.5
    bScCoul              = FALSE
    bScPrintEnergy       = FALSE
@@ -282,7 +294,7 @@ Acceleration selected at GROMACS compile time: None
 
 Table routines are used for coulomb: FALSE
 Table routines are used for vdw:     TRUE
-Will do PME sum in reciprocal space.
+Will do PME sum in reciprocal space for electrostatic interactions.
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
 U. Essmann, L. Perera, M. L. Berkowitz, T. Darden, H. Lee and L. G. Pedersen 
@@ -357,7 +369,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 1.46e-06
 Initial temperature: 303.109 K
 
-Started mdrun on node 0 Thu Dec 20 14:13:31 2012
+Started mdrun on node 0 Thu Nov  7 20:51:21 2013
 
            Step           Time         Lambda
               0        0.00000        0.00000
@@ -370,25 +382,25 @@ Grid: 4 x 4 x 3 cells
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
     5.70188e+03   -4.10327e+02   -3.19340e+04   -3.38039e+03   -3.01885e+04
     Kinetic En.   Total Energy    Temperature Pres. DC (bar) Pressure (bar)
-    4.84593e+03   -2.53425e+04    3.02297e+02   -3.47142e+02   -1.52280e+03
+    4.84593e+03   -2.53425e+04    3.02297e+02   -3.47142e+02   -1.52277e+03
       dVcoul/dl       dVvdw/dl   Constr. rmsd
-   -3.85134e+01   -8.80505e+00    1.71564e-06
+   -3.85138e+01   -2.04355e+01    1.57713e-06
 
            Step           Time         Lambda
              60        0.06000        0.00000
 
-Writing checkpoint, step 60 at Thu Dec 20 14:13:35 2012
+Writing checkpoint, step 60 at Thu Nov  7 20:51:25 2013
 
 
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.          LJ-14     Coulomb-14
-    8.98905e+00    1.65548e-02    2.56317e+00    8.21621e-01   -1.81097e+02
+    8.98854e+00    1.65165e-02    2.56357e+00    8.21758e-01   -1.81097e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
-    5.89883e+03   -4.10327e+02   -3.19502e+04   -3.34348e+03   -2.99739e+04
+    5.89883e+03   -4.10327e+02   -3.19503e+04   -3.34348e+03   -2.99739e+04
     Kinetic En.   Total Energy    Temperature Pres. DC (bar) Pressure (bar)
-    4.63489e+03   -2.53390e+04    2.89132e+02   -3.47142e+02   -8.25666e+02
+    4.63490e+03   -2.53390e+04    2.89132e+02   -3.47142e+02   -8.25966e+02
       dVcoul/dl       dVvdw/dl   Constr. rmsd
-   -5.48738e+01    8.11852e-01    1.65530e-06
+   -5.48744e+01   -1.13026e+01    1.59115e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -398,27 +410,27 @@ Writing checkpoint, step 60 at Thu Dec 20 14:13:35 2012
 
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.          LJ-14     Coulomb-14
-    7.77117e+00    4.64067e-01    3.70532e+00    7.64166e-01   -1.82811e+02
+    7.77112e+00    4.64036e-01    3.70537e+00    7.64157e-01   -1.82811e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
     5.74914e+03   -4.10327e+02   -3.18611e+04   -3.35494e+03   -3.00473e+04
     Kinetic En.   Total Energy    Temperature Pres. DC (bar) Pressure (bar)
-    4.70576e+03   -2.53416e+04    2.93553e+02   -3.47142e+02   -1.25310e+03
+    4.70577e+03   -2.53416e+04    2.93553e+02   -3.47142e+02   -1.25323e+03
       dVcoul/dl       dVvdw/dl   Constr. rmsd
-   -4.90551e+01   -5.62236e+00    0.00000e+00
+   -4.90549e+01   -1.68800e+01    0.00000e+00
 
    Total Virial (kJ/mol)
-    2.74041e+03    1.60254e+02   -4.59764e+02
-    1.60451e+02    1.91123e+03    4.19432e+02
-   -4.59597e+02    4.19527e+02    2.28072e+03
+    2.74039e+03    1.60154e+02   -4.59483e+02
+    1.60480e+02    1.91131e+03    4.19597e+02
+   -4.59475e+02    4.19513e+02    2.28088e+03
 
    Pressure (bar)
-   -1.99416e+03   -2.31296e+02    9.34950e+02
-   -2.31628e+02   -5.15327e+02   -7.58217e+02
-    9.34668e+02   -7.58377e+02   -1.24983e+03
+   -1.99414e+03   -2.31127e+02    9.34474e+02
+   -2.31676e+02   -5.15446e+02   -7.58495e+02
+    9.34459e+02   -7.58353e+02   -1.25009e+03
 
   Epot (kJ/mol)        Coul-SR          LJ-SR        Coul-14          LJ-14   
-Protein-Protein    5.73552e+01    0.00000e+00   -1.82811e+02    7.64166e-01
-    Protein-SOL   -2.75953e+01   -2.65294e+01    0.00000e+00    0.00000e+00
+Protein-Protein    5.73552e+01    0.00000e+00   -1.82811e+02    7.64157e-01
+    Protein-SOL   -2.75951e+01   -2.65297e+01    0.00000e+00    0.00000e+00
         SOL-SOL   -3.18909e+04    5.77567e+03    0.00000e+00    0.00000e+00
 
 
@@ -463,24 +475,24 @@ Protein-Protein    5.73552e+01    0.00000e+00   -1.82811e+02    7.64166e-01
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          7       0.109        0.250     2.7
- Force                  1    1         61       2.606        5.997    65.0
- PME mesh               1    1         61       1.189        2.737    29.7
- Write traj.            1    1          2       0.024        0.056     0.6
- Update                 1    1         61       0.009        0.022     0.2
- Constraints            1    1         61       0.027        0.061     0.7
+ Neighbor search        1    1          7       0.102        0.235     2.6
+ Force                  1    1         61       2.568        5.911    64.6
+ PME mesh               1    1         61       1.194        2.749    30.1
+ Write traj.            1    1          2       0.027        0.062     0.7
+ Update                 1    1         61       0.010        0.022     0.2
+ Constraints            1    1         61       0.027        0.062     0.7
  Rest                   1                       0.045        0.103     1.1
 -----------------------------------------------------------------------------
- Total                  1                       4.009        9.225   100.0
+ Total                  1                       3.973        9.144   100.0
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
- PME spread/gather      1    1        244       0.590        1.357    14.7
- PME 3D-FFT             1    1        244       0.479        1.103    12.0
- PME solve              1    1        122       0.120        0.277     3.0
+ PME spread/gather      1    1        244       0.590        1.358    14.9
+ PME 3D-FFT             1    1        244       0.482        1.110    12.1
+ PME solve Elec         1    1        122       0.121        0.279     3.1
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        4.000        4.009       99.8
+       Time:        3.960        3.973       99.7
                  (ns/day)    (hour/ns)
-Performance:        1.315       18.254
-Finished mdrun on node 0 Thu Dec 20 14:13:35 2012
+Performance:        1.327       18.091
+Finished mdrun on node 0 Thu Nov  7 20:51:21 2013
