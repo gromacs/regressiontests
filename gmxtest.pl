@@ -935,6 +935,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	push @work, "test_tools()";
     }
     elsif ($arg eq 'all' ) {
+	#if adding a new folder also add it to tests/CMakeLists.txt, so that it is being run by ctest
 	push @work, "test_dirs('simple')";
 	push @work, "test_dirs('complex')";
 	push @work, "test_dirs('kernel')";
