@@ -86,7 +86,7 @@ sub setup_vars()
 	{
 	    # edit the next line if you need to customize the call to runjob
 	    $mdprefix = "runjob -n $mpi_processes";
-	} elsif ( $mpirun =~ /aprun/ ) {
+	} elsif ( $mpirun =~ /(ap|s)run/ ) {
 	    $mdprefix = "$mpirun -n $mpi_processes";
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
@@ -411,7 +411,7 @@ sub test_systems {
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
 		my $local_mdprefix = $mdprefix;
-		if ( $mpi_processes > 0 && !($mpirun =~ /aprun/) ) {
+		if ( $mpi_processes > 0 && !($mpirun =~ /(ap|s)run/) ) {
                     $local_mdprefix .= ($bluegene > 0 ?
                                   ' --cwd ' :
                                   ' -wdir ') . getcwd(); 
@@ -872,6 +872,7 @@ sub clean_all {
     cleandirs("complex");
     cleandirs("kernel");
     cleandirs("freeenergy");
+    cleandirs("rotation");
     cleandirs("extra");
     chdir("pdb2gmx");
     unlink("pdb2gmx.log");
@@ -884,7 +885,7 @@ sub usage {
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
                     [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
-                    [ simple | complex | kernel | freeenergy | extra | pdb2gmx | all ]
+                    [ simple | complex | kernel | freeenergy | rotation | extra | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
     exit 1;
@@ -921,6 +922,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'freeenergy' ) {
 	push @work, "test_dirs('freeenergy')";
     }
+    elsif ($arg eq 'rotation' ) {
+	push @work, "test_dirs('rotation')";
+    }
     elsif ($arg eq 'extra' ) {
 	push @work, "test_dirs('extra')";
     }
@@ -931,10 +935,12 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	push @work, "test_tools()";
     }
     elsif ($arg eq 'all' ) {
+	#if adding a new folder also add it to tests/CMakeLists.txt, so that it is being run by ctest
 	push @work, "test_dirs('simple')";
 	push @work, "test_dirs('complex')";
 	push @work, "test_dirs('kernel')";
 	push @work, "test_dirs('freeenergy')";
+	push @work, "test_dirs('rotation')";
 	push @work, "test_dirs('extra')";
 	push @work, "test_pdb2gmx()";
 	#push @work, "test_tools()";
