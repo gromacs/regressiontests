@@ -1,0 +1,4 @@
+WARNING 1 [file grompp.mdp]:
+  You are using arithmetic-geometric combination rules in LJ-PME, but your
+  non-bonded C6 parameters do not follow these rules.
+
