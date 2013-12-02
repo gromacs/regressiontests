@@ -67,7 +67,7 @@ my %progs = ( 'grompp'   => 'grompp',
 
 # List of all the generic subdirectories of tests; pdb2gmx is treated
 # separately.
-my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'extra');
+my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
 
 sub setup_vars()
 {
