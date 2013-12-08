@@ -59,11 +59,12 @@ my $ref      = '';
 my $mpirun   = 'mpirun';
 my $mpiforall = 0;
 my $parse_cmd = '';
-my %progs = ( 'grompp'   => 'grompp',
-	      'mdrun'    => 'mdrun',
-	      'pdb2gmx'  => 'pdb2gmx',
-	      'gmxcheck' => 'gmxcheck',
-	      'editconf' => 'editconf' );
+my $gmx_cmd = "gmx";
+my %progs = ( 'grompp'   => '',
+	      'mdrun'    => '',
+	      'pdb2gmx'  => '',
+	      'check' => '',
+	      'editconf' => '' );
 
 # List of all the generic subdirectories of tests; pdb2gmx is treated
 # separately.
@@ -73,18 +74,12 @@ sub setup_vars()
 {
     # We assume that the name of executables match the pattern 
     # ${prefix}mdrun[_mpi][_d]${suffix} where ${prefix} and ${suffix} are 
-    # as defined above (oro ver-ridden on the command line), "_d" indicates 
+    # as defined above (or over-ridden on the command line), "_d" indicates 
     # a double-precision version, and (only in the case of mdrun) "_mpi" 
     # indicates a parallel version compiled with MPI.
     if ( $mpi_processes > 0 || $mpiforall ) {
 	if ($autosuffix) {
-	    if ($mpiforall) {
-		foreach my $prog ( values %progs ) {
-		    $prog .= "_mpi";
-		}
-	    } else {
-		$progs{'mdrun'} .= "_mpi";
-	    }
+            $gmx_cmd .= "_mpi";
 	}
 	if ( $bluegene > 0 )
 	{
@@ -97,12 +92,11 @@ sub setup_vars()
 	    $mdprefix = "$mpirun -np $mpi_processes";
 	}
     }
-    foreach my $prog ( values %progs ) {
-	$prog = $prefix . $prog;
-	if ($autosuffix) {
-	    $prog .= "_d" if ( $double > 0 );
-	}
-	$prog .= $suffix;
+    if ($autosuffix && ( $double > 0)) {
+        $gmx_cmd .= "_d";
+    }
+    foreach my $prog ( keys %progs ) {
+        $progs{$prog} = "$gmx_cmd$suffix $prog";
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
     
@@ -180,8 +174,8 @@ sub check_force($)
     my $cfor2 = "checkforce.err";
     my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
-    do_system("$progs{'gmxcheck'} -f $reftrr -f2 $traj -tol $ftol_rel -abstol $ftol_abs >$cfor 2>$cfor2", 0,
-	      sub { print "\ngmxcheck failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
+    do_system("$progs{'check'} -f $reftrr -f2 $traj -tol $ftol_rel -abstol $ftol_abs >$cfor 2>$cfor2", 0,
+	      sub { print "\ngmx check failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
     
     open(FIN,"$cfor");
     while(my $line=<FIN>)
@@ -237,8 +231,8 @@ sub check_virial()
     my $refedr = "${ref}.edr";
     my $nerr_vir = 0;
 
-    do_system("$progs{'gmxcheck'} -e $refedr -e2 ener -tol $virtol_rel -abstol $virtol_abs -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
-	sub { print "\ngmxcheck failed on the .edr file while checking the virial\n"; $nerr_vir = 1; });
+    do_system("$progs{'check'} -e $refedr -e2 ener -tol $virtol_rel -abstol $virtol_abs -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
+	sub { print "\ngmx check failed on the .edr file while checking the virial\n"; $nerr_vir = 1; });
     
     open(VIN,"$cvir");
     while(my $line=<VIN>)
@@ -352,7 +346,7 @@ sub test_systems {
 		} else {
 		    my $tprout="checktpr.out";
 		    my $tprerr="checktpr.err";
-		    do_system("$progs{'gmxcheck'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0, 
+		    do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0, 
 			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
 		    $nerror |= find_in_file("step","$tprout");
 		    if ($nerror > 0) {
@@ -502,12 +496,12 @@ sub test_systems {
 		        my $potout="checkpot.out";
 		        my $poterr="checkpot.err";
 			# Now do the real tests
-			do_system("$progs{'gmxcheck'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
+			do_system("$progs{'check'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
 				  sub {
 				      if($nerror != 0) {
-					  print "\ngmxcheck failed on the .edr file, probably because mdrun also failed";
+					  print "\ngmx check failed on the .edr file, probably because mdrun also failed";
 				      } else {
-					  print "\ngmxcheck FAILED on the .edr file"; 
+					  print "\ngmx check FAILED on the .edr file"; 
 					  $nerror = 1;
 				      }
 				  });
@@ -884,7 +878,7 @@ sub usage {
     my $dirs = join(' | ', @all_dirs);
     print <<EOP;
 Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
-                    [ -prefix xxx ] [ -suffix xxx ] [ -reprod ]
+                    [ -suffix xxx ] [ -reprod ] [ -mpirun mpirun_command ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
                     [ $dirs | pdb2gmx | all ]
 or:    ./gmxtest.pl clean | refclean | dist
@@ -1010,11 +1004,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	$autosuffix = 0;
     }
     elsif ($arg eq '-prefix' ) {
-	if ($kk <$#ARGV) {
-	    $kk++;
-	    $prefix = $ARGV[$kk];
-	    print "Will test using executable prefix $prefix\n";
-	}
+        print "Option -prefix is deprecated. Please update your script\n";
     }
     elsif ($arg eq '-reprod' ) {
       $mdparams.=" -reprod"
