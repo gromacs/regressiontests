@@ -338,6 +338,7 @@ sub test_systems {
 	    my $error_detail = ' ';
 	    if (! -f "topol.tpr") {
 		print ("No topol.tpr file in $dir. grompp failed\n");	    
+		$error_detail = 'grompp.out ';
 		$nerror = 1;
 	    }
 	    if ($nerror == 0) {
