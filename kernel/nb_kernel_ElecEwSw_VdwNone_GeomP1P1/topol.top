@@ -109,7 +109,7 @@ SOL             2
 #endif
 
 ; Include generic topology for ions
-#include "ions.itp"
+#include "gromos43a1.ff/ions.itp"
 
 [ system ]
 ; Name

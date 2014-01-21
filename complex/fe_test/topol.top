@@ -133,7 +133,7 @@ Protein             3
 #endif
 
 ; Include generic topology for ions
-#include "ions.itp"
+#include "gromos53a6.ff/ions.itp"
 
 [ system ]
 ; Name
