@@ -420,8 +420,8 @@ sub test_systems {
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
-		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
-		    $local_mdparams .= " -pd"
+		if (find_in_file("ns_type\\s*=\\s*simple","grompp.mdp") > 0 && find_in_file("cutoff-scheme\\s*=\\s*Group","grompp.mdp") > 0) {
+		    $local_mdparams .= " -ntmpi 1"
 		}
         $ntmpi_opt = '';
         $ntomp_opt = '';
