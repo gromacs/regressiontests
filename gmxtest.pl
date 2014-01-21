@@ -420,9 +420,6 @@ sub test_systems {
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
-		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
-		    $local_mdparams .= " -pd"
-		}
         $ntmpi_opt = '';
         $ntomp_opt = '';
         if (0 < $mpi_threads) {
@@ -465,6 +462,12 @@ sub test_systems {
                                         # This one we change permanently.
                                         $omp_threads = 8;
                                         $ntomp_opt = " -ntomp $omp_threads";
+                                        $rerun = 1;
+                                        last;
+                                    }
+                                    elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
+                                        print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with 1.\n");
+                                        $alt_ntmpi_opt = '-ntmpi 1';
                                         $rerun = 1;
                                         last;
                                     }
