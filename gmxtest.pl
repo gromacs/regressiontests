@@ -53,7 +53,7 @@ my $only_subdir = qr/.*/;
 my $tolerance_factor = 1;
 
 # trickery for program and reference file names
-my $mdprefix  = '';
+my $mdprefix  = sub {''};
 my $mdparams  = '';
 my $ref       = '';
 my $mpirun    = 'mpirun';
@@ -84,12 +84,12 @@ sub setup_vars()
 	if ( $bluegene > 0 )
 	{
 	    # edit the next line if you need to customize the call to runjob
-	    $mdprefix = "runjob -n $mpi_processes";
+	    $mdprefix = sub { "runjob -n $_[0]" };
 	} elsif ( $mpirun =~ /(ap|s)run/ ) {
-	    $mdprefix = "$mpirun -n $mpi_processes";
+	    $mdprefix = sub { "$mpirun -n $_[0]" };
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = "$mpirun -np $mpi_processes";
+	    $mdprefix = sub { "$mpirun -np $_[0]" };
 	}
     }
     if ($autosuffix && ( $double > 0)) {
@@ -411,7 +411,7 @@ sub test_systems {
 		# BlueGene), so after the chdir we need to deal with
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
-		my $local_mdprefix = $mdprefix;
+		my $local_mdprefix = '';
 		if ( $mpi_processes > 0 && !($mpirun =~ /(ap|s)run/) ) {
                     $local_mdprefix .= ($bluegene > 0 ?
                                   ' --cwd ' :
@@ -420,9 +420,6 @@ sub test_systems {
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
-		if (find_in_file("ns_type.*simple","grompp.mdp") > 0) {
-		    $local_mdparams .= " -pd"
-		}
         $ntmpi_opt = '';
         $ntomp_opt = '';
         if (0 < $mpi_threads) {
@@ -438,7 +435,7 @@ sub test_systems {
 		}
         # Semi-temporary work-around for modern systems with lots of cores
         # First we try running with whatever number of threads the user wants
-        $nerror = do_system("$local_mdprefix $progs{'mdrun'} $ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1", 0,
+        $nerror = do_system($mdprefix->($mpi_processes)."$local_mdprefix $progs{'mdrun'} $ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1", 0,
 			    sub {
                                 my $retval = shift;
                                 # Oopsie, error. Is it because we are using too many cores, or trying to use -nt with a reference build?
@@ -446,6 +443,7 @@ sub test_systems {
                                 my(@lines) = <MDOUT>;
                                 close(MDOUT);
                                 my $alt_ntmpi_opt = '';
+				my $alt_mpi_processes = $mpi_processes;
                                 my $rerun = 0;
                                 foreach my $line (@lines) {
                                     if ($line =~ /There is no domain decomposition for/) {
@@ -468,9 +466,19 @@ sub test_systems {
                                         $rerun = 1;
                                         last;
                                     }
+                                    elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
+                                        print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with 1.\n");
+					if ($mpi_processes>1) {
+					    $alt_mpi_processes = 1;
+					} else {
+					    $alt_ntmpi_opt = '-ntmpi 1';
+					}
+                                        $rerun = 1;
+                                        last;
+                                    }
                                 }
                                 if ($rerun == 1) {   
-                                    $retval = do_system("$local_mdprefix $progs{'mdrun'} $alt_ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1");
+                                    $retval = do_system($mdprefix->($alt_mpi_processes)."$local_mdprefix $progs{'mdrun'} $alt_ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1");
                                 }
                                 return $retval;
 			    });
@@ -821,7 +829,7 @@ sub test_pdb2gmx {
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running mdrun\n");
 		    print(LOG "****************************************************\n");
-		    open(PIPE,"$mdprefix $progs{'mdrun'} $mdparams 2>&1 |");
+		    open(PIPE,$mdprefix->($mpi_processes)." $progs{'mdrun'} $mdparams 2>&1 |");
 		    print LOG while <PIPE>;
 		    close PIPE;
 		    chdir("..");
