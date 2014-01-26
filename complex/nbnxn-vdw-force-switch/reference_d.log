@@ -1,6 +1,6 @@
-Log file opened on Wed Feb 19 13:56:01 2014
-Host: amd2  pid: 13627  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140218-5b0c74f (double precision)
+Log file opened on Tue Feb 25 20:00:13 2014
+Host: amd2  pid: 29291  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140221-d8091c5 (double precision)
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,14 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140218-5b0c74f (double precision)
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140221-d8091c5 (double precision)
 Executable: /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/bin/gmx_d
 Command line:
   gmx_d mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140218-5b0c74f
-GIT SHA1 hash:      5b0c74f142a3c284342feb669daa2637826fc0e4
-Branched from:      a26a0a6fe7e13129696cef23555465df9d958bd8 (3 newer local commits)
+Gromacs version:    VERSION 5.0-beta2-dev-20140221-d8091c5
+GIT SHA1 hash:      d8091c50e21729eb3a4008e37b9ad282dcf72af5
+Branched from:      b8f4cb8a0c818f24782e4cf3c258d856bac39550 (2 newer local commits)
 Precision:          double
 Memory model:       64 bit
 MPI library:        none
@@ -51,9 +51,9 @@ Build CPU brand:    AMD Opteron(tm) Processor 6376
 Build CPU family:   21   Model: 2   Stepping: 0
 Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
-C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
+C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
 Boost version:      1.48.0 (internal)
 
 
@@ -296,7 +296,7 @@ Tabscale = 2000 points/nm
 
 Using plain C 4x4 non-bonded kernels
 
-Potential shift: LJ r^-12: -6.469 r^-6 -2.590, Ewald -1.000e-05
+Potential shift: LJ r^-12: -6.469e+00 r^-6: -2.590e+00, Ewald -1.000e-05
 Initialized non-bonded Ewald correction tables, spacing: 6.26e-04 size: 3056
 
 Removing pbc first time
@@ -336,7 +336,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 5.00e-07
 Initial temperature: 296.114 K
 
-Started mdrun on node 0 Wed Feb 19 13:56:01 2014
+Started mdrun on node 0 Tue Feb 25 20:00:13 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -353,7 +353,7 @@ Started mdrun on node 0 Wed Feb 19 13:56:01 2014
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Wed Feb 19 13:56:03 2014
+Writing checkpoint, step 20 at Tue Feb 25 20:00:15 2014
 
 
    Energies (kJ/mol)
@@ -438,26 +438,26 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          1       0.016          0.036   0.8
- Force                  1    1         21       1.485          3.420  74.6
- PME mesh               1    1         21       0.431          0.993  21.6
+ Neighbor search        1    1          1       0.018          0.042   0.9
+ Force                  1    1         21       1.496          3.446  74.6
+ PME mesh               1    1         21       0.435          1.001  21.7
  NB X/F buffer ops.     1    1         41       0.002          0.004   0.1
- Write traj.            1    1          2       0.032          0.073   1.6
- Update                 1    1         21       0.002          0.005   0.1
- Constraints            1    1         21       0.018          0.042   0.9
+ Write traj.            1    1          2       0.028          0.065   1.4
+ Update                 1    1         21       0.002          0.006   0.1
+ Constraints            1    1         21       0.019          0.044   0.9
  Rest                                           0.006          0.013   0.3
 -----------------------------------------------------------------------------
- Total                                          1.992          4.587 100.0
+ Total                                          2.007          4.621 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
  PME spread/gather      1    1         42       0.065          0.149   3.2
- PME 3D-FFT             1    1         42       0.332          0.765  16.7
- PME solve Elec         1    1         21       0.034          0.079   1.7
+ PME 3D-FFT             1    1         42       0.334          0.769  16.6
+ PME solve Elec         1    1         21       0.036          0.083   1.8
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.981        1.992       99.4
+       Time:        1.995        2.007       99.4
                  (ns/day)    (hour/ns)
-Performance:        1.822       13.174
-Finished mdrun on node 0 Wed Feb 19 13:56:01 2014
+Performance:        1.808       13.271
+Finished mdrun on node 0 Tue Feb 25 20:00:13 2014

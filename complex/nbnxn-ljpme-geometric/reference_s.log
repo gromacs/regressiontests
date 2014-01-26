@@ -1,6 +1,6 @@
-Log file opened on Wed Feb 19 17:19:30 2014
-Host: amd2  pid: 31483  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140219-a4f165c
+Log file opened on Tue Feb 25 19:45:25 2014
+Host: amd2  pid: 28268  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140221-d8091c5
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,14 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140219-a4f165c
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140221-d8091c5
 Executable: /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
 Command line:
   gmx mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140219-a4f165c
-GIT SHA1 hash:      a4f165c323d770edb512905b61a7826f9a09dfce
-Branched from:      c6c09ba49c401bacfa1f816818f6ada094bdd408 (6 newer local commits)
+Gromacs version:    VERSION 5.0-beta2-dev-20140221-d8091c5
+GIT SHA1 hash:      d8091c50e21729eb3a4008e37b9ad282dcf72af5
+Branched from:      b8f4cb8a0c818f24782e4cf3c258d856bac39550 (2 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
@@ -346,7 +346,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 1.11e-06
 Initial temperature: 296.114 K
 
-Started mdrun on node 0 Wed Feb 19 17:19:31 2014
+Started mdrun on node 0 Tue Feb 25 19:45:25 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -363,7 +363,7 @@ Started mdrun on node 0 Wed Feb 19 17:19:31 2014
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Wed Feb 19 17:19:34 2014
+Writing checkpoint, step 20 at Tue Feb 25 19:45:28 2014
 
 
    Energies (kJ/mol)
@@ -448,27 +448,27 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          1       0.017          0.039   0.5
- Force                  1    1         21       2.160          4.971  68.2
- PME mesh               1    1         21       0.933          2.148  29.5
+ Neighbor search        1    1          1       0.018          0.040   0.6
+ Force                  1    1         21       2.134          4.911  68.4
+ PME mesh               1    1         21       0.919          2.115  29.5
  NB X/F buffer ops.     1    1         41       0.002          0.004   0.1
- Write traj.            1    1          2       0.030          0.069   0.9
- Update                 1    1         21       0.003          0.007   0.1
+ Write traj.            1    1          2       0.021          0.049   0.7
+ Update                 1    1         21       0.003          0.008   0.1
  Constraints            1    1         21       0.018          0.042   0.6
- Rest                                           0.005          0.011   0.1
+ Rest                                           0.005          0.011   0.2
 -----------------------------------------------------------------------------
- Total                                          3.168          7.291 100.0
+ Total                                          3.120          7.181 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1         84       0.133          0.307   4.2
- PME 3D-FFT             1    1         84       0.672          1.548  21.2
- PME solve LJ           1    1         21       0.096          0.220   3.0
- PME solve Elec         1    1         21       0.032          0.073   1.0
+ PME spread/gather      1    1         84       0.131          0.301   4.2
+ PME 3D-FFT             1    1         84       0.661          1.521  21.2
+ PME solve LJ           1    1         21       0.095          0.218   3.0
+ PME solve Elec         1    1         21       0.033          0.075   1.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        3.156        3.168       99.6
+       Time:        3.108        3.120       99.6
                  (ns/day)    (hour/ns)
-Performance:        1.145       20.953
-Finished mdrun on node 0 Wed Feb 19 17:19:31 2014
+Performance:        1.163       20.635
+Finished mdrun on node 0 Tue Feb 25 19:45:25 2014
