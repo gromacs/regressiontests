@@ -1,6 +1,6 @@
-Log file opened on Wed Feb 19 13:55:53 2014
-Host: amd2  pid: 13583  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140218-5b0c74f
+Log file opened on Wed Feb 26 03:32:07 2014
+Host: amd2  pid: 14713  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140225-cb4ab23
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,14 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140218-5b0c74f
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140225-cb4ab23
 Executable: /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
 Command line:
   gmx mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140218-5b0c74f
-GIT SHA1 hash:      5b0c74f142a3c284342feb669daa2637826fc0e4
-Branched from:      a26a0a6fe7e13129696cef23555465df9d958bd8 (3 newer local commits)
+Gromacs version:    VERSION 5.0-beta2-dev-20140225-cb4ab23
+GIT SHA1 hash:      cb4ab2347dab6a821078d6c596ff41ec2dbbe50b
+Branched from:      5f171ffba93bc01c63bfebf4c0004422c2653209 (19 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
@@ -51,10 +51,10 @@ Build CPU brand:    AMD Opteron(tm) Processor 6376
 Build CPU family:   21   Model: 2   Stepping: 0
 Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
-C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
-Boost version:      1.48.0 (internal)
+C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
+Boost version:      1.55.0 (internal)
 
 
 
@@ -296,7 +296,7 @@ Tabscale = 500 points/nm
 
 Using plain C 4x4 non-bonded kernels
 
-Potential shift: LJ r^-12: -6.469 r^-6 -2.590, Ewald -1.000e-05
+Potential shift: LJ r^-12: -6.469e+00 r^-6: -2.590e+00, Ewald -1.000e-05
 Initialized non-bonded Ewald correction tables, spacing: 6.26e-04 size: 3056
 
 Removing pbc first time
@@ -336,7 +336,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 1.11e-06
 Initial temperature: 296.114 K
 
-Started mdrun on node 0 Wed Feb 19 13:55:53 2014
+Started mdrun on node 0 Wed Feb 26 03:32:07 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -353,18 +353,18 @@ Started mdrun on node 0 Wed Feb 19 13:55:53 2014
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Wed Feb 19 13:55:55 2014
+Writing checkpoint, step 20 at Wed Feb 26 03:32:09 2014
 
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.02710e+03    9.24421e+02   -4.33526e+02    0.00000e+00   -1.10793e+03
+    1.02034e+03    9.23568e+02   -4.33744e+02    0.00000e+00   -1.11161e+03
   Disper. corr.   Coulomb (SR)   Coul. recip.      Potential    Kinetic En.
-   -2.02248e+03   -2.14443e+04    2.28746e+02   -2.28280e+04    6.14084e+03
+   -2.02248e+03   -2.14534e+04    2.28491e+02   -2.28488e+04    6.10732e+03
    Total Energy  Conserved En.    Temperature Pres. DC (bar) Pressure (bar)
-   -1.66871e+04   -1.66486e+04    2.95605e+02   -6.15198e+02   -3.89588e+01
+   -1.67415e+04   -1.66488e+04    2.93991e+02   -6.15198e+02   -5.21526e+01
    Constr. rmsd
-    1.09183e-06
+    1.08751e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -374,23 +374,23 @@ Writing checkpoint, step 20 at Wed Feb 19 13:55:55 2014
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.03465e+03    9.30608e+02   -4.26806e+02    0.00000e+00   -1.09176e+03
+    1.03127e+03    9.30182e+02   -4.26915e+02    0.00000e+00   -1.09361e+03
   Disper. corr.   Coulomb (SR)   Coul. recip.      Potential    Kinetic En.
-   -2.02248e+03   -2.14799e+04    2.45415e+02   -2.28102e+04    6.14159e+03
+   -2.02248e+03   -2.14844e+04    2.45287e+02   -2.28207e+04    6.12483e+03
    Total Energy  Conserved En.    Temperature Pres. DC (bar) Pressure (bar)
-   -1.66687e+04   -1.66494e+04    2.95641e+02   -6.15198e+02   -3.70144e+01
+   -1.66959e+04   -1.66495e+04    2.94834e+02   -6.15198e+02   -4.36113e+01
    Constr. rmsd
     0.00000e+00
 
    Total Virial (kJ/mol)
-    2.43258e+03   -3.68792e+02   -1.20750e+02
-   -3.68586e+02    2.10287e+03    2.89172e+02
-   -1.21027e+02    2.88603e+02    1.78948e+03
+    2.43691e+03   -3.68089e+02   -1.20457e+02
+   -3.68085e+02    2.11003e+03    2.88283e+02
+   -1.20397e+02    2.87956e+02    1.79390e+03
 
    Pressure (bar)
-   -2.08904e+02    2.19324e+02    1.04232e+02
-    2.19200e+02   -4.40978e+01   -1.73729e+02
-    1.04400e+02   -1.73384e+02    1.41959e+02
+   -2.14885e+02    2.18925e+02    1.03884e+02
+    2.18922e+02   -5.18867e+01   -1.73177e+02
+    1.03847e+02   -1.72978e+02    1.35938e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -438,26 +438,26 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          1       0.015          0.035   0.8
- Force                  1    1         21       1.506          3.466  75.3
- PME mesh               1    1         21       0.427          0.982  21.3
+ Neighbor search        1    1          1       0.016          0.036   0.8
+ Force                  1    1         21       1.496          3.443  75.1
+ PME mesh               1    1         21       0.431          0.992  21.6
  NB X/F buffer ops.     1    1         41       0.002          0.004   0.1
- Write traj.            1    1          2       0.025          0.057   1.2
+ Write traj.            1    1          2       0.021          0.048   1.0
  Update                 1    1         21       0.003          0.008   0.2
- Constraints            1    1         21       0.018          0.042   0.9
- Rest                                           0.005          0.010   0.2
+ Constraints            1    1         21       0.019          0.043   0.9
+ Rest                                           0.005          0.011   0.2
 -----------------------------------------------------------------------------
- Total                                          2.000          4.604 100.0
+ Total                                          1.991          4.584 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1         42       0.061          0.141   3.1
- PME 3D-FFT             1    1         42       0.331          0.761  16.5
- PME solve Elec         1    1         21       0.035          0.080   1.7
+ PME spread/gather      1    1         42       0.064          0.146   3.2
+ PME 3D-FFT             1    1         42       0.329          0.757  16.5
+ PME solve Elec         1    1         21       0.038          0.089   1.9
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.990        2.000       99.5
+       Time:        1.983        1.991       99.6
                  (ns/day)    (hour/ns)
-Performance:        1.814       13.228
-Finished mdrun on node 0 Wed Feb 19 13:55:53 2014
+Performance:        1.822       13.170
+Finished mdrun on node 0 Wed Feb 26 03:32:07 2014
