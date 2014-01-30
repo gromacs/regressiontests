@@ -1,8 +1,36 @@
-Log file opened on Thu May 23 17:44:34 2013
-Host: ckutzne  pid: 28502  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6.2-dev-20130522-712ccd5-dirty
-GIT SHA1 hash:      712ccd561dba07d6132e86b87488a46570d82d08 (dirty)
-Branched from:      972ab1f9a0711af3bdc21b6126f45b85d2662014 (2 newer local commits)
+Log file opened on Thu Jan 30 04:29:08 2014
+Host: amd2  pid: 56781  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140130-02adca5
+
+GROMACS is written by:
+Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
+Aldert van Buuren  Rudi van Drunen    Anton Feenstra     Sebastian Fritsch  
+Gerrit Groenhof    Christoph Junghans Peter Kasson       Carsten Kutzner    
+Per Larsson        Justin A. Lemkul   Magnus Lundborg    Pieter Meulenhoff  
+Erik Marklund      Teemu Murtola      Szilard Pall       Sander Pronk       
+Roland Schulz      Alexey Shvetsov    Michael Shirts     Alfons Sijbers     
+Peter Tieleman     Christian Wennberg Maarten Wolf       
+and the project leaders:
+Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2014, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140130-02adca5
+Executable: /nethome/mark/nfs-git/master/build-cmake-gcc-reference-amd2/install/bin/gmx
+Command line:
+  gmx mdrun -notunepme -table ../table -tablep ../tablep
+
+Gromacs version:    VERSION 5.0-beta2-dev-20140130-02adca5
+GIT SHA1 hash:      02adca56654bcbb0ff8438d5fcf32b86519d35d7
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
@@ -11,45 +39,22 @@ GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
 CPU acceleration:   NONE
 FFT library:        fftpack (built-in)
-Large file support: enabled
 RDTSCP usage:       enabled
-Built on:           Thu May 23 17:43:19 CEST 2013
-Built by:           ckutzne@ckutzne [CMAKE]
-Build OS/arch:      Linux 3.4.33-2.24-desktop x86_64
-Build CPU vendor:   GenuineIntel
-Build CPU brand:    Intel(R) Xeon(R) CPU E5-1620 0 @ 3.60GHz
-Build CPU family:   6   Model: 45   Stepping: 7
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (SUSE Linux) 4.7.1 20120723 [gcc-4_7-branch revision 189773]
-C compiler flags:     -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas  -g -O0  -O0 -g
+C++11 compilation:  enabled
+TNG support:        enabled
+Built on:           Sun Oct 13 16:14:06 CEST 2013
+Built by:           mark@amd2 [CMAKE]
+Build OS/arch:      Linux 3.5.0-41-generic x86_64
+Build CPU vendor:   AuthenticAMD
+Build CPU brand:    AMD Opteron(tm) Processor 6176
+Build CPU family:   16   Model: 9   Stepping: 1
+Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
+C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
+C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
+Boost version:      1.48.0 (internal)
 
-
-                         :-)  G  R  O  M  A  C  S  (-:
-
-                   Groningen Machine for Chemical Simulation
-
-               :-)  VERSION 4.6.2-dev-20130522-712ccd5-dirty  (-:
-
-        Contributions from Mark Abraham, Emile Apol, Rossen Apostolov, 
-           Herman J.C. Berendsen, Aldert van Buuren, Pär Bjelkmar,  
-     Rudi van Drunen, Anton Feenstra, Gerrit Groenhof, Christoph Junghans, 
-        Peter Kasson, Carsten Kutzner, Per Larsson, Pieter Meulenhoff, 
-           Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz, 
-                Michael Shirts, Alfons Sijbers, Peter Tieleman,
-
-               Berk Hess, David van der Spoel, and Erik Lindahl.
-
-       Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-         Copyright (c) 2001-2012,2013, The GROMACS development team at
-        Uppsala University & The Royal Institute of Technology, Sweden.
-            check out http://www.gromacs.org for more information.
-
-         This program is free software; you can redistribute it and/or
-       modify it under the terms of the GNU Lesser General Public License
-        as published by the Free Software Foundation; either version 2.1
-             of the License, or (at your option) any later version.
-
-                                :-)  mdrun  (-:
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -86,7 +91,7 @@ Input Parameters:
    nsteps               = 25
    init-step            = 0
    cutoff-scheme        = Group
-   ns_type              = Simple
+   ns_type              = Grid
    nstlist              = 5
    ndelta               = 2
    nstcomm              = 100
@@ -97,19 +102,21 @@ Input Parameters:
    nstfout              = 25
    nstcalcenergy        = 1
    nstenergy            = 1
-   nstxtcout            = 100
+   nstxout_compressed   = 100
    init-t               = 0.002
    delta-t              = 0.002
-   xtcprec              = 1000
+   x_compression_precision = 1000
    fourierspacing       = 0.12
    nkx                  = 0
    nky                  = 0
    nkz                  = 0
    pme-order            = 4
    ewald-rtol           = 1e-05
+   ewald-rtol-lj        = 0.001
    ewald-geometry       = 0
    epsilon-surface      = 0
    optimize-fft         = FALSE
+   lj-pme-comb-rule     = Geometric
    ePBC                 = xyz
    bPeriodicMols        = FALSE
    bContinuation        = FALSE
@@ -138,7 +145,7 @@ Input Parameters:
       posres-comB[0]= 0.00000e+00
       posres-comB[1]= 0.00000e+00
       posres-comB[2]= 0.00000e+00
-   verlet-buffer-drift  = 0.005
+   verlet-buffer-tolerance = 0.005
    rlist                = 0.4
    rlistlong            = 0.4
    nstcalclr            = 0
@@ -265,6 +272,7 @@ ann-npoints:           0
       n = 0
    efield-zt:
       n = 0
+   eSwapCoords          = no
    bQMMM                = FALSE
    QMconstraints        = 0
    QMMMscheme           = 0
@@ -274,16 +282,16 @@ qm-opts:
 
 Detecting CPU-specific acceleration.
 Present hardware specification:
-Vendor: GenuineIntel
-Brand:  Intel(R) Xeon(R) CPU E5-1620 0 @ 3.60GHz
-Family:  6  Model: 45  Stepping:  7
-Features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-Acceleration most likely to fit this hardware: AVX_256
+Vendor: AuthenticAMD
+Brand:  AMD Opteron(tm) Processor 6376                 
+Family: 21  Model:  2  Stepping:  0
+Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Acceleration most likely to fit this hardware: AVX_128_FMA
 Acceleration selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-Acceleration most likely to fit this hardware: AVX_256
+Acceleration most likely to fit this hardware: AVX_128_FMA
 Acceleration selected at GROMACS compile time: None
 
 Table routines are used for coulomb: FALSE
@@ -293,10 +301,6 @@ Long Range LJ corr.: <C6> 1.7269e-04
 System total charge: 0.000
 Potential shift: LJ r^-12: 0.000 r^-6 0.000, Coulomb 0.000
 Removing pbc first time
-
-Can not set thread affinities on the current platform. On NUMA systems this
-can cause performance degradation. If you think your platform should support
-setting affinities, contact the GROMACS developers.
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
 C. Kutzner and J. Czub and H. Grubmuller
@@ -314,12 +318,12 @@ Max number of connections per atom is 0
 Total number of connections is 0
 Initial temperature: 0 K
 
-Started mdrun on node 0 Thu May 23 17:44:34 2013
-
+Started mdrun on node 0 Thu Jan 30 04:29:08 2014
            Step           Time         Lambda
               0        0.00200        0.00000
 
 
+Grid: 20 x 20 x 20 cells
    Energies (kJ/mol)
         LJ (SR)  Disper. corr.   Coulomb (SR)   COM Pull En.      Potential
     0.00000e+00   -1.76597e-04    0.00000e+00    2.55589e+02    2.55589e+02
@@ -329,7 +333,7 @@ Started mdrun on node 0 Thu May 23 17:44:34 2013
            Step           Time         Lambda
              25        0.05200        0.00000
 
-Writing checkpoint, step 25 at Thu May 23 17:44:34 2013
+Writing checkpoint, step 25 at Thu Jan 30 04:29:08 2014
 
 
    Energies (kJ/mol)
@@ -370,12 +374,12 @@ Writing checkpoint, step 25 at Thu May 23 17:44:34 2013
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NS-Pairs                                 0.000060           0.001     4.6
+ NS-Pairs                                 0.000024           0.001     1.9
  Reset In Box                             0.000024           0.000     0.3
  CG-CoM                                   0.000024           0.000     0.3
- Virial                                   0.001274           0.023    83.9
+ Virial                                   0.001274           0.023    86.3
  Stop-CM                                  0.000008           0.000     0.3
- Calc-Ekin                                0.000108           0.003    10.7
+ Calc-Ekin                                0.000108           0.003    11.0
 -----------------------------------------------------------------------------
  Total                                                       0.027   100.0
 -----------------------------------------------------------------------------
@@ -385,19 +389,19 @@ Writing checkpoint, step 25 at Thu May 23 17:44:34 2013
 
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          6       0.000        0.000     0.0
- Force                  1    1         26       0.000        0.000     0.0
- Write traj.            1    1          2       0.329        1.185    99.1
- Update                 1    1         26       0.000        0.000     0.0
- Enforced rotation      1    1         26       0.002        0.007     0.6
- Add rot. forces        1    1         26       0.000        0.001     0.1
- Rest                   1                       0.001        0.002     0.2
+ Neighbor search        1    1          6       0.002        0.009     7.5
+ Force                  1    1         26       0.000        0.000     0.2
+ Write traj.            1    1          2       0.004        0.023    18.7
+ Update                 1    1         26       0.000        0.000     0.1
+ Enforced rotation      1    1         26       0.003        0.015    12.8
+ Add rot. forces        1    1         26       0.000        0.002     1.4
+ Rest                   1                       0.013        0.071    59.1
 -----------------------------------------------------------------------------
- Total                  1                       0.332        1.195   100.0
+ Total                  1                       0.023        0.120   100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.000        0.332        0.0
+       Time:        0.017        0.023       73.9
                  (ns/day)    (hour/ns)
-Performance:       13.541        1.772
-Finished mdrun on node 0 Thu May 23 17:44:35 2013
+Performance:      198.684        0.121
+Finished mdrun on node 0 Thu Jan 30 04:29:08 2014
