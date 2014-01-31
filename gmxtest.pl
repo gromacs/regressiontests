@@ -52,9 +52,10 @@ my $addversionnote = 0;
 my $only_subdir = qr/.*/;
 my $tolerance_factor = 1;
 
-# trickery for program and reference file names
+# trickery for program and reference file names, command line options, etc.
 my $mdprefix  = sub {''};
 my $mdparams  = '';
+my $gpu_id    = '';
 my $ref       = '';
 my $mpirun    = 'mpirun';
 my $parse_cmd = '';
@@ -69,6 +70,11 @@ my %progs = ( 'grompp'   => '',
 # List of all the generic subdirectories of tests; pdb2gmx is treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
+
+sub add_gpu_id
+{
+    return ($_[0]) ? "-gpu_id $_[0] " : "";
+}
 
 sub setup_vars()
 {
@@ -420,6 +426,7 @@ sub test_systems {
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
+                my $local_gpu_id = $gpu_id;
         $ntmpi_opt = '';
         $ntomp_opt = '';
         if (0 < $mpi_threads) {
@@ -435,7 +442,9 @@ sub test_systems {
 		}
         # Semi-temporary work-around for modern systems with lots of cores
         # First we try running with whatever number of threads the user wants
-        $nerror = do_system($mdprefix->($mpi_processes)."$local_mdprefix $progs{'mdrun'} $ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1", 0,
+        $nerror = do_system($mdprefix->($mpi_processes)
+                            . "$local_mdprefix $progs{'mdrun'} $ntmpi_opt $ntomp_opt $local_mdparams "
+                            . add_gpu_id(${local_gpu_id}) . " >mdrun.out 2>&1", 0,
 			    sub {
                                 my $retval = shift;
                                 # Oopsie, error. Is it because we are using too many cores, or trying to use -nt with a reference build?
@@ -467,18 +476,22 @@ sub test_systems {
                                         last;
                                     }
                                     elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
-                                        print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with 1.\n");
-					if ($mpi_processes>1) {
-					    $alt_mpi_processes = 1;
+                                        my $new_mpi_processes = 1;
+                                        print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with ${new_mpi_processes}.\n");
+					if ($mpi_processes > $new_mpi_processes) {
+					    $alt_mpi_processes = $new_mpi_processes;
 					} else {
-					    $alt_ntmpi_opt = '-ntmpi 1';
+					    $alt_ntmpi_opt = "-ntmpi ${new_mpi_processes}";
 					}
+                                        $local_gpu_id = substr($gpu_id, 0, $new_mpi_processes);
                                         $rerun = 1;
                                         last;
                                     }
                                 }
-                                if ($rerun == 1) {   
-                                    $retval = do_system($mdprefix->($alt_mpi_processes)."$local_mdprefix $progs{'mdrun'} $alt_ntmpi_opt $ntomp_opt $local_mdparams >mdrun.out 2>&1");
+                                if ($rerun == 1) {
+                                    $retval = do_system($mdprefix->($alt_mpi_processes)
+                                                        . "$local_mdprefix $progs{'mdrun'} $alt_ntmpi_opt $ntomp_opt $local_mdparams "
+                                                        . add_gpu_id($local_gpu_id) . " >mdrun.out 2>&1");
                                 }
                                 return $retval;
 			    });
@@ -1040,6 +1053,15 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	    $kk++;
 	    $mdparams .= $ARGV[$kk];
 	    print "Will test using 'mdrun $mdparams'\n";
+	}
+    }
+    elsif ($arg eq '-gpu_id' ) {
+	# The user is responsible for providing sensible values for
+	# this flag when they want them (ie. as for mdrun)
+	if ($kk <$#ARGV) {
+	    $kk++;
+	    $gpu_id .= $ARGV[$kk];
+	    print "Will test using 'mdrun -gpu_id ${gpu_id}'\n";
 	}
     }
     elsif ($arg eq '-only' ) {
