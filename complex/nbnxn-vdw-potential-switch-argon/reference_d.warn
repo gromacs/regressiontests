@@ -1,0 +1,6 @@
+WARNING 1 [file grompp.mdp]:
+  You are using full electrostatics treatment PME for a system without
+  charges.
+  This costs a lot of performance for just processing zeros, consider using
+  Cut-off instead.
+
