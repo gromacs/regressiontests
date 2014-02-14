@@ -27,7 +27,7 @@ at step zero will stem exclusively from the rotation potential. The forces
 in the first frame of the .trr output files should therefore be identical to
 the Mathematica results. These are listed here for the 12 rotation potentials.
 The values for the potential energies and torques are also given; these can be 
-compared to the values in the rotation.log output file.
+compared to the values in the rotation.xvg output file.
 
 V_iso:
 f0 =   -131.51692692    127.41828586    -54.439881601
