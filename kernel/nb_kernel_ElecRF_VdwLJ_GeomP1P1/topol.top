@@ -8,7 +8,7 @@
 ;	"Don't Push Me, Cause I'm Close to the Edge" (Tricky)
 ;
 ; Include forcefield parameters
-#include "ffG43a1.itp"
+#include "gromos43a1.ff/forcefield.itp"
 
 [ moleculetype ]
 ; Name            nrexcl
@@ -81,7 +81,7 @@ Protein             3
 #endif
 
 ; Include water topology
-#include "spc.itp"
+#include "gromos43a1.ff/spc.itp"
 
 #ifdef POSRES_WATER
 ; Position restraint for each water oxygen

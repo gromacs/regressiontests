@@ -1,5 +1,5 @@
-#include "ffoplsaa.itp"
-#include "tip4p.itp"
+#include "oplsaa.ff/forcefield.itp"
+#include "oplsaa.ff/tip4p.itp"
 
 [ system ]
 ; The name of the system to be simulated

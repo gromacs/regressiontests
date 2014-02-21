@@ -8,7 +8,7 @@
 ;	"Don't Push Me, Cause I'm Close to the Edge" (Tricky)
 ;
 ; Include forcefield parameters
-#include "ffG43a1.itp"
+#include "gromos43a1.ff/forcefield.itp"
 
 [ moleculetype ]
 ; Name            nrexcl

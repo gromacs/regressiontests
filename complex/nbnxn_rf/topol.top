@@ -1,6 +1,6 @@
 #include "gromos53a6.ff/forcefield.itp"
 
-#include "spce.itp"
+#include "gromos53a6.ff/spce.itp"
 
 [ moleculetype ]
 ; Name            nrexcl
