@@ -1,6 +1,6 @@
-Log file opened on Thu Feb 20 16:29:40 2014
-Host: amd2  pid: 12900  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-5f171ff
+Log file opened on Sun Feb 23 08:58:18 2014
+Host: tcbs21  pid: 12348  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-fcf54ef
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,13 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-5f171ff
-Executable: /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-fcf54ef
+Executable: /nethome/rossen/local/gmx-testing/bin/gmx
 Command line:
-  gmx mdrun -notunepme -table ../table -tablep ../tablep
+  mdrun -v -s topol.tpr -deffnm reference_s
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140220-5f171ff
-GIT SHA1 hash:      5f171ffba93bc01c63bfebf4c0004422c2653209
+Gromacs version:    VERSION 5.0-beta2-dev-20140220-fcf54ef
+GIT SHA1 hash:      fcf54ef6fff2805d406f99ee855fce662d703e2f
+Branched from:      5f171ffba93bc01c63bfebf4c0004422c2653209 (1 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
@@ -42,13 +43,13 @@ FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 C++11 compilation:  enabled
 TNG support:        enabled
-Built on:           Thu Feb  6 17:04:31 CET 2014
-Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.5.0-45-generic x86_64
-Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(tm) Processor 6376
-Build CPU family:   21   Model: 2   Stepping: 0
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Built on:           Fri Feb 21 15:25:06 CET 2014
+Built by:           rossen@tcbs21 [CMAKE]
+Build OS/arch:      Linux 3.5.0-46-generic x86_64
+Build CPU vendor:   GenuineIntel
+Build CPU brand:    Intel(R) Xeon(R) CPU E5-2620 0 @ 2.00GHz
+Build CPU family:   6   Model: 45   Stepping: 7
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
@@ -254,28 +255,22 @@ qm-opts:
 
 Detecting CPU SIMD instructions.
 Present hardware specification:
-Vendor: AuthenticAMD
-Brand:  AMD Opteron(tm) Processor 6376                 
-Family: 21  Model:  2  Stepping:  0
-Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
+Vendor: GenuineIntel
+Brand:  Intel(R) Xeon(R) CPU E5-2620 0 @ 2.00GHz
+Family:  6  Model: 45  Stepping:  7
+Features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+SIMD instructions most likely to fit this hardware: AVX_256
 SIMD instructions selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
+SIMD instructions most likely to fit this hardware: AVX_256
 SIMD instructions selected at GROMACS compile time: None
 
 Table routines are used for coulomb: FALSE
 Table routines are used for vdw:     FALSE
 Cut-off's:   NS: 1   Coulomb: 1   LJ: 1
 System total charge: 0.000
-Generated table with 1000 data points for 1-4 COUL.
-Tabscale = 500 points/nm
-Generated table with 1000 data points for 1-4 LJ6.
-Tabscale = 500 points/nm
-Generated table with 1000 data points for 1-4 LJ12.
-Tabscale = 500 points/nm
 
 Enabling SPC-like water optimization for 357 molecules.
 
@@ -290,25 +285,25 @@ J. Comp. Chem. 13 (1992) pp. 952-962
 -------- -------- --- Thank You --- -------- --------
 
 Initiating Steepest Descents
-Max number of connections per atom is 32
-Total number of connections is 6180
+Max number of connections per atom is 31
+Total number of connections is 5172
 Max number of graph edges per atom is 3
 Total number of graph edges is 1932
-Started Steepest Descents on node 0 Thu Feb 20 16:29:40 2014
+Started Steepest Descents on node 0 Sun Feb 23 08:58:18 2014
 
 Steepest Descents:
    Tolerance (Fmax)   =  1.00000e-03
    Number of steps    =           20
 
-Grid: 3 x 4 x 4 cells
+Grid: 4 x 4 x 4 cells
            Step           Time         Lambda
               0        0.00000        0.00000
 
    Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    8.57364e+00    4.05719e+02    2.30288e+02    4.97590e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -2.98222e+04    2.61091e+03   -1.45122e+04   -4.10291e+04   -2.64905e+04
+           Bond    Proper Dih.  Improper Dih.        LJ (SR)   Coulomb (SR)
+    2.39209e+02    1.27527e+03    2.84663e+01    3.35762e+03   -1.22292e+04
+      Potential Pressure (bar)
+   -7.32861e+03   -2.67339e+04
 
            Step           Time         Lambda
               1        1.00000        0.00000
@@ -325,50 +320,38 @@ Grid: 3 x 4 x 4 cells
            Step           Time         Lambda
               5        5.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    4.26529e+02    2.13626e+02    1.36722e+02    2.06654e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.00030e+04    2.44645e+03   -1.47893e+04   -4.15482e+04   -2.67143e+04
-
            Step           Time         Lambda
               6        6.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond    Proper Dih.  Improper Dih.        LJ (SR)   Coulomb (SR)
+    7.77467e+01    1.27436e+03    2.90185e+01    3.32628e+03   -1.22532e+04
+      Potential Pressure (bar)
+   -7.54577e+03   -2.67580e+04
 
            Step           Time         Lambda
               7        7.00000        0.00000
 
    Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    1.39806e+02    2.50208e+02    1.21817e+02    1.87589e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.00785e+04    2.42802e+03   -1.47183e+04   -4.18382e+04   -2.67288e+04
+           Bond    Proper Dih.  Improper Dih.        LJ (SR)   Coulomb (SR)
+    2.96748e+02    1.27407e+03    2.93177e+01    3.24570e+03   -1.26623e+04
+      Potential Pressure (bar)
+   -7.81648e+03   -2.69871e+04
 
            Step           Time         Lambda
               8        8.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.77123e+02    1.58306e+02    1.04857e+02    1.51825e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.00941e+04    2.36971e+03   -1.48552e+04   -4.20242e+04   -2.68753e+04
 
            Step           Time         Lambda
               9        9.00000        0.00000
 
    Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.68901e+02    2.35010e+02    9.29294e+01    1.39204e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.02091e+04    2.32645e+03   -1.48361e+04   -4.21079e+04   -2.69174e+04
+           Bond    Proper Dih.  Improper Dih.        LJ (SR)   Coulomb (SR)
+    1.20393e+02    1.27357e+03    2.94124e+01    3.23558e+03   -1.27932e+04
+      Potential Pressure (bar)
+   -8.13426e+03   -2.69732e+04
 
            Step           Time         Lambda
              10       10.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    3.21293e+02    1.24100e+02    8.66911e+01    1.26272e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.01522e+04    2.29319e+03   -1.49955e+04   -4.23097e+04   -2.70488e+04
 
            Step           Time         Lambda
              11       11.00000        0.00000
@@ -376,38 +359,14 @@ Grid: 3 x 4 x 4 cells
            Step           Time         Lambda
              12       12.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.20814e+02    1.63545e+02    8.22447e+01    1.23986e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.02148e+04    2.27489e+03   -1.49728e+04   -4.24338e+04   -2.70612e+04
-
            Step           Time         Lambda
              13       13.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    3.46149e+02    1.05014e+02    7.58272e+01    1.14867e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.01789e+04    2.23961e+03   -1.51176e+04   -4.25185e+04   -2.71918e+04
 
            Step           Time         Lambda
              14       14.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.76911e+02    1.71879e+02    7.20896e+01    1.14410e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.02571e+04    2.22256e+03   -1.50735e+04   -4.25757e+04   -2.71910e+04
-
            Step           Time         Lambda
              15       15.00000        0.00000
-
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    3.96041e+02    9.10556e+01    6.79750e+01    1.08211e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.01874e+04    2.19646e+03   -1.52353e+04   -4.26604e+04   -2.73217e+04
 
            Step           Time         Lambda
              16       16.00000        0.00000
@@ -416,40 +375,34 @@ Grid: 3 x 4 x 4 cells
              17       17.00000        0.00000
 
    Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.41495e+02    1.19653e+02    6.64229e+01    1.08482e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.02381e+04    2.18942e+03   -1.51944e+04   -4.28046e+04   -2.73081e+04
+           Bond    Proper Dih.  Improper Dih.        LJ (SR)   Coulomb (SR)
+    1.19703e+02    1.27356e+03    2.94125e+01    3.23513e+03   -1.27946e+04
+      Potential Pressure (bar)
+   -8.13676e+03   -2.69740e+04
 
            Step           Time         Lambda
              18       18.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    4.16700e+02    7.85296e+01    5.98110e+01    1.02441e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.01961e+04    2.14823e+03   -1.53722e+04   -4.28548e+04   -2.74727e+04
-
            Step           Time         Lambda
              19       19.00000        0.00000
 
-   Energies (kJ/mol)
-           Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.66429e+02    1.30161e+02    5.86268e+01    1.03153e+01    0.00000e+00
-     Coulomb-14        LJ (SR)   Coulomb (SR)      Potential Pressure (bar)
-   -3.02636e+04    2.14228e+03   -1.53061e+04   -4.29618e+04   -2.74426e+04
-
            Step           Time         Lambda
              20       20.00000        0.00000
+
+   Energies (kJ/mol)
+           Bond    Proper Dih.  Improper Dih.        LJ (SR)   Coulomb (SR)
+    1.19502e+02    1.27356e+03    2.94125e+01    3.23499e+03   -1.27950e+04
+      Potential Pressure (bar)
+   -8.13758e+03   -2.69743e+04
 
 
 Energy minimization reached the maximum number of steps before the forces
 reached the requested precision Fmax < 0.001.
 
 Steepest Descents did not converge to Fmax < 0.001 in 21 steps.
-Potential Energy  = -4.2961793e+04
-Maximum force     =  3.5871201e+03 on atom 201
-Norm of force     =  3.8694400e+02
+Potential Energy  = -8.1375791e+03
+Maximum force     =  9.9059784e+02 on atom 140
+Norm of force     =  2.9620004e+02
 
 	M E G A - F L O P S   A C C O U N T I N G
 
@@ -460,24 +413,21 @@ Norm of force     =  3.8694400e+02
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NB Elec. [V&F]                          36.800288          36.800    12.9
- NB Elec. [W3,V&F]                       18.201375          18.201     6.4
- NB VdW & Elec. [V&F]                    11.857745          11.858     4.2
- NB VdW & Elec. [W3,V&F]                 21.053024          21.053     7.4
- NB VdW & Elec. [W3-W3,V&F]             132.548878         132.549    46.5
- 1,4 nonbonded interactions               0.006048           0.544     0.2
- NS-Pairs                                 2.617028          54.958    19.3
- Reset In Box                             0.009765           0.029     0.0
+ NB Elec. [V&F]                          23.892246          23.892     7.2
+ NB VdW & Elec. [V&F]                    30.304325          30.304     9.1
+ NB VdW & Elec. [W3,V&F]                 41.516160          41.516    12.4
+ NB VdW & Elec. [W3-W3,V&F]             132.533675         132.534    39.7
+ NS-Pairs                                 4.619688          97.013    29.1
+ Reset In Box                             0.013545           0.041     0.0
  Shift-X                                  0.028539           0.171     0.1
  CG-CoM                                   0.028539           0.086     0.0
  Bonds                                    0.005292           0.312     0.1
- Angles                                   0.006804           1.143     0.4
- Propers                                  0.006048           1.385     0.5
- Impropers                                0.002268           0.472     0.2
+ Propers                                  0.009072           2.077     0.6
+ Impropers                                0.002268           0.472     0.1
  Virial                                   0.029484           0.531     0.2
- Settle                                   0.014994           4.843     1.7
+ Settle                                   0.014994           4.843     1.5
 -----------------------------------------------------------------------------
- Total                                                     284.935   100.0
+ Total                                                     333.793   100.0
 -----------------------------------------------------------------------------
 
 
@@ -488,16 +438,16 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1         21       0.117          0.540  19.0
- Force                  1    1         21       0.185          0.851  29.9
- Constraints            1    1         41       0.003          0.012   0.4
- Rest                                           0.314          1.445  50.7
+ Neighbor search        1    1         21       0.154          0.615  22.2
+ Force                  1    1         21       0.183          0.734  26.5
+ Constraints            1    1         41       0.003          0.010   0.4
+ Rest                                           0.351          1.406  50.8
 -----------------------------------------------------------------------------
- Total                                          0.619          2.848 100.0
+ Total                                          0.691          2.764 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.616        0.619       99.6
+       Time:        0.685        0.691       99.2
                (steps/hour)
-Performance:       122110.9
-Finished mdrun on node 0 Thu Feb 20 16:29:40 2014
+Performance:       109398.4
+Finished mdrun on node 0 Sun Feb 23 08:58:18 2014
