@@ -1,5 +1,0 @@
-WARNING 1 [file topol.top, line 31]:
-  1071 non-matching atom names
-  atom names from topol.top will be used
-  atom names from conf.gro will be ignored
-

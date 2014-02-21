@@ -65,7 +65,7 @@ xtc_precision            = 200
 ; select multiple groups. By default all atoms will be written.
 xtc-grps                 = 
 ; Selection of energy groups
-energygrps               = Urea	SOL
+energygrps               = URE	SOL
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
@@ -152,7 +152,7 @@ nsttcouple               = -1
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
 ; Groups to couple separately
-tc_grps                  = Urea	SOL
+tc_grps                  = URE	SOL
 ; Time constant (ps) and reference temperature (K)
 tau_t                    = 0.1	0.1
 ref_t                    = 300	300

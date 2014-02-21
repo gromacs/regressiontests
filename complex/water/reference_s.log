@@ -1,6 +1,6 @@
-Log file opened on Thu Feb 20 16:29:41 2014
-Host: amd2  pid: 12904  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-5f171ff
+Log file opened on Fri Feb 21 14:05:35 2014
+Host: tcbs21  pid: 9242  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-7093b4b
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,13 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-5f171ff
-Executable: /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-7093b4b
+Executable: /nethome/rossen/local/gmx-testing/bin/gmx
 Command line:
-  gmx mdrun -notunepme -table ../table -tablep ../tablep
+  mdrun -v -deffnm reference_s -s topol.tpr
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140220-5f171ff
-GIT SHA1 hash:      5f171ffba93bc01c63bfebf4c0004422c2653209
+Gromacs version:    VERSION 5.0-beta2-dev-20140220-7093b4b
+GIT SHA1 hash:      7093b4bca2ad1b70cb4e6fa577e4ce2e687c0086
+Branched from:      5f171ffba93bc01c63bfebf4c0004422c2653209 (1 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
@@ -42,13 +43,13 @@ FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 C++11 compilation:  enabled
 TNG support:        enabled
-Built on:           Thu Feb  6 17:04:31 CET 2014
-Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.5.0-45-generic x86_64
-Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(tm) Processor 6376
-Build CPU family:   21   Model: 2   Stepping: 0
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Built on:           Fri Feb 21 12:07:56 CET 2014
+Built by:           rossen@tcbs21 [CMAKE]
+Build OS/arch:      Linux 3.5.0-46-generic x86_64
+Build CPU vendor:   GenuineIntel
+Build CPU brand:    Intel(R) Xeon(R) CPU E5-2620 0 @ 2.00GHz
+Build CPU family:   6   Model: 45   Stepping: 7
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
@@ -253,16 +254,16 @@ qm-opts:
 
 Detecting CPU SIMD instructions.
 Present hardware specification:
-Vendor: AuthenticAMD
-Brand:  AMD Opteron(tm) Processor 6376                 
-Family: 21  Model:  2  Stepping:  0
-Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
+Vendor: GenuineIntel
+Brand:  Intel(R) Xeon(R) CPU E5-2620 0 @ 2.00GHz
+Family:  6  Model: 45  Stepping:  7
+Features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+SIMD instructions most likely to fit this hardware: AVX_256
 SIMD instructions selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
+SIMD instructions most likely to fit this hardware: AVX_256
 SIMD instructions selected at GROMACS compile time: None
 
 Table routines are used for coulomb: TRUE
@@ -307,7 +308,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 0.00e+00
 Initial temperature: 4.18617e-09 K
 
-Started mdrun on node 0 Thu Feb 20 16:29:41 2014
+Started mdrun on node 0 Fri Feb 21 14:05:35 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -315,21 +316,21 @@ Started mdrun on node 0 Thu Feb 20 16:29:41 2014
 Grid: 3 x 3 x 3 cells
    Energies (kJ/mol)
         LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    2.01665e+03   -1.35844e+04   -1.15678e+04    5.28466e+02   -1.10393e+04
+    2.01741e+03   -1.35844e+04   -1.15670e+04    5.28467e+02   -1.10386e+04
     Temperature Pressure (bar)
-    9.80857e+01    2.96285e+04
+    9.80858e+01    2.96363e+04
 
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Thu Feb 20 16:29:41 2014
+Writing checkpoint, step 20 at Fri Feb 21 14:05:36 2014
 
 
    Energies (kJ/mol)
         LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    3.84011e+03   -3.46024e+04   -3.07623e+04    1.93307e+04   -1.14316e+04
+    3.84078e+03   -3.46022e+04   -3.07614e+04    1.93305e+04   -1.14309e+04
     Temperature Pressure (bar)
-    3.58786e+03    6.12919e+04
+    3.58783e+03    6.13007e+04
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -339,19 +340,19 @@ Writing checkpoint, step 20 at Thu Feb 20 16:29:41 2014
 
    Energies (kJ/mol)
         LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    3.01794e+03   -3.02049e+04   -2.71869e+04    1.56137e+04   -1.15732e+04
+    3.01862e+03   -3.02048e+04   -2.71862e+04    1.56138e+04   -1.15724e+04
     Temperature Pressure (bar)
-    2.89798e+03    7.09074e+04
+    2.89798e+03    7.09157e+04
 
    Total Virial (kJ/mol)
-   -8.70662e+03    1.72790e+03    4.22621e+01
-    1.72783e+03   -9.01864e+03    3.87952e+03
-    4.21949e+01    3.87953e+03   -8.01471e+03
+   -8.70822e+03    1.72790e+03    4.21088e+01
+    1.72788e+03   -9.02018e+03    3.87949e+03
+    4.20617e+01    3.87945e+03   -8.01639e+03
 
    Pressure (bar)
-    7.15768e+04   -8.84823e+03   -7.68041e+02
-   -8.84788e+03    7.33038e+04   -2.00116e+04
-   -7.67695e+02   -2.00116e+04    6.78416e+04
+    7.15850e+04   -8.84818e+03   -7.67233e+02
+   -8.84809e+03    7.33117e+04   -2.00114e+04
+   -7.66990e+02   -2.00113e+04    6.78504e+04
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -385,18 +386,18 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.006          0.015   4.6
- Force                  1    1         21       0.104          0.242  74.5
- Write traj.            1    1         21       0.022          0.052  15.9
- Update                 1    1         21       0.001          0.002   0.6
- Constraints            1    1         21       0.002          0.006   1.8
- Rest                                           0.004          0.008   2.5
+ Neighbor search        1    1          3       0.009          0.019   5.7
+ Force                  1    1         21       0.122          0.246  73.2
+ Write traj.            1    1         21       0.027          0.054  16.2
+ Update                 1    1         21       0.001          0.002   0.5
+ Constraints            1    1         21       0.003          0.005   1.6
+ Rest                                           0.005          0.009   2.8
 -----------------------------------------------------------------------------
- Total                                          0.140          0.324 100.0
+ Total                                          0.166          0.336 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.133        0.140       95.1
+       Time:        0.157        0.166       94.3
                  (ns/day)    (hour/ns)
-Performance:       25.914        0.926
-Finished mdrun on node 0 Thu Feb 20 16:29:41 2014
+Performance:       21.804        1.101
+Finished mdrun on node 0 Fri Feb 21 14:05:35 2014
