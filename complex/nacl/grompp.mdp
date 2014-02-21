@@ -1,8 +1,8 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: mark (1302)
-;	On host: amd2
-;	At date: Wed Dec 19 13:43:20 2012
+;	By user: rossen (1077)
+;	On host: tcbs21
+;	At date: Sun Feb 23 08:56:06 2014
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
@@ -59,16 +59,17 @@ nstlog                   = 0
 nstcalcenergy            = 1
 nstenergy                = 1
 ; Output frequency and precision for .xtc file
-nstxtcout                = 0
-xtc-precision            = 200
-; This selects the subset of atoms for the .xtc file. You can
-; select multiple groups. By default all atoms will be written.
-xtc-grps                 = 
+nstxout-compressed       = 0
+compressed-x-precision   = 200
+; This selects the subset of atoms for the compressed
+; trajectory file. You can select multiple groups. By
+; default, all atoms will be written.
+compressed-x-grps        = 
 ; Selection of energy groups
 energygrps               = system
 
 ; NEIGHBORSEARCHING PARAMETERS
-; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
+; cut-off scheme (Verlet: particle based cut-offs, group: using charge groups)
 cutoff-scheme            = Group
 ; nblist update frequency
 nstlist                  = 5
@@ -77,9 +78,9 @@ ns_type                  = grid
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
-; Allowed energy drift due to the Verlet buffer in kJ/mol/ps per atom,
+; Allowed energy error due to the Verlet buffer in kJ/mol/ps per atom,
 ; a value of -1 means: use rlist
-verlet-buffer-drift      = 0.005
+verlet-buffer-tolerance  = 0.005
 ; nblist cut-off        
 rlist                    = 1
 ; long-range cut-off for switched potentials
@@ -105,7 +106,7 @@ rvdw                     = 1.0
 DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
 table-extension          = 1
-; Seperate tables between energy group pairs
+; Separate tables between energy group pairs
 energygrp-table          = 
 ; Spacing for the PME/PPPM FFT grid
 fourierspacing           = 0.2
@@ -116,6 +117,8 @@ fourier_nz               = 0
 ; EWALD/PME/PPPM parameters
 pme_order                = 4
 ewald_rtol               = 1e-05
+ewald-rtol-lj            = 0.001
+lj-pme-comb-rule         = Geometric
 ewald_geometry           = 3d
 epsilon_surface          = 0
 optimize_fft             = no
@@ -290,6 +293,7 @@ vdw-lambdas              =
 bonded-lambdas           = 
 restraint-lambdas        = 
 temperature-lambdas      = 
+calc-lambda-neighbors    = 1
 init-lambda-weights      = 
 dhdl-print-energy        = no
 sc-alpha                 = 0
@@ -325,6 +329,10 @@ E-y                      =
 E-yt                     = 
 E-z                      = 
 E-zt                     = 
+
+; Ion/water position swapping for computational electrophysiology setups
+; Swap positions along direction: no, X, Y, Z
+swapcoords               = no
 
 ; AdResS parameters    
 adress                   = no
