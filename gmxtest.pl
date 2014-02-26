@@ -326,6 +326,77 @@ sub check_xvg {
     return $nerr;
 }
 
+# Callback used only when mdrun has returned an error, so we can work
+# out how to try to call it so it works
+sub how_should_we_rerun_mdrun {
+    my ($ntmpi_opt_ref, $ntomp_opt_ref, $mpi_processes_ref, $gpu_id_ref) = @_;
+
+    # Is it because we are using too many cores, or trying to use -nt
+    # with a reference build, or running a test that does not run in
+    # parallel?
+    open(MDOUT,"mdrun.out");
+    my(@lines) = <MDOUT>;
+    close(MDOUT);
+    my $rerun = 0;
+    foreach my $line (@lines) {
+        if ($line =~ /There is no domain decomposition for/) {
+            my $new_tmpi_processes = 8;
+            print ("Mdrun cannot use the requested (or automatic) number of cores, retrying with $new_tmpi_processes.\n");
+            $$ntmpi_opt_ref = "-ntmpi $new_tmpi_processes";
+            $rerun = 1;
+            last;
+        }
+        elsif ($line =~ /Setting the number of thread-MPI threads is only supported/) {
+            printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 thread.\n");
+            $$ntmpi_opt_ref = '';
+            $rerun = 1;
+            last;
+        }
+        elsif ($line =~ /OpenMP threads were requested/) {
+            my $new_omp_threads = 8;
+            print ("Mdrun cannot use the requested (or automatic) number of OpenMP threads, retrying with $new_omp_threads.\n");
+            # This one we change permanently.
+            $$ntomp_opt_ref = " -ntomp $new_omp_threads";
+            $rerun = 1;
+            last;
+        }
+        elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
+            my $new_mpi_processes = 1;
+            print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with ${new_mpi_processes}.\n");
+            if ($$mpi_processes_ref > $new_mpi_processes) {
+                $$mpi_processes_ref = $new_mpi_processes;
+            } else {
+                $$ntmpi_opt_ref = "-ntmpi ${new_mpi_processes}";
+            }
+            $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_processes);
+            $rerun = 1;
+            last;
+        }
+    }
+    return $rerun;
+}
+
+sub run_mdrun {
+    # Copy all parameters by value, which is useful so we can modify
+    # them if we need to, and have the changes local to this test
+    my ($ntmpi_opt, $ntomp_opt, $mpi_processes, $gpu_id, $mdprefix, $mdparams) = @_;
+
+    # Semi-temporary work-around for modern systems with lots of cores
+    # First we try running with whatever number of whatever the user
+    # wants, then adapt to the error messages
+    for my $attempt (0 .. 2)
+    {
+        my $command = $mdprefix->($mpi_processes)
+            . " $progs{'mdrun'} $ntmpi_opt $ntomp_opt $mdparams "
+            . add_gpu_id($gpu_id) . " >mdrun.out 2>&1";
+        my $nerror = do_system($command, 0,
+                               sub { how_should_we_rerun_mdrun(\$ntmpi_opt, \$ntomp_opt, \$mpi_processes, \$gpu_id) });
+        return $nerror unless($nerror);
+    }
+    # mdrun always failed, so pass the error upstream
+    return 1;
+}
+
 sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
@@ -426,7 +497,6 @@ sub test_systems {
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme -table ../table -tablep ../tablep"; 
-                my $local_gpu_id = $gpu_id;
         $ntmpi_opt = '';
         $ntomp_opt = '';
         if (0 < $mpi_threads) {
@@ -440,62 +510,7 @@ sub test_systems {
 		    $local_mdparams .= " -cpi continue -noappend";
 		    $part = ".part0002";
 		}
-        # Semi-temporary work-around for modern systems with lots of cores
-        # First we try running with whatever number of threads the user wants
-        $nerror = do_system($mdprefix->($mpi_processes)
-                            . "$local_mdprefix $progs{'mdrun'} $ntmpi_opt $ntomp_opt $local_mdparams "
-                            . add_gpu_id(${local_gpu_id}) . " >mdrun.out 2>&1", 0,
-			    sub {
-                                my $retval = shift;
-                                # Oopsie, error. Is it because we are using too many cores, or trying to use -nt with a reference build?
-                                open(MDOUT,"mdrun.out");
-                                my(@lines) = <MDOUT>;
-                                close(MDOUT);
-                                my $alt_ntmpi_opt = '';
-				my $alt_mpi_processes = $mpi_processes;
-                                my $rerun = 0;
-                                foreach my $line (@lines) {
-                                    if ($line =~ /There is no domain decomposition for/) {
-                                        print ("Mdrun cannot use the requested (or automatic) number of cores, retrying with 8.\n");
-                                        $alt_ntmpi_opt = '-ntmpi 8';
-                                        $rerun = 1;
-                                        last;
-                                    }
-                                    elsif ($line =~ /Setting the number of thread-MPI threads is only supported/) {
-                                        printf ("Mdrun compiled without threads or MPI support. Retrying with only 1 thread.\n");
-                                        $alt_ntmpi_opt = '';
-                                        $rerun = 1;
-                                        last;
-                                    }
-                                    elsif ($line =~ /OpenMP threads were requested/) {
-                                        print ("Mdrun cannot use the requested (or automatic) number of OpenMP threads, retrying with 8.\n");
-                                        # This one we change permanently.
-                                        $omp_threads = 8;
-                                        $ntomp_opt = " -ntomp $omp_threads";
-                                        $rerun = 1;
-                                        last;
-                                    }
-                                    elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
-                                        my $new_mpi_processes = 1;
-                                        print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with ${new_mpi_processes}.\n");
-					if ($mpi_processes > $new_mpi_processes) {
-					    $alt_mpi_processes = $new_mpi_processes;
-					} else {
-					    $alt_ntmpi_opt = "-ntmpi ${new_mpi_processes}";
-					}
-                                        $local_gpu_id = substr($gpu_id, 0, $new_mpi_processes);
-                                        $rerun = 1;
-                                        last;
-                                    }
-                                }
-                                if ($rerun == 1) {
-                                    $retval = do_system($mdprefix->($alt_mpi_processes)
-                                                        . "$local_mdprefix $progs{'mdrun'} $alt_ntmpi_opt $ntomp_opt $local_mdparams "
-                                                        . add_gpu_id($local_gpu_id) . " >mdrun.out 2>&1");
-                                }
-                                return $retval;
-			    });
-                             
+                $nerror = run_mdrun($ntmpi_opt, $ntomp_opt, $mpi_processes, $gpu_id, $mdprefix, $local_mdparams);
                 if ($nerror != 0) {
 		    if ($parse_cmd eq '') {
 			push(@error_detail, ("mdrun.out", "md.log"));
