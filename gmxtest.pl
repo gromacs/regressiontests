@@ -429,15 +429,18 @@ sub test_systems {
 		    my $tprerr="checktpr.err";
 		    do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0, 
 			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-		    $nerror |= find_in_file("step","$tprout");
+		    $nerror |= find_in_file("^(?!comparing)","$tprout");
 		    if ($nerror > 0) {
+			push(@error_detail, ("checktpr.out", "checktpr.err"));
 			print "topol.tpr file different from $reftpr. Check files in $dir\n";
 		    }
 		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
 			print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
 			$addversionnote = 1;
 		    }
-		    unlink($tprout,$tprerr);
+		    if ($nerror == 0) {			
+			unlink($tprout,$tprerr);
+		    }
 		}
 	    }
 	    if ($nerror == 0) {
