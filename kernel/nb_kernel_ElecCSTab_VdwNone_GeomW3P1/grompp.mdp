@@ -290,6 +290,7 @@ vdw-lambdas              =
 bonded-lambdas           = 
 restraint-lambdas        = 
 temperature-lambdas      = 
+calc-lambda-neighbors    = 0
 init-lambda-weights      = 
 dhdl-print-energy        = no
 sc-alpha                 = 0
