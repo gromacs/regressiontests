@@ -328,7 +328,7 @@ weight-equil-wl-delta    = 0.001
 weight-equil-count-ratio = -1
 
 ; Seed for Monte Carlo in lambda space
-lmc-seed                 = -1
+lmc-seed                 = -1062425001
 mc-temperature           = -1
 lmc-repeats              = 1
 lmc-gibbsdelta           = -1

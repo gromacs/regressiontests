@@ -83,7 +83,7 @@ verlet-buffer-drift      = 0.005
 ; nblist cut-off        
 rlist                    = 0.01
 ; long-range cut-off for switched potentials
-rlistlong                = 0.99
+rlistlong                = 0.9
 nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
@@ -290,6 +290,7 @@ vdw-lambdas              =
 bonded-lambdas           = 
 restraint-lambdas        = 
 temperature-lambdas      = 
+calc-lambda-neighbors    = 0
 init-lambda-weights      = 
 dhdl-print-energy        = no
 sc-alpha                 = 0
