@@ -369,9 +369,13 @@ sub how_should_we_rerun_mdrun {
     my $rerun = 0;
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
-            my $new_mpi_threads = 8;
-            print ("Mdrun cannot use the requested (or automatic) number of ranks, retrying with $new_mpi_threads.\n");
-            $$mpi_threads_ref = $new_mpi_threads;
+            my $new_mpi_ranks = 8;
+            if ($$mpi_processes_ref > $new_mpi_ranks) {
+                $$mpi_processes_ref = $new_mpi_ranks;
+            } else {
+                $$mpi_threads_ref = ${new_mpi_ranks};
+            }
+            print ("Mdrun cannot use the requested (or automatic) number of ranks, retrying with $new_mpi_ranks.\n");
             $rerun = 1;
             last;
         }
