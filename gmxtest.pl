@@ -17,6 +17,7 @@ $ENV{GMX_NO_QUOTES}='NO';
 
 my $mpi_threads = 0;
 my $omp_threads = 0;
+my $npme_nodes = -1;
 my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
@@ -72,6 +73,18 @@ my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra'
 sub add_gpu_id
 {
     return ($_[0]) ? "-gpu_id $_[0] " : "";
+}
+
+sub use_separate_pme_nodes {
+    my ($ntmpi, $mpi_processes, $npme_nodes) = @_;
+    # Only try -npme if using some kind of PME, with enough ranks and
+    # the user asked for it
+    if ((find_in_file("(coulombtype|vdw-type)\\s*=\\s*(pme|PME)", "grompp.mdp") > 0) &&
+        ($ntmpi > 2 || $mpi_processes > 2) &&
+        ($npme_nodes >= 0))
+    {
+        return " -npme $npme_nodes ";
+    }
 }
 
 sub setup_vars()
@@ -375,7 +388,7 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($mpi_threads, $omp_threads, $mpi_processes, $gpu_id, $mdprefix, $mdparams) = @_;
+    my ($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $mdparams) = @_;
 
     # Semi-temporary work-around for modern systems with lots of cores
     # First we try running with whatever number of whatever the user
@@ -393,6 +406,7 @@ sub run_mdrun {
 
         my $command = $mdprefix->($mpi_processes)
             . " $progs{'mdrun'} $ntmpi_opt "
+            . use_separate_pme_nodes($mpi_threads, $mpi_processes, $npme_nodes)
             . add_gpu_id($gpu_id)
             . "$ntomp_opt $mdparams "
             . " >mdrun.out 2>&1";
@@ -513,7 +527,7 @@ sub test_systems {
 		    $local_mdparams .= " -cpi continue -noappend";
 		    $part = ".part0002";
 		}
-                $nerror = run_mdrun($mpi_threads, $omp_threads, $mpi_processes, $gpu_id, $mdprefix, $local_mdparams);
+                $nerror = run_mdrun($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $local_mdparams);
                 if ($nerror != 0) {
 		    if ($parse_cmd eq '') {
 			push(@error_detail, ("mdrun.out", "md.log"));
@@ -919,7 +933,8 @@ sub clean_all {
 sub usage {
     my $dirs = join(' | ', @all_dirs);
     print <<EOP;
-Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [-verbose ] [ -double ] [ -bluegene ]
+Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [ -npme n ]
+                    [ -verbose ] [ -double ] [ -bluegene ]
                     [ -suffix xxx ] [ -reprod ] [ -mpirun mpirun_command ]
                     [ -mdrun mdrun_command ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
@@ -1035,6 +1050,13 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
                 print "Will test on $omp_threads OpenMP threads\n";
 	    }
 	}
+    }
+    elsif ($arg eq '-npme' ) {
+        if ($kk < $#ARGV) {
+            $kk++;
+            $npme_nodes = $ARGV[$kk];
+            print "Will run PME tests using $npme_nodes separate PME nodes\n";
+        }
     }
     elsif ($arg eq '-suffix' ) {
 	if ($kk <$#ARGV) {
