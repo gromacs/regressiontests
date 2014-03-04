@@ -17,8 +17,6 @@ $ENV{GMX_NO_QUOTES}='NO';
 
 my $mpi_threads = 0;
 my $omp_threads = 0;
-my $ntmpi_opt = '';
-my $ntomp_opt = '';
 my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
@@ -329,7 +327,7 @@ sub check_xvg {
 # Callback used only when mdrun has returned an error, so we can work
 # out how to try to call it so it works
 sub how_should_we_rerun_mdrun {
-    my ($ntmpi_opt_ref, $ntomp_opt_ref, $mpi_processes_ref, $gpu_id_ref) = @_;
+    my ($mpi_threads_ref, $omp_threads_ref, $mpi_processes_ref, $gpu_id_ref) = @_;
 
     # Is it because we are using too many cores, or trying to use -nt
     # with a reference build, or running a test that does not run in
@@ -340,33 +338,31 @@ sub how_should_we_rerun_mdrun {
     my $rerun = 0;
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
-            my $new_tmpi_processes = 8;
-            print ("Mdrun cannot use the requested (or automatic) number of cores, retrying with $new_tmpi_processes.\n");
-            $$ntmpi_opt_ref = "-ntmpi $new_tmpi_processes";
+            my $new_mpi_threads = 8;
+            print ("Mdrun cannot use the requested (or automatic) number of ranks, retrying with $new_mpi_threads.\n");
+            $$mpi_threads_ref = $new_mpi_threads;
             $rerun = 1;
             last;
         }
         elsif ($line =~ /Setting the number of thread-MPI threads is only supported/) {
             printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 thread.\n");
-            $$ntmpi_opt_ref = '';
+            $$mpi_threads_ref = '';
             $rerun = 1;
             last;
         }
         elsif ($line =~ /OpenMP threads were requested/) {
-            my $new_omp_threads = 8;
-            print ("Mdrun cannot use the requested (or automatic) number of OpenMP threads, retrying with $new_omp_threads.\n");
-            # This one we change permanently.
-            $$ntomp_opt_ref = " -ntomp $new_omp_threads";
+            $$omp_threads_ref = 8;
+            print ("Mdrun cannot use the requested (or automatic) number of OpenMP threads, retrying with $$omp_threads_ref.\n");
             $rerun = 1;
             last;
         }
         elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
             my $new_mpi_processes = 1;
-            print ("Mdrun cannot use the requested (or automatic) number of MPI cores, retrying with ${new_mpi_processes}.\n");
+            print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_processes}.\n");
             if ($$mpi_processes_ref > $new_mpi_processes) {
                 $$mpi_processes_ref = $new_mpi_processes;
             } else {
-                $$ntmpi_opt_ref = "-ntmpi ${new_mpi_processes}";
+                $$mpi_threads_ref = ${new_mpi_processes};
             }
             $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_processes);
             $rerun = 1;
@@ -379,18 +375,29 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($ntmpi_opt, $ntomp_opt, $mpi_processes, $gpu_id, $mdprefix, $mdparams) = @_;
+    my ($mpi_threads, $omp_threads, $mpi_processes, $gpu_id, $mdprefix, $mdparams) = @_;
 
     # Semi-temporary work-around for modern systems with lots of cores
     # First we try running with whatever number of whatever the user
     # wants, then adapt to the error messages
     for my $attempt (0 .. 2)
     {
+        my $ntmpi_opt = '';
+        my $ntomp_opt = '';
+        if (0 < $mpi_threads) {
+            $ntmpi_opt = " -ntmpi $mpi_threads";
+        }
+        if (find_in_file("cutoff-scheme.*=.*verlet","grompp.mdp") > 0 && $omp_threads > 0) {
+            $ntomp_opt = " -ntomp $omp_threads";
+        }
+
         my $command = $mdprefix->($mpi_processes)
-            . " $progs{'mdrun'} $ntmpi_opt $ntomp_opt $mdparams "
-            . add_gpu_id($gpu_id) . " >mdrun.out 2>&1";
+            . " $progs{'mdrun'} $ntmpi_opt "
+            . add_gpu_id($gpu_id)
+            . "$ntomp_opt $mdparams "
+            . " >mdrun.out 2>&1";
         my $nerror = do_system($command, 0,
-                               sub { how_should_we_rerun_mdrun(\$ntmpi_opt, \$ntomp_opt, \$mpi_processes, \$gpu_id) });
+                               sub { how_should_we_rerun_mdrun(\$mpi_threads, \$omp_threads, \$mpi_processes, \$gpu_id) });
         return $nerror unless($nerror);
     }
     # mdrun always failed, so pass the error upstream
@@ -501,20 +508,12 @@ sub test_systems {
 		unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
 		    $local_mdparams .= " -table ../table -tablep ../tablep";
 		}
-        $ntmpi_opt = '';
-        $ntomp_opt = '';
-        if (0 < $mpi_threads) {
-            $ntmpi_opt = " -ntmpi $mpi_threads";
-        }
-        if (find_in_file("cutoff-scheme.*=.*verlet","grompp.mdp") > 0 && $omp_threads > 0) {
-            $ntomp_opt = " -ntomp $omp_threads";
-        }
                my $part = "";
 		if ( -f "continue.cpt" ) {
 		    $local_mdparams .= " -cpi continue -noappend";
 		    $part = ".part0002";
 		}
-                $nerror = run_mdrun($ntmpi_opt, $ntomp_opt, $mpi_processes, $gpu_id, $mdprefix, $local_mdparams);
+                $nerror = run_mdrun($mpi_threads, $omp_threads, $mpi_processes, $gpu_id, $mdprefix, $local_mdparams);
                 if ($nerror != 0) {
 		    if ($parse_cmd eq '') {
 			push(@error_detail, ("mdrun.out", "md.log"));
