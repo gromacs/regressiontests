@@ -123,7 +123,7 @@ Protein             3
 #endif
 
 ; Include water topology
-#include "spce.itp"
+#include "gromos53a6.ff/spce.itp"
 
 #ifdef POSRES_WATER
 ; Position restraint for each water oxygen
