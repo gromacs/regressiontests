@@ -1,6 +1,6 @@
-Log file opened on Thu Feb 20 16:15:02 2014
-Host: amd2  pid: 5479  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-5f171ff (double precision)
+Log file opened on Sun Mar  9 11:44:22 2014
+Host: amd2  pid: 26904  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140306-1c2878c (double precision)
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,13 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140220-5f171ff (double precision)
-Executable: /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/bin/gmx_d
+GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140306-1c2878c (double precision)
+Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/bin/gmx_d
+Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/share/gromacs/top
 Command line:
   gmx_d mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140220-5f171ff
-GIT SHA1 hash:      5f171ffba93bc01c63bfebf4c0004422c2653209
+Gromacs version:    VERSION 5.0-beta2-dev-20140306-1c2878c
+GIT SHA1 hash:      1c2878cf56e7f7c9aaefa3d18e5a2efb99bddcaf
 Precision:          double
 Memory model:       64 bit
 MPI library:        none
@@ -53,7 +54,7 @@ C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
 C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
-Boost version:      1.48.0 (internal)
+Boost version:      1.55.0 (internal)
 
 
 
@@ -146,20 +147,20 @@ Input Parameters:
       posres-comB[1]= 0.00000e+00
       posres-comB[2]= 0.00000e+00
    verlet-buffer-tolerance = 0.005
-   rlist                = 0.8
-   rlistlong            = 0.8
+   rlist                = 0.9
+   rlistlong            = 0.9
    nstcalclr            = 0
    rtpi                 = 0.05
-   coulombtype                    = Cut-off
+   coulombtype                    = Reaction-Field-zero
    coulomb-modifier               = None
    rcoulomb-switch      = 0
    rcoulomb             = 0.8
    vdwtype                        = Cut-off
-   vdw-modifier                   = None
+   vdw-modifier                   = Potential-shift
    rvdw-switch          = 0
    rvdw                 = 0.8
    epsilon-r            = 1
-   epsilon-rf           = 1
+   epsilon-rf                     = inf
    tabext               = 1
    implicit-solvent               = No
    gb-algorithm                   = Still
@@ -265,14 +266,21 @@ Binary not matching hardware - you might be losing performance.
 SIMD instructions most likely to fit this hardware: AVX_128_FMA
 SIMD instructions selected at GROMACS compile time: None
 
+
+NOTE: This file uses the deprecated 'group' cutoff_scheme. This will be
+removed in a future release when 'verlet' supports all interaction forms.
+
 Table routines are used for coulomb: FALSE
 Table routines are used for vdw:     FALSE
-Cut-off's:   NS: 0.8   Coulomb: 0.8   LJ: 0.8
+Cut-off's:   NS: 0.9   Coulomb: 0.8   LJ: 0.8
+Reaction-Field-zero:
+epsRF = 0, rc = 0.8, krf = 0.976562, crf = 1.875, epsfac = 138.935
+The electrostatics potential has its minimum at r = 0.8
 System total charge: 0.000
 
 Enabling SPC-like water optimization for 216 molecules.
 
-Potential shift: LJ r^-12: 0.000 r^-6 0.000, Coulomb -0.000
+Potential shift: LJ r^-12: -1.455e+01 r^-6: -3.815e+00
 Removing pbc first time
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -301,28 +309,28 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 0.00e+00
 Initial temperature: 1.37407e-26 K
 
-Started mdrun on node 0 Thu Feb 20 16:15:02 2014
+Started mdrun on node 0 Sun Mar  9 11:44:22 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
 
    Energies (kJ/mol)
-        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    1.77977e+03   -1.09640e+04   -9.18426e+03    1.71235e+01   -9.16714e+03
-    Temperature Pressure (bar)
-    3.17820e+00   -1.32030e+02
+        LJ (SR)   Coulomb (SR)       RF excl.      Potential    Kinetic En.
+    1.85123e+03   -1.07551e+04   -6.99714e+01   -8.97384e+03    1.69855e+01
+   Total Energy    Temperature Pressure (bar)
+   -8.95685e+03    3.15258e+00    3.05351e+02
 
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Thu Feb 20 16:15:02 2014
+Writing checkpoint, step 20 at Sun Mar  9 11:44:22 2014
 
 
    Energies (kJ/mol)
-        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    1.34870e+03   -1.11154e+04   -9.76670e+03    8.04129e+02   -8.96257e+03
-    Temperature Pressure (bar)
-    1.49250e+02   -4.44410e+03
+        LJ (SR)   Coulomb (SR)       RF excl.      Potential    Kinetic En.
+    1.42645e+03   -1.09132e+04   -6.99714e+01   -9.55670e+03    8.06646e+02
+   Total Energy    Temperature Pressure (bar)
+   -8.75005e+03    1.49717e+02   -4.10735e+03
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -331,20 +339,20 @@ Writing checkpoint, step 20 at Thu Feb 20 16:15:02 2014
 	Statistics over 21 steps using 21 frames
 
    Energies (kJ/mol)
-        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    1.51439e+03   -1.12183e+04   -9.70394e+03    6.39261e+02   -9.06468e+03
-    Temperature Pressure (bar)
-    1.18650e+02   -3.32750e+03
+        LJ (SR)   Coulomb (SR)       RF excl.      Potential    Kinetic En.
+    1.58776e+03   -1.10127e+04   -6.99714e+01   -9.49494e+03    6.39913e+02
+   Total Energy    Temperature Pressure (bar)
+   -8.85503e+03    1.18771e+02   -2.93882e+03
 
    Total Virial (kJ/mol)
-    9.40805e+02   -1.06346e+02    1.28074e+01
-   -1.06346e+02    9.70763e+02   -9.07013e+01
-    1.28074e+01   -9.07013e+01    6.68317e+02
+    8.15586e+02   -1.66646e+02    4.17874e+01
+   -1.66646e+02    9.31942e+02   -7.16573e+01
+    4.17874e+01   -7.16573e+01    6.06329e+02
 
    Pressure (bar)
-   -3.77945e+03    4.90069e+02   -6.35215e+01
-    4.90069e+02   -3.89853e+03    4.05666e+02
-   -6.35215e+01    4.05666e+02   -2.30453e+03
+   -3.12023e+03    8.10307e+02   -2.07175e+02
+    8.10307e+02   -3.70417e+03    3.08972e+02
+   -2.07175e+02    3.08972e+02   -1.99208e+03
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -356,18 +364,18 @@ Writing checkpoint, step 20 at Thu Feb 20 16:15:02 2014
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NB VdW & Elec. [W3-W3,V&F]              41.633870          41.634    90.6
- NS-Pairs                                 0.070308           1.476     3.2
+ NB VdW & Elec. [W3-W3,V&F]              68.495408          68.495    94.0
+ NS-Pairs                                 0.070308           1.476     2.0
  Reset In Box                             0.000648           0.002     0.0
- Shift-X                                  0.027216           0.163     0.4
+ Shift-X                                  0.027216           0.163     0.2
  CG-CoM                                   0.001944           0.006     0.0
- Virial                                   0.014553           0.262     0.6
- Calc-Ekin                                0.014256           0.385     0.8
+ Virial                                   0.014553           0.262     0.4
+ Calc-Ekin                                0.014256           0.385     0.5
  Constraint-V                             0.014256           0.114     0.2
- Constraint-Vir                           0.013608           0.327     0.7
- Settle                                   0.004968           1.605     3.5
+ Constraint-Vir                           0.013608           0.327     0.4
+ Settle                                   0.004968           1.605     2.2
 -----------------------------------------------------------------------------
- Total                                                      45.974   100.0
+ Total                                                      72.835   100.0
 -----------------------------------------------------------------------------
 
 
@@ -378,18 +386,18 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.007          0.016   9.3
- Force                  1    1         21       0.049          0.115  67.8
- Write traj.            1    1          2       0.010          0.023  13.5
- Update                 1    1         21       0.001          0.002   0.9
- Constraints            1    1         21       0.002          0.005   3.2
- Rest                                           0.004          0.009   5.3
+ Neighbor search        1    1          3       0.010          0.024   9.7
+ Force                  1    1         21       0.070          0.164  66.2
+ Write traj.            1    1          2       0.019          0.044  17.6
+ Update                 1    1         21       0.001          0.002   0.6
+ Constraints            1    1         21       0.002          0.005   2.1
+ Rest                                           0.004          0.009   3.7
 -----------------------------------------------------------------------------
- Total                                          0.072          0.169 100.0
+ Total                                          0.106          0.247 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.068        0.072       94.1
+       Time:        0.096        0.106       90.1
                  (ns/day)    (hour/ns)
-Performance:       50.120        0.479
-Finished mdrun on node 0 Thu Feb 20 16:15:02 2014
+Performance:       34.166        0.702
+Finished mdrun on node 0 Sun Mar  9 11:44:22 2014
