@@ -17,7 +17,7 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
 dt                       = 0.001
-nsteps                   = 60
+nsteps                   = 40
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -51,11 +51,11 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 60
-nstvout                  = 60
-nstfout                  = 60
+nstxout                  = 40
+nstvout                  = 40
+nstfout                  = 40
 ; Output frequency for energies to log file and energy file
-nstlog                   = 60
+nstlog                   = 40
 nstcalcenergy            = 100
 nstenergy                = 1
 ; Output frequency and precision for .xtc file
@@ -282,7 +282,7 @@ couple-intramol          = no
 init-lambda              = -1
 init-lambda-state        = 3
 delta-lambda             = 0
-nstdhdl                  = 100
+nstdhdl                  = 20
 fep-lambdas              = 
 mass-lambdas             = 
 coul-lambdas             = 0.0 0.0 0.0 0.0 0.0 0.0 0.4 0.8 1.0

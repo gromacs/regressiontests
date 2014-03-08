@@ -1,0 +1,3 @@
+The purpose of this test is to ensure that simple neighbour searching
+continues to work with the Verlet cut-off scheme. The inputs are identical
+to those of simple_search_group, apart from the cut-off scheme.
