@@ -88,9 +88,9 @@ nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
-coulombtype              = pme
+coulombtype              = pme-switch
 coulomb-modifier         = Potential-shift-Verlet
-rcoulomb-switch          = 0
+rcoulomb-switch          = 0.85
 rcoulomb                 = 0.9
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
