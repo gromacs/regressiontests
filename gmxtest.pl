@@ -659,7 +659,7 @@ sub test_systems {
 		    }
 		    else {
 			my $mdp_result = 0;
-			foreach my $reference_mdp ( 'grompp.mdp', 'grompp4.mdp', 'grompp41.mdp' ) {
+			foreach my $reference_mdp ( 'grompp.mdp' ) {
 			    if (-f $reference_mdp) {
 			    	open(FILE1,"$reference_mdp") || die "Could not open file '$reference_mdp'\n";
 				open(FILE2,"mdout.mdp") || die "Could not open file 'mdout.mdp'\n";
