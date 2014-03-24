@@ -1,44 +1,46 @@
-Log file opened on Thu Dec 20 14:17:02 2012
-Host: amd2  pid: 32982  nodeid: 0  nnodes:  1
-Gromacs version:    VERSION 4.6-beta2-dev-20121220-4d3a2d4
-GIT SHA1 hash:      4d3a2d48d7bdde9d1297230221ea2d088af0e8cc
-Branched from:      66ba29b16bd066b88f06813f62f43a5233723780 (1 newer local commits)
+Log file opened on Mon Mar 24 18:17:29 2014
+Host: amd2  pid: 59925  nodeid: 0  nnodes:  1
+Gromacs version:    VERSION 4.6.6-dev-20140323-b58afa7-unknown
+GIT SHA1 hash:      b58afa7e304477f48ce48dfc11b9e9afd2987bc3
+Branched from:      unknown
 Precision:          double
+Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
-CPU acceleration:   None
+CPU acceleration:   NONE
 FFT library:        fftpack (built-in)
 Large file support: enabled
 RDTSCP usage:       enabled
-Built on:           Thu Dec 20 14:12:15 CET 2012
+Built on:           Mon Mar 24 17:58:53 CET 2014
 Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.2.0-29-generic x86_64
+Build OS/arch:      Linux 3.5.0-47-generic x86_64
 Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(tm) Processor 6176
-Build CPU family:   16   Model: 9   Stepping: 1
-Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
-C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.2-4precise1) 4.7.2
-C compiler flags:    -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
+Build CPU brand:    AMD Opteron(tm) Processor 6376
+Build CPU family:   21   Model: 2   Stepping: 0
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+C compiler:         /usr/bin/gcc-4.7 GNU gcc-4.7 (Ubuntu/Linaro 4.7.3-2ubuntu1~12.04) 4.7.3
+C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wno-unknown-pragmas   -O0 -g
 
 
                          :-)  G  R  O  M  A  C  S  (-:
 
                    Groningen Machine for Chemical Simulation
 
-                :-)  VERSION 4.6-beta2-dev-20121220-4d3a2d4  (-:
+              :-)  VERSION 4.6.6-dev-20140323-b58afa7-unknown  (-:
 
-        Written by Emile Apol, Rossen Apostolov, Herman J.C. Berendsen,
-      Aldert van Buuren, Pär Bjelkmar, Rudi van Drunen, Anton Feenstra, 
-        Gerrit Groenhof, Peter Kasson, Per Larsson, Pieter Meulenhoff, 
+        Contributions from Mark Abraham, Emile Apol, Rossen Apostolov, 
+           Herman J.C. Berendsen, Aldert van Buuren, Pär Bjelkmar,  
+     Rudi van Drunen, Anton Feenstra, Gerrit Groenhof, Christoph Junghans, 
+        Peter Kasson, Carsten Kutzner, Per Larsson, Pieter Meulenhoff, 
            Teemu Murtola, Szilard Pall, Sander Pronk, Roland Schulz, 
                 Michael Shirts, Alfons Sijbers, Peter Tieleman,
 
                Berk Hess, David van der Spoel, and Erik Lindahl.
 
        Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-            Copyright (c) 2001-2010, The GROMACS development team at
+         Copyright (c) 2001-2012,2013, The GROMACS development team at
         Uppsala University & The Royal Institute of Technology, Sweden.
             check out http://www.gromacs.org for more information.
 
@@ -137,18 +139,18 @@ Input Parameters:
       posres-comB[1]= 0.00000e+00
       posres-comB[2]= 0.00000e+00
    verlet-buffer-drift  = 0.005
-   rlist                = 0.952
-   rlistlong            = 0.952
+   rlist                = 0.895
+   rlistlong            = 0.895
    nstcalclr            = 10
    rtpi                 = 0.05
    coulombtype          = PME
    coulomb-modifier     = Potential-shift
    rcoulomb-switch      = 0
-   rcoulomb             = 0.9
+   rcoulomb             = 0.85
    vdwtype              = Cut-off
    vdw-modifier         = Potential-shift
    rvdw-switch          = 0
-   rvdw                 = 0.9
+   rvdw                 = 0.85
    epsilon-r            = 1
    epsilon-rf           = inf
    tabext               = 1
@@ -244,15 +246,15 @@ qm-opts:
 Detecting CPU-specific acceleration.
 Present hardware specification:
 Vendor: AuthenticAMD
-Brand:  AMD Opteron(tm) Processor 6176
-Family: 16  Model:  9  Stepping:  1
-Features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
-Acceleration most likely to fit this hardware: SSE2
+Brand:  AMD Opteron(tm) Processor 6376                 
+Family: 21  Model:  2  Stepping:  0
+Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Acceleration most likely to fit this hardware: AVX_128_FMA
 Acceleration selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-Acceleration most likely to fit this hardware: SSE2
+Acceleration most likely to fit this hardware: AVX_128_FMA
 Acceleration selected at GROMACS compile time: None
 
 Will do PME sum in reciprocal space.
@@ -264,28 +266,28 @@ J. Chem. Phys. 103 (1995) pp. 8577-8592
 -------- -------- --- Thank You --- -------- --------
 
 Will do ordinary reciprocal space Ewald sum.
-Using a Gaussian width (1/beta) of 0.288146 nm for Ewald
-Cut-off's:   NS: 0.952   Coulomb: 0.9   LJ: 0.9
+Using a Gaussian width (1/beta) of 0.272138 nm for Ewald
+Cut-off's:   NS: 0.895   Coulomb: 0.85   LJ: 0.85
 System total charge: 0.000
-Generated table with 3904 data points for Ewald.
+Generated table with 3790 data points for Ewald.
 Tabscale = 2000 points/nm
-Generated table with 3904 data points for LJ6.
+Generated table with 3790 data points for LJ6.
 Tabscale = 2000 points/nm
-Generated table with 3904 data points for LJ12.
+Generated table with 3790 data points for LJ12.
 Tabscale = 2000 points/nm
-Generated table with 3904 data points for 1-4 COUL.
+Generated table with 3790 data points for 1-4 COUL.
 Tabscale = 2000 points/nm
-Generated table with 3904 data points for 1-4 LJ6.
+Generated table with 3790 data points for 1-4 LJ6.
 Tabscale = 2000 points/nm
-Generated table with 3904 data points for 1-4 LJ12.
+Generated table with 3790 data points for 1-4 LJ12.
 Tabscale = 2000 points/nm
 
 Using plain C 4x4 non-bonded kernels
 
 Using Lorentz-Berthelot Lennard-Jones combination rule
 
-Potential shift: LJ r^-12: 3.541 r^-6 1.882, Ewald 1.000e-05
-Initialized non-bonded Ewald correction tables, spacing: 6.26e-04 size: 3120
+Potential shift: LJ r^-12: 7.030 r^-6 2.651, Ewald 1.000e-05
+Initialized non-bonded Ewald correction tables, spacing: 6.08e-04 size: 3117
 
 Removing pbc first time
 
@@ -328,8 +330,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 8.32e-07
 Initial temperature: 289.877 K
 
-Started mdrun on node 0 Thu Dec 20 14:17:02 2012
-
+Started mdrun on node 0 Thu Jan  1 01:00:00 1970
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -337,23 +338,23 @@ Started mdrun on node 0 Thu Dec 20 14:17:02 2012
           Angle    Proper Dih.  Improper Dih.          LJ-14     Coulomb-14
     1.92200e+01    8.45390e+00    5.35404e-01    9.73851e+00    6.48782e+02
         LJ (SR)   Coulomb (SR)   Coul. recip.      Potential    Kinetic En.
-    1.91688e+03   -1.51961e+04    1.51553e+02   -1.24409e+04    2.18234e+03
+    1.94439e+03   -1.52342e+04    1.89334e+02   -1.24138e+04    2.18233e+03
    Total Energy    Temperature Pressure (bar)   Constr. rmsd
-   -1.02586e+04    2.89866e+02   -1.65156e+02    2.12817e-06
+   -1.02314e+04    2.89865e+02   -1.15036e+02    2.12805e-06
 
            Step           Time         Lambda
              20        0.10000        0.00000
 
-Writing checkpoint, step 20 at Thu Dec 20 14:17:04 2012
+Writing checkpoint, step 20 at Mon Mar 24 18:17:30 2014
 
 
    Energies (kJ/mol)
           Angle    Proper Dih.  Improper Dih.          LJ-14     Coulomb-14
-    2.87218e+01    1.14386e+01    1.15166e+00    6.31753e+00    6.44137e+02
+    2.86917e+01    1.14389e+01    1.15010e+00    6.32061e+00    6.44115e+02
         LJ (SR)   Coulomb (SR)   Coul. recip.      Potential    Kinetic En.
-    1.96553e+03   -1.52825e+04    1.31457e+02   -1.24937e+04    2.23584e+03
+    1.99176e+03   -1.53149e+04    1.65842e+02   -1.24656e+04    2.23538e+03
    Total Energy    Temperature Pressure (bar)   Constr. rmsd
-   -1.02579e+04    2.96972e+02   -3.39531e+01    3.35874e-06
+   -1.02302e+04    2.96911e+02    8.20748e+00    3.35929e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -363,24 +364,24 @@ Writing checkpoint, step 20 at Thu Dec 20 14:17:04 2012
 
    Energies (kJ/mol)
           Angle    Proper Dih.  Improper Dih.          LJ-14     Coulomb-14
-    2.39709e+01    9.94626e+00    8.43530e-01    8.02802e+00    6.46460e+02
+    2.39558e+01    9.94639e+00    8.42750e-01    8.02956e+00    6.46449e+02
         LJ (SR)   Coulomb (SR)   Coul. recip.      Potential    Kinetic En.
-    1.94121e+03   -1.52393e+04    1.41505e+02   -1.24673e+04    2.20909e+03
+    1.96808e+03   -1.52746e+04    1.77588e+02   -1.24397e+04    2.20886e+03
    Total Energy    Temperature Pressure (bar)   Constr. rmsd
-   -1.02582e+04    2.93419e+02   -9.95545e+01    0.00000e+00
+   -1.02308e+04    2.93388e+02   -5.34140e+01    0.00000e+00
 
           Box-X          Box-Y          Box-Z
-    2.35519e+00    2.35519e+00    1.66537e+00
+    2.35527e+00    2.35527e+00    1.66542e+00
 
    Total Virial (kJ/mol)
-    1.01664e+03    9.22010e+01    9.75603e+01
-    9.22010e+01    6.34745e+02   -9.38562e+01
-    9.75603e+01   -9.38562e+01    6.40813e+02
+    1.00328e+03    9.23182e+01    9.69564e+01
+    9.23182e+01    6.22149e+02   -9.38266e+01
+    9.69564e+01   -9.38266e+01    6.28031e+02
 
    Pressure (bar)
-   -1.08993e+03   -3.85330e+02   -4.01003e+02
-   -3.85330e+02    3.72161e+02    2.56264e+02
-   -4.01003e+02    2.56264e+02    4.19105e+02
+   -1.04197e+03   -3.85775e+02   -3.98752e+02
+   -3.85775e+02    4.17103e+02    2.56073e+02
+   -3.98752e+02    2.56073e+02    4.64623e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -392,35 +393,36 @@ Writing checkpoint, step 20 at Thu Dec 20 14:17:04 2012
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check               0.768820           6.919     1.9
- NxN QSTab Elec. + VdW [F]                3.551024         145.592    40.4
- NxN QSTab Elec. + VdW [V&F]              0.369968          21.828     6.1
- NxN QSTab Elec. [F]                      2.766864          94.073    26.1
- NxN QSTab Elec. [V&F]                    0.291376          11.946     3.3
+ Pair Search distance check               0.676236           6.086     1.9
+ NxN QSTab Elec. + VdW [F]                2.764680         113.352    35.8
+ NxN QSTab Elec. + VdW [V&F]              0.288960          17.049     5.4
+ NxN QSTab Elec. [F]                      2.625144          89.255    28.2
+ NxN QSTab Elec. [V&F]                    0.274320          11.247     3.5
  1,4 nonbonded interactions               0.001029           0.093     0.0
- Calc Weights                             0.058149           2.093     0.6
- Spread Q Bspline                         1.240512           2.481     0.7
- Gather F Bspline                         1.240512           7.443     2.1
- 3D-FFT                                   7.986174          63.889    17.7
+ Calc Weights                             0.058149           2.093     0.7
+ Spread Q Bspline                         1.240512           2.481     0.8
+ Gather F Bspline                         1.240512           7.443     2.3
+ 3D-FFT                                   7.986174          63.889    20.2
  Solve PME                                0.012096           0.774     0.2
  Shift-X                                  0.002769           0.017     0.0
  Angles                                   0.000441           0.074     0.0
- Propers                                  0.000987           0.226     0.1
+ Propers                                  0.000630           0.144     0.0
+ Impropers                                0.000063           0.013     0.0
  Virial                                   0.002904           0.052     0.0
  Stop-CM                                  0.001846           0.018     0.0
  P-Coupling                               0.019383           0.116     0.0
  Calc-Ekin                                0.005538           0.150     0.0
  Lincs                                    0.000368           0.022     0.0
  Lincs-Mat                                0.006164           0.025     0.0
- Constraint-V                             0.020372           0.163     0.0
+ Constraint-V                             0.020372           0.163     0.1
  Constraint-Vir                           0.002730           0.066     0.0
- Settle                                   0.006854           2.214     0.6
+ Settle                                   0.006854           2.214     0.7
  Virtual Site 3                           0.000144           0.005     0.0
  Virtual Site 3fd                         0.000024           0.002     0.0
  Virtual Site 3out                        0.000144           0.013     0.0
  Virtual Site 4fdn                        0.000048           0.012     0.0
 -----------------------------------------------------------------------------
- Total                                                     360.308   100.0
+ Total                                                     316.868   100.0
 -----------------------------------------------------------------------------
 
 
@@ -429,26 +431,26 @@ Writing checkpoint, step 20 at Thu Dec 20 14:17:04 2012
  Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
 -----------------------------------------------------------------------------
  Vsite constr.          1    1         21       0.000        0.001     0.0
- Neighbor search        1    1          3       0.047        0.107     3.3
- Force                  1    1         21       1.161        2.674    81.3
- PME mesh               1    1         21       0.187        0.431    13.1
+ Neighbor search        1    1          3       0.032        0.073     3.2
+ Force                  1    1         21       0.818        1.884    81.9
+ PME mesh               1    1         21       0.118        0.273    11.8
  NB X/F buffer ops.     1    1         39       0.001        0.002     0.1
- Vsite spread           1    1         24       0.001        0.002     0.0
- Write traj.            1    1          2       0.018        0.041     1.2
- Update                 1    1         21       0.001        0.003     0.1
- Constraints            1    1         21       0.007        0.016     0.5
- Rest                   1                       0.004        0.010     0.3
+ Vsite spread           1    1         24       0.000        0.001     0.0
+ Write traj.            1    1          2       0.019        0.044     1.9
+ Update                 1    1         21       0.001        0.002     0.1
+ Constraints            1    1         21       0.006        0.014     0.6
+ Rest                   1                       0.003        0.008     0.3
 -----------------------------------------------------------------------------
- Total                  1                       1.428        3.287   100.0
+ Total                  1                       0.999        2.302   100.0
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
- PME spread/gather      1    1         42       0.062        0.143     4.4
- PME 3D-FFT             1    1         42       0.108        0.249     7.6
- PME solve              1    1         21       0.017        0.039     1.2
+ PME spread/gather      1    1         42       0.039        0.090     3.9
+ PME 3D-FFT             1    1         42       0.068        0.156     6.8
+ PME solve              1    1         21       0.011        0.026     1.1
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.410        1.428       98.8
+       Time:        0.990        0.999       99.1
                  (ns/day)    (hour/ns)
-Performance:        6.354        3.777
-Finished mdrun on node 0 Thu Dec 20 14:17:04 2012
+Performance:        9.079        2.644
+Finished mdrun on node 0 Mon Mar 24 18:17:30 2014
