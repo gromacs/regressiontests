@@ -79,7 +79,7 @@ pbc                      = xyz
 periodic-molecules       = no
 ; Allowed energy drift due to the Verlet buffer in kJ/mol/ps per atom,
 ; a value of -1 means: use rlist
-verlet-buffer-drift      = 0.005
+verlet-buffer-drift      = -1
 ; nblist cut-off        
 rlist                    = 0.9
 ; long-range cut-off for switched potentials
@@ -91,7 +91,7 @@ nstcalclr                = -1
 coulombtype              = PME
 coulomb-modifier         = Potential-shift-Verlet
 rcoulomb-switch          = 0
-rcoulomb                 = 0.9
+rcoulomb                 = 0.85
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
 epsilon-rf               = 0
@@ -100,7 +100,7 @@ vdw-type                 = Cut-off
 vdw-modifier             = Potential-shift-Verlet
 ; cut-off lengths       
 rvdw-switch              = 0
-rvdw                     = 0.9
+rvdw                     = 0.85
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
