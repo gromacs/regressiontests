@@ -1,6 +1,6 @@
-Log file opened on Sun Mar  9 09:55:02 2014
-Host: amd2  pid: 23159  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140306-1c2878c (double precision)
+Log file opened on Sat Mar 29 22:40:50 2014
+Host: amd2  pid: 17504  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140317-ca44752
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,15 +24,16 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140306-1c2878c (double precision)
-Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/bin/gmx_d
-Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/share/gromacs/top
+GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140317-ca44752
+Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
+Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/share/gromacs/top
 Command line:
-  gmx_d mdrun -notunepme -table ../table -tablep ../tablep
+  gmx mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140306-1c2878c
-GIT SHA1 hash:      1c2878cf56e7f7c9aaefa3d18e5a2efb99bddcaf
-Precision:          double
+Gromacs version:    VERSION 5.0-beta2-dev-20140317-ca44752
+GIT SHA1 hash:      ca44752412a8402239e8a7823962200957f72fd0
+Branched from:      23d79229d99e4ff53bf9356c22f57727450f01af (9 newer local commits)
+Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
@@ -43,7 +44,7 @@ FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 C++11 compilation:  enabled
 TNG support:        enabled
-Built on:           Thu Feb  6 17:05:59 CET 2014
+Built on:           Thu Feb  6 17:04:31 CET 2014
 Built by:           mark@amd2 [CMAKE]
 Build OS/arch:      Linux 3.5.0-45-generic x86_64
 Build CPU vendor:   AuthenticAMD
@@ -319,19 +320,19 @@ Using a Gaussian width (1/beta) of 0.289108 nm for Ewald
 Using shifted Lennard-Jones, switch between 0.8 and 0.85 nm
 Cut-off's:   NS: 1   Coulomb: 1   LJ: 0.85
 Long Range LJ corr.: <C6> 2.8808e-04
-System total charge, top. A: 0.000 top. B: 0.000
-Generated table with 4000 data points for Ewald.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for LJ6Shift.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for LJ12Shift.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for 1-4 COUL.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for 1-4 LJ6.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for 1-4 LJ12.
-Tabscale = 2000 points/nm
+System total charge, top. A: 0.000 top. B: -0.000
+Generated table with 1000 data points for Ewald.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for LJ6Shift.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for LJ12Shift.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for 1-4 COUL.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for 1-4 LJ6.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for 1-4 LJ12.
+Tabscale = 500 points/nm
 
 Enabling SPC-like water optimization for 640 molecules.
 
@@ -378,10 +379,10 @@ Total number of graph edges is 2576
 Constraining the starting coordinates (step 0)
 
 Constraining the coordinates at t0-dt (step 0)
-RMS relative constraint deviation after constraining: 8.20e-07
-Initial temperature: 303.11 K
+RMS relative constraint deviation after constraining: 1.46e-06
+Initial temperature: 303.109 K
 
-Started mdrun on node 0 Sun Mar  9 09:55:02 2014
+Started mdrun on node 0 Sat Mar 29 22:40:50 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -389,29 +390,29 @@ Started mdrun on node 0 Sun Mar  9 09:55:02 2014
 Grid: 4 x 4 x 3 cells
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.          LJ-14     Coulomb-14
-    8.78799e+00    1.74586e+00    6.80414e+00    5.72507e-01   -1.83519e+02
+    8.78771e+00    1.74582e+00    6.80406e+00    5.72488e-01   -1.83519e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
-    5.70892e+03   -4.07809e+02   -3.19119e+04   -3.37174e+03   -3.01481e+04
+    5.70892e+03   -4.07808e+02   -3.19119e+04   -3.37175e+03   -3.01481e+04
     Kinetic En.   Total Energy    Temperature Pres. DC (bar) Pressure (bar)
-    4.84631e+03   -2.53018e+04    3.02321e+02   -3.45012e+02   -1.52793e+03
+    4.84631e+03   -2.53018e+04    3.02320e+02   -3.45012e+02   -1.53024e+03
       dVcoul/dl       dVvdw/dl   Constr. rmsd
-   -3.85107e+01   -3.39863e+01    4.97456e-07
+   -3.85138e+01   -3.39863e+01    1.36001e-06
 
            Step           Time         Lambda
              40        0.04000        0.00000
 
-Writing checkpoint, step 40 at Sun Mar  9 09:55:04 2014
+Writing checkpoint, step 40 at Sat Mar 29 22:40:52 2014
 
 
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.          LJ-14     Coulomb-14
-    3.04981e+00    1.81021e+00    6.85785e+00    1.71081e-01   -1.81164e+02
+    3.04932e+00    1.81062e+00    6.85775e+00    1.71107e-01   -1.81164e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
-    5.76405e+03   -4.07809e+02   -3.19141e+04   -3.34437e+03   -3.00715e+04
+    5.76402e+03   -4.07808e+02   -3.19141e+04   -3.34438e+03   -3.00716e+04
     Kinetic En.   Total Energy    Temperature Pres. DC (bar) Pressure (bar)
-    4.77055e+03   -2.53010e+04    2.97595e+02   -3.45012e+02   -1.36078e+03
+    4.77054e+03   -2.53010e+04    2.97594e+02   -3.45012e+02   -1.36207e+03
       dVcoul/dl       dVvdw/dl   Constr. rmsd
-   -1.99844e+01   -2.93469e+01    1.24649e-06
+   -1.99871e+01   -2.93463e+01    1.47092e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -421,28 +422,28 @@ Writing checkpoint, step 40 at Sun Mar  9 09:55:04 2014
 
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.          LJ-14     Coulomb-14
-    6.95961e+00    8.00616e-01    5.45952e+00    8.58775e-01   -1.82958e+02
+    6.95985e+00    8.00669e-01    5.45950e+00    8.58805e-01   -1.82958e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
-    5.70631e+03   -4.07809e+02   -3.18208e+04   -3.34748e+03   -3.00387e+04
+    5.70630e+03   -4.07808e+02   -3.18209e+04   -3.34749e+03   -3.00387e+04
     Kinetic En.   Total Energy    Temperature Pres. DC (bar) Pressure (bar)
-    4.73725e+03   -2.53014e+04    2.95517e+02   -3.45012e+02   -1.42420e+03
+    4.73724e+03   -2.53015e+04    2.95516e+02   -3.45012e+02   -1.42426e+03
       dVcoul/dl       dVvdw/dl   Constr. rmsd
-   -2.34650e+01   -3.13543e+01    0.00000e+00
+   -2.34679e+01   -3.13540e+01    0.00000e+00
 
    Total Virial (kJ/mol)
-    3.04055e+03    1.64425e+02   -4.06875e+02
-    1.64425e+02    1.79622e+03    4.56190e+02
-   -4.06875e+02    4.56190e+02    2.43108e+03
+    3.04088e+03    1.63982e+02   -4.07188e+02
+    1.64570e+02    1.79610e+03    4.56087e+02
+   -4.06864e+02    4.56038e+02    2.43098e+03
 
    Pressure (bar)
-   -2.48573e+03   -2.25549e+02    8.86477e+02
-   -2.25549e+02   -2.97985e+02   -8.36242e+02
-    8.86477e+02   -8.36242e+02   -1.48889e+03
+   -2.48629e+03   -2.24793e+02    8.87011e+02
+   -2.25785e+02   -2.97777e+02   -8.36059e+02
+    8.86463e+02   -8.35976e+02   -1.48871e+03
 
   Epot (kJ/mol)        Coul-SR          LJ-SR        Coul-14          LJ-14   
-Protein-Protein    5.82685e+01    0.00000e+00   -1.82958e+02    8.58775e-01
+Protein-Protein    5.82685e+01    0.00000e+00   -1.82958e+02    8.58805e-01
     Protein-SOL    0.00000e+00   -1.94053e+01    0.00000e+00    0.00000e+00
-        SOL-SOL   -3.18791e+04    5.72572e+03    0.00000e+00    0.00000e+00
+        SOL-SOL   -3.18791e+04    5.72570e+03    0.00000e+00    0.00000e+00
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -462,7 +463,7 @@ Protein-Protein    5.82685e+01    0.00000e+00   -1.82958e+02    8.58775e-01
  Gather F Bspline                        10.123392          60.740     5.8
  3D-FFT                                  22.682348         181.459    17.3
  Solve PME                                0.047232           3.023     0.3
- NS-Pairs                                 0.785616          16.498     1.6
+ NS-Pairs                                 0.785615          16.498     1.6
  Reset In Box                             0.003215           0.010     0.0
  Shift-X                                  0.316356           1.898     0.2
  CG-CoM                                   0.009645           0.029     0.0
@@ -489,25 +490,25 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          5       0.059          0.137   3.4
- Force                  1    1         41       1.159          2.670  65.6
- PME mesh               1    1         41       0.460          1.060  26.0
- Write traj.            1    1          2       0.050          0.115   2.8
- Update                 1    1         41       0.004          0.009   0.2
- Constraints            1    1         41       0.013          0.031   0.8
- Rest                                           0.021          0.048   1.2
+ Neighbor search        1    1          5       0.057          0.137   3.3
+ Force                  1    1         41       1.112          2.682  63.9
+ PME mesh               1    1         41       0.435          1.050  25.0
+ Write traj.            1    1          2       0.019          0.047   1.1
+ Update                 1    1         41       0.005          0.012   0.3
+ Constraints            1    1         41       0.013          0.031   0.7
+ Rest                                           0.098          0.236   5.6
 -----------------------------------------------------------------------------
- Total                                          1.766          4.068 100.0
+ Total                                          1.738          4.195 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1        164       0.197          0.455  11.2
- PME 3D-FFT             1    1        164       0.207          0.477  11.7
- PME solve Elec         1    1         82       0.055          0.127   3.1
+ PME spread/gather      1    1        164       0.186          0.448  10.7
+ PME 3D-FFT             1    1        164       0.195          0.471  11.2
+ PME solve Elec         1    1         82       0.054          0.131   3.1
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.740        1.766       98.5
+       Time:        1.730        1.738       99.5
                  (ns/day)    (hour/ns)
-Performance:        2.006       11.965
-Finished mdrun on node 0 Sun Mar  9 09:55:02 2014
+Performance:        2.038       11.778
+Finished mdrun on node 0 Sat Mar 29 22:40:50 2014

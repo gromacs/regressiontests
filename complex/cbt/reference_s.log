@@ -1,6 +1,6 @@
-Log file opened on Wed Mar  5 16:46:29 2014
-Host: amd2  pid: 31298  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140305-e2e3d4d (double precision)
+Log file opened on Sat Mar 29 22:43:20 2014
+Host: amd2  pid: 17846  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140317-ca44752
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,16 +24,16 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140305-e2e3d4d (double precision)
-Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/bin/gmx_d
-Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/share/gromacs/top
+GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140317-ca44752
+Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
+Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/share/gromacs/top
 Command line:
-  gmx_d mdrun -notunepme -table ../table -tablep ../tablep
+  gmx mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140305-e2e3d4d
-GIT SHA1 hash:      e2e3d4d1ccf45cdced36e3fe9ed3ca20163794fe
-Branched from:      f0d0bb7fd55d6257ad2552b0458b47a835c1def1 (1 newer local commits)
-Precision:          double
+Gromacs version:    VERSION 5.0-beta2-dev-20140317-ca44752
+GIT SHA1 hash:      ca44752412a8402239e8a7823962200957f72fd0
+Branched from:      23d79229d99e4ff53bf9356c22f57727450f01af (9 newer local commits)
+Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
@@ -44,7 +44,7 @@ FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 C++11 compilation:  enabled
 TNG support:        enabled
-Built on:           Thu Feb  6 17:05:59 CET 2014
+Built on:           Thu Feb  6 17:04:31 CET 2014
 Built by:           mark@amd2 [CMAKE]
 Build OS/arch:      Linux 3.5.0-45-generic x86_64
 Build CPU vendor:   AuthenticAMD
@@ -276,12 +276,12 @@ Table routines are used for vdw:     TRUE
 Using shifted Lennard-Jones, switch between 0.9 and 1.2 nm
 Cut-off's:   NS: 1.2   Coulomb: 1.2   LJ: 1.2
 System total charge: 0.000
-Generated table with 4400 data points for Shift.
-Tabscale = 2000 points/nm
-Generated table with 4400 data points for LJ6Shift.
-Tabscale = 2000 points/nm
-Generated table with 4400 data points for LJ12Shift.
-Tabscale = 2000 points/nm
+Generated table with 1100 data points for Shift.
+Tabscale = 500 points/nm
+Generated table with 1100 data points for LJ6Shift.
+Tabscale = 500 points/nm
+Generated table with 1100 data points for LJ12Shift.
+Tabscale = 500 points/nm
 Potential shift: LJ r^-12: 0.000e+00 r^-6: 0.000e+00
 Removing pbc first time
 Center of mass motion removal mode is Linear
@@ -301,7 +301,7 @@ Max number of graph edges per atom is 2
 Total number of graph edges is 72
 Initial temperature: 240.418 K
 
-Started mdrun on node 0 Wed Mar  5 16:46:29 2014
+Started mdrun on node 0 Sat Mar 29 22:43:20 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -309,30 +309,30 @@ Started mdrun on node 0 Wed Mar  5 16:46:29 2014
 Grid: 10 x 10 x 10 cells
    Energies (kJ/mol)
            Bond       G96Angle       CBT Dih.        LJ (SR)   Coulomb (SR)
-    3.20827e+01    8.86557e+01    1.75858e+02   -6.18035e+01    0.00000e+00
+    3.20831e+01    8.86556e+01    1.75858e+02   -6.18035e+01    0.00000e+00
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-    2.34793e+02    1.04913e+02    3.39706e+02    2.33668e+02    1.90488e-01
+    2.34794e+02    1.04913e+02    3.39707e+02    2.33668e+02    1.90510e-01
 
            Step           Time         Lambda
               5        0.20000        0.00000
 
    Energies (kJ/mol)
            Bond       G96Angle       CBT Dih.        LJ (SR)   Coulomb (SR)
-    3.56585e+01    1.38368e+02    1.00020e+02   -6.07770e+01    0.00000e+00
+    3.56582e+01    1.38368e+02    1.00020e+02   -6.07771e+01    0.00000e+00
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-    2.13270e+02    1.28454e+02    3.41724e+02    2.86099e+02   -8.78124e-02
+    2.13270e+02    1.28454e+02    3.41724e+02    2.86101e+02   -8.77797e-02
 
            Step           Time         Lambda
              10        0.40000        0.00000
 
-Writing checkpoint, step 10 at Wed Mar  5 16:46:29 2014
+Writing checkpoint, step 10 at Sat Mar 29 22:43:20 2014
 
 
    Energies (kJ/mol)
            Bond       G96Angle       CBT Dih.        LJ (SR)   Coulomb (SR)
-    4.14950e+01    1.59934e+02    8.72519e+01   -5.91003e+01    0.00000e+00
+    4.14954e+01    1.59934e+02    8.72520e+01   -5.91001e+01    0.00000e+00
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-    2.29580e+02    1.16268e+02    3.45848e+02    2.58959e+02   -1.95717e+00
+    2.29581e+02    1.16268e+02    3.45849e+02    2.58959e+02   -1.95727e+00
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -342,19 +342,19 @@ Writing checkpoint, step 10 at Wed Mar  5 16:46:29 2014
 
    Energies (kJ/mol)
            Bond       G96Angle       CBT Dih.        LJ (SR)   Coulomb (SR)
-    3.64121e+01    1.28986e+02    1.21043e+02   -6.05603e+01    0.00000e+00
+    3.64122e+01    1.28986e+02    1.21044e+02   -6.05602e+01    0.00000e+00
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-    2.25881e+02    1.16545e+02    3.42426e+02    2.59575e+02   -6.18165e-01
+    2.25881e+02    1.16545e+02    3.42427e+02    2.59576e+02   -6.18182e-01
 
    Total Virial (kJ/mol)
-    7.76624e+01   -1.99470e+01   -4.81745e+01
-   -1.99470e+01    8.32336e+01    1.75577e+00
-   -4.81745e+01    1.75577e+00    5.33743e+01
+    7.76656e+01   -1.99471e+01   -4.81749e+01
+   -1.99472e+01    8.32349e+01    1.75668e+00
+   -4.81752e+01    1.75685e+00    5.33728e+01
 
    Pressure (bar)
-   -4.33037e-01    4.57354e-01    8.11203e-01
-    4.57354e-01   -9.74561e-01   -7.56463e-02
-    8.11203e-01   -7.56463e-02   -4.46898e-01
+   -4.33091e-01    4.57357e-01    8.11212e-01
+    4.57359e-01   -9.74586e-01   -7.56691e-02
+    8.11217e-01   -7.56723e-02   -4.46867e-01
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -390,17 +390,17 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.001          0.002   6.2
- Force                  1    1         11       0.002          0.004  12.1
- Write traj.            1    1          3       0.009          0.022  71.2
- Update                 1    1         11       0.000          0.000   0.5
- Rest                                           0.001          0.003   9.9
+ Neighbor search        1    1          3       0.001          0.002   8.7
+ Force                  1    1         11       0.002          0.004  18.0
+ Write traj.            1    1          3       0.005          0.013  60.2
+ Update                 1    1         11       0.000          0.000   0.9
+ Rest                                           0.001          0.003  12.2
 -----------------------------------------------------------------------------
- Total                                          0.013          0.031 100.0
+ Total                                          0.009          0.022 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.007        0.013       55.3
+       Time:        0.006        0.009       70.4
                  (ns/day)    (hour/ns)
-Performance:     3027.640        0.008
-Finished mdrun on node 0 Wed Mar  5 16:46:29 2014
+Performance:     4340.919        0.006
+Finished mdrun on node 0 Sat Mar 29 22:43:20 2014
