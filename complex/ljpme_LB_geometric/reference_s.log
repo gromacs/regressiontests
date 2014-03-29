@@ -1,6 +1,6 @@
-Log file opened on Fri Mar 28 15:32:19 2014
-Host: amd2  pid: 35475  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140327-b403e79 (double precision)
+Log file opened on Sun Mar 30 15:04:42 2014
+Host: amd2  pid: 13041  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140329-3267c10
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,16 +24,16 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140327-b403e79 (double precision)
-Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/bin/gmx_d
-Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-double-amd2/install/share/gromacs/top
+GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140329-3267c10
+Executable:   /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
+Library dir:  /nethome/mark/nfs-git/master-make-reference/build-cmake-reference-amd2/install/share/gromacs/top
 Command line:
-  gmx_d mdrun -notunepme -table ../table -tablep ../tablep
+  gmx mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140327-b403e79
-GIT SHA1 hash:      b403e79ff7c8964dbed86a4bd4462efe351bfc10
-Branched from:      23d79229d99e4ff53bf9356c22f57727450f01af (27 newer local commits)
-Precision:          double
+Gromacs version:    VERSION 5.0-beta2-dev-20140329-3267c10
+GIT SHA1 hash:      3267c1060cfa01cf2b667b77f885078dd7a86ae1
+Branched from:      23d79229d99e4ff53bf9356c22f57727450f01af (37 newer local commits)
+Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
@@ -44,7 +44,7 @@ FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 C++11 compilation:  enabled
 TNG support:        enabled
-Built on:           Thu Feb  6 17:05:59 CET 2014
+Built on:           Thu Feb  6 17:04:31 CET 2014
 Built by:           mark@amd2 [CMAKE]
 Build OS/arch:      Linux 3.5.0-45-generic x86_64
 Build CPU vendor:   AuthenticAMD
@@ -296,18 +296,18 @@ Using a Gaussian width (1/beta) of 0.298423 nm for LJ Ewald
 Using shifted Lennard-Jones, switch between 0 and 1 nm
 Cut-off's:   NS: 1   Coulomb: 1   LJ: 1
 System total charge: 0.000
-Generated table with 4000 data points for Ewald.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for LJ6Ewald.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for LJ12.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for 1-4 COUL.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for 1-4 LJ6.
-Tabscale = 2000 points/nm
-Generated table with 4000 data points for 1-4 LJ12.
-Tabscale = 2000 points/nm
+Generated table with 1000 data points for Ewald.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for LJ6Ewald.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for LJ12.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for 1-4 COUL.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for 1-4 LJ6.
+Tabscale = 500 points/nm
+Generated table with 1000 data points for 1-4 LJ12.
+Tabscale = 500 points/nm
 
 Enabling SPC-like water optimization for 1 molecules.
 
@@ -345,10 +345,10 @@ Total number of graph edges is 106
 Constraining the starting coordinates (step 0)
 
 Constraining the coordinates at t0-dt (step 0)
-RMS relative constraint deviation after constraining: 3.16e-08
-Initial temperature: 7.39354e-05 K
+RMS relative constraint deviation after constraining: 1.23e-06
+Initial temperature: 9.02195e-05 K
 
-Started mdrun on node 0 Fri Mar 28 15:32:19 2014
+Started mdrun on node 0 Sun Mar 30 15:04:42 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -356,29 +356,29 @@ Started mdrun on node 0 Fri Mar 28 15:32:19 2014
 Grid: 7 x 7 x 7 cells
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.  Improper Dih.          LJ-14
-    2.33681e+02    3.77343e+01    3.99865e+01    8.22789e+00    9.88149e+01
+    2.33680e+02    3.77341e+01    3.99863e+01    8.22802e+00    9.88146e+01
      Coulomb-14        LJ (SR)   Coulomb (SR)   Coul. recip.      LJ recip.
-   -2.12216e+02   -1.05022e+01   -3.27527e+01   -8.23158e+02   -3.05409e+01
+   -2.12216e+02   -1.05023e+01   -3.27527e+01   -8.23167e+02   -3.05330e+01
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-   -6.90726e+02    6.83285e-01   -6.90043e+02    1.52185e+00    1.02057e+01
+   -6.90728e+02    6.83277e-01   -6.90044e+02    1.52183e+00    1.02027e+01
    Constr. rmsd
-    1.42693e-06
+    1.86295e-06
 
            Step           Time         Lambda
              20        0.04000        0.00000
 
-Writing checkpoint, step 20 at Fri Mar 28 15:32:22 2014
+Writing checkpoint, step 20 at Sun Mar 30 15:04:45 2014
 
 
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.  Improper Dih.          LJ-14
-    2.05528e+02    3.79880e+01    2.93275e+01    2.53008e+00    8.49969e+01
+    2.05528e+02    3.79881e+01    2.93273e+01    2.52992e+00    8.49982e+01
      Coulomb-14        LJ (SR)   Coulomb (SR)   Coul. recip.      LJ recip.
-   -1.93263e+02   -1.11675e+01   -3.64251e+01   -8.26329e+02   -3.02164e+01
+   -1.93265e+02   -1.11675e+01   -3.64254e+01   -8.26337e+02   -3.02081e+01
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-   -7.37031e+02    6.50479e+01   -6.71983e+02    1.44878e+02   -1.29391e+00
+   -7.37032e+02    6.50464e+01   -6.71985e+02    1.44875e+02   -1.33240e+00
    Constr. rmsd
-    3.53537e-06
+    3.78011e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -388,11 +388,11 @@ Writing checkpoint, step 20 at Fri Mar 28 15:32:22 2014
 
    Energies (kJ/mol)
           Angle    Proper Dih. Ryckaert-Bell.  Improper Dih.          LJ-14
-    2.19604e+02    3.78611e+01    3.46570e+01    5.37898e+00    9.19059e+01
+    2.19604e+02    3.78611e+01    3.46568e+01    5.37897e+00    9.19064e+01
      Coulomb-14        LJ (SR)   Coulomb (SR)   Coul. recip.      LJ recip.
-   -2.02740e+02   -1.08349e+01   -3.45889e+01   -8.24744e+02   -3.03787e+01
+   -2.02741e+02   -1.08349e+01   -3.45891e+01   -8.24752e+02   -3.03705e+01
       Potential    Kinetic En.   Total Energy    Temperature Pressure (bar)
-   -7.13878e+02    3.28656e+01   -6.81013e+02    7.32000e+01    4.45590e+00
+   -7.13880e+02    3.28648e+01   -6.81015e+02    7.31983e+01    4.43513e+00
    Constr. rmsd
     0.00000e+00
 
@@ -400,14 +400,14 @@ Writing checkpoint, step 20 at Fri Mar 28 15:32:22 2014
     6.91971e+00    6.85541e+00    6.72471e+00
 
    Total Virial (kJ/mol)
-   -7.66712e+01   -1.12025e+01    4.34485e+00
-   -1.12025e+01   -3.98560e+01   -3.72018e+01
-    4.34485e+00   -3.72018e+01    2.09912e+01
+   -7.64862e+01   -1.12822e+01    4.31109e+00
+   -1.12857e+01   -3.95398e+01   -3.71762e+01
+    4.27661e+00   -3.72175e+01    2.10878e+01
 
    Pressure (bar)
-    9.09934e+00    6.86898e-01   -3.70162e-01
-    6.86898e-01    5.64857e+00    3.82986e+00
-   -3.70162e-01    3.82986e+00   -1.38020e+00
+    9.08013e+00    6.95238e-01   -3.66629e-01
+    6.95602e-01    5.61561e+00    3.82717e+00
+   -3.63039e-01    3.83147e+00   -1.39034e+00
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -457,26 +457,26 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1         21       0.003          0.006   0.1
- Force                  1    1         21       0.005          0.011   0.2
- PME mesh               1    1         21       3.230          7.432  99.3
- Write traj.            1    1          2       0.011          0.026   0.3
+ Neighbor search        1    1         21       0.002          0.006   0.1
+ Force                  1    1         21       0.004          0.010   0.1
+ PME mesh               1    1         21       3.187          7.333  99.5
+ Write traj.            1    1          2       0.006          0.013   0.2
  Update                 1    1         21       0.000          0.001   0.0
  Constraints            1    1         21       0.001          0.002   0.0
- Rest                                           0.002          0.004   0.1
+ Rest                                           0.002          0.004   0.0
 -----------------------------------------------------------------------------
- Total                                          3.252          7.482 100.0
+ Total                                          3.203          7.368 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1         84       0.222          0.510   6.8
- PME 3D-FFT             1    1         84       2.186          5.030  67.2
- PME solve LJ           1    1         21       0.557          1.281  17.1
- PME solve Elec         1    1         21       0.265          0.611   8.2
+ PME spread/gather      1    1         84       0.201          0.463   6.3
+ PME 3D-FFT             1    1         84       2.122          4.881  66.2
+ PME solve LJ           1    1         21       0.588          1.353  18.4
+ PME solve Elec         1    1         21       0.277          0.636   8.6
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        3.241        3.252       99.6
+       Time:        3.197        3.203       99.8
                  (ns/day)    (hour/ns)
-Performance:        1.116       21.511
-Finished mdrun on node 0 Fri Mar 28 15:32:22 2014
+Performance:        1.133       21.183
+Finished mdrun on node 0 Sun Mar 30 15:04:45 2014

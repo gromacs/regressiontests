@@ -4,6 +4,7 @@ use strict;
 
 use Cwd qw(getcwd);
 use File::Basename;
+use File::Copy qw(copy);
 
 #change directory to script location
 chdir(dirname(__FILE__));
@@ -465,7 +466,7 @@ sub test_systems {
 		if (! -f $reftpr) {
 		    print ("No $reftpr file in $dir\n");
 		    print ("This means you are not really testing $dir\n");
-		    link('topol.tpr', $reftpr);
+		    copy('topol.tpr', $reftpr);
 		} else {
 		    my $tprout="checktpr.out";
 		    my $tprerr="checktpr.err";
@@ -497,7 +498,7 @@ sub test_systems {
 		if (! -f $refwarn) {
 		    print("No $refwarn file in $dir\n");
 		    print ("This means you are not really testing $dir\n");
-                    rename('grompp.warn', $refwarn);
+                    copy('grompp.warn', $refwarn);
 		} else {
 	            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
 	            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
@@ -568,7 +569,7 @@ sub test_systems {
 		    if (! -f  $refedr) {
 			print ("No $refedr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link("$ener", $refedr);
+			copy("$ener", $refedr);
 		    } else {
 		        my $potout="checkpot.out";
 		        my $poterr="checkpot.err";
@@ -595,7 +596,7 @@ sub test_systems {
 		    if (! -f $reftrr ) {
 			print ("No $reftrr file in $dir.\n");
 			print ("This means you are not really testing $dir\n");
-			link("$traj", $reftrr);
+			copy("$traj", $reftrr);
 		    } else {
 			# Now do the real tests
 			my $nerr_force = check_force($traj);
@@ -604,7 +605,7 @@ sub test_systems {
 		    }
 		    my $reflog = "${ref}.log";
 		    if (! -f $reflog ) {
-                        link($log, $reflog);
+                        copy($log, $reflog);
                     }
 
 		    # This bit below is only relevant for free energy tests
@@ -796,7 +797,7 @@ sub test_tools {
 		foreach my $of (@ofiles) {
 		    if (! -f "$of.ref") {
 			print "No file $of.ref. You are not really testing $cfg_name\n";
-			link($of, "$of.ref");
+			copy($of, "$of.ref");
 		    }
 		    else {
 			my $nerror = check_xvg("$of.ref",$of,1);  #TODO: check all columns
@@ -920,7 +921,7 @@ sub test_pdb2gmx {
 	my $reflog = "${ref}.log";
 	if (! -f $reflog) {
 	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    link($only_energies_filename, $reflog);
+	    copy($only_energies_filename, $reflog);
 	}
 	else {
 	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
