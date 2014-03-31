@@ -183,6 +183,7 @@ sub find_in_file {
     my $filename_to_search = shift;
     my $filename_for_redirect = shift;
     my $return=0;
+    my $case_sensitive=1;
 
     defined($filename_to_search) || die "find_in_file: Missing argument\n";
     my $do_redirect = defined $filename_for_redirect;
@@ -190,9 +191,12 @@ sub find_in_file {
         open(REDIRECT, ">$filename_for_redirect") || die "Could not open redirect file '$filename_for_redirect'\n";
     }
     open(FILE,$filename_to_search) || die "Could not open file '$filename_to_search'\n";
+    if ($filename_to_search eq "grompp.mdp") {
+        $case_sensitive=0;
+    }
 
     while(<FILE>) {
-        if (/$pattern/) {
+        if ($case_sensitive?/$pattern/:/$pattern/i) {
             $return++;
             if ($do_redirect) {
                 print REDIRECT $_;
@@ -423,7 +427,7 @@ sub run_mdrun {
         if (0 < $mpi_threads) {
             $ntmpi_opt = "-ntmpi $mpi_threads";
         }
-        if (find_in_file("cutoff-scheme.*=.*verlet","grompp.mdp") > 0 && $omp_threads > 0) {
+        if (!find_in_file("cutoff[-_]scheme.*=.*group","grompp.mdp") > 0 && $omp_threads > 0) {
             $ntomp_opt = "-ntomp $omp_threads";
         }
 
