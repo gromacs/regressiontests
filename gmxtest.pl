@@ -15,6 +15,10 @@ use List::Util qw(sum);
 
 #disable quotes as they could screw up pattern matching
 $ENV{GMX_NO_QUOTES}='NO';
+#disable backups because otherwise tests fail after being run 99x
+if(!defined $ENV{GMX_MAXBACKUP}) {
+    $ENV{GMX_MAXBACKUP}=-1
+}
 
 my $mpi_threads = 0;
 my $omp_threads = 0;
@@ -367,7 +371,7 @@ sub how_should_we_rerun_mdrun {
     open(MDOUT,"mdrun.out");
     my(@lines) = <MDOUT>;
     close(MDOUT);
-    my $rerun = 0;
+    my $rerun = -1;
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
             my $new_mpi_ranks = 8;
@@ -405,6 +409,10 @@ sub how_should_we_rerun_mdrun {
             last;
         }
     }
+    #do_system using this callback will return:
+    #1 for known error: rerun
+    #0 exit value was 0 (and thus this callback wasn't called)
+    #-1 unkown error
     return $rerun;
 }
 
@@ -434,7 +442,7 @@ sub run_mdrun {
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
         my $nerror = do_system($command, 0,
                                sub { how_should_we_rerun_mdrun(\$mpi_threads, \$omp_threads, \$mpi_processes, \$gpu_id) });
-        return $nerror unless($nerror);
+        return $nerror unless($nerror>0);
     }
     # mdrun always failed, so pass the error upstream
     return 1;
@@ -453,12 +461,11 @@ sub test_systems {
 	    if ( -f "index.ndx" ) {
 		$ndx = "-n index";
 	    }
-	    do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
+	    $nerror = do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
 	    
 	    my @error_detail;
 	    if (! -f "topol.tpr") {
 		print ("No topol.tpr file in $dir. grompp failed\n");	    
-		push(@error_detail, ("grompp.out"));
 		$nerror = 1;
 	    }
 	    if ($nerror == 0) {
@@ -482,7 +489,10 @@ sub test_systems {
 		    }
 		    unlink($tprout,$tprerr);
 		}
+	    } else {
+		push(@error_detail, ("grompp.out"));
 	    }
+
 	    if ($nerror == 0) {
 	       open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
 	       open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
@@ -562,8 +572,9 @@ sub test_systems {
 		my $ener = "ener${part}.edr";
 		my $traj = "traj${part}.trr";
 		my $log = "md${part}.log";
-		# First check whether we have any output
-		if ((-f "$ener" ) && (-f "$traj")) {
+		if ($nerror!=0) {
+		    $nerror=1;
+		} elsif ((-f "$ener" ) && (-f "$traj")) {  # Check whether we have any output
 		    # Now check whether we have any reference files
 		    my $refedr = "${ref}.edr";
 		    if (! -f  $refedr) {
@@ -622,7 +633,7 @@ sub test_systems {
 	    my $error_detail = join(', ', @error_detail) . ' ';
 	    print XML "<testcase name=\"$dir\">\n" if ($xml);
 	    if ($nerror > 0) {
-		print "FAILED. Check ${error_detail}files in $dir\n";
+		print "FAILED. Check ${error_detail}file(s) in $dir\n";
 		if ($xml) {
 		    print XML "<error message=\"Errors in ${error_detail}\">\n";
 		    print XML "<![CDATA[\n";
