@@ -380,7 +380,7 @@ sub how_should_we_rerun_mdrun {
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
             my $new_mpi_ranks = 8;
-            if ($$mpi_processes_ref > $new_mpi_ranks) {
+            if ($$mpi_processes_ref > 0) {
                 $$mpi_processes_ref = $new_mpi_ranks;
             } else {
                 $$mpi_threads_ref = ${new_mpi_ranks};
@@ -391,7 +391,7 @@ sub how_should_we_rerun_mdrun {
         }
         elsif ($line =~ /Setting the number of thread-MPI threads is only supported/) {
             printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 thread.\n");
-            $$mpi_threads_ref = '';
+            $$mpi_threads_ref = 0;
             $rerun = 1;
             last;
         }
@@ -404,7 +404,7 @@ sub how_should_we_rerun_mdrun {
         elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
             my $new_mpi_processes = 1;
             print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_processes}.\n");
-            if ($$mpi_processes_ref > $new_mpi_processes) {
+            if ($$mpi_processes_ref > 0) {
                 $$mpi_processes_ref = $new_mpi_processes;
             } else {
                 $$mpi_threads_ref = ${new_mpi_processes};
