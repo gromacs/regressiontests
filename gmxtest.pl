@@ -559,8 +559,8 @@ sub test_systems {
 	        }
                 # With tunepme Coul-Sr/Recip isn't reproducible
 		my $local_mdparams = $mdparams . " -notunepme";
-		#adress has it's own tables
-		unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
+                # Alternative would be to check whether this is a kernel test
+                if (-f "../table.xvg" && -f "../tablep.xvg") {
 		    $local_mdparams .= " -table ../table -tablep ../tablep";
 		}
                my $part = "";
