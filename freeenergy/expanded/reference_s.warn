@@ -1,6 +1,8 @@
 WARNING 1 [file grompp.mdp]:
-  The switching range for PME-Switch should be 5% or less, energy
-  conservation will be good anyhow, since ewald_rtol = 1e-06
+  The switching range for should be 5% or less (currently 100.00% using a
+  switching range of 0.000000-1.000000) for accurate electrostatic
+  energies, energy conservation will be good regardless, since ewald_rtol =
+  1e-06.
 
 WARNING 2 [file grompp.mdp]:
   You are not using center of mass motion removal (mdp option comm-mode),
