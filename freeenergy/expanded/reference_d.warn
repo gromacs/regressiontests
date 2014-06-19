@@ -1,5 +1,5 @@
 WARNING 1 [file grompp.mdp]:
-  The switching range for should be 5% or less (currently 100.00% using a
+  The switching range should be 5% or less (currently 100.00% using a
   switching range of 0.000000-1.000000) for accurate electrostatic
   energies, energy conservation will be good regardless, since ewald_rtol =
   1e-06.
