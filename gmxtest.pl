@@ -379,7 +379,7 @@ sub how_should_we_rerun_mdrun {
     my $rerun = -1;
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
-            my $new_mpi_ranks = 8;
+            my $new_mpi_ranks = 4;
             if ($$mpi_processes_ref > 0) {
                 $$mpi_processes_ref = $new_mpi_ranks;
             } else {
