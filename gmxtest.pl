@@ -334,7 +334,7 @@ sub test_systems {
 	    }
 	    do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
 	    
-	    my $error_detail = ' ';
+	    my @error_detail;
 	    if (! -f "topol.tpr") {
 		print ("No topol.tpr file in $dir. grompp failed\n");	    
 		$nerror = 1;
@@ -394,13 +394,12 @@ sub test_systems {
                     }
 		    if ($nerror>0) {
 			print("Different warnings in $refwarn and grompp.warn\n");
-			$error_detail = "grompp.out ";
+			push @error_detail, "grompp.out ";
 		    } else {
 		      unlink("grompp.warn");
 		    }
 		}
 	    }
-	    my @error_detail;
 	    if ($nerror == 0) {
 		# Do the mdrun at last!
 
@@ -542,10 +541,10 @@ sub test_systems {
 		    print "No mdrun output files.\n";
 		    $nerror = 1;
 		}
-		$error_detail = join(', ', @error_detail) . ' ';
 	    }
 	    print XML "<testcase name=\"$dir\">\n" if ($xml);
 	    if ($nerror > 0) {
+                my $error_detail = join(', ', @error_detail) . ' ';
 		print "FAILED. Check ${error_detail}files in $dir\n";
 		if ($xml) {
 		    print XML "<error message=\"Erorrs in ${error_detail}\">\n";
