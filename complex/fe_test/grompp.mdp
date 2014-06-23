@@ -56,8 +56,8 @@ nstvout                  = 20
 nstfout                  = 20
 ; Output frequency for energies to log file and energy file
 nstlog                   = 4
-nstcalcenergy            = 4
-nstenergy                = 4
+nstcalcenergy            = 5
+nstenergy                = 5
 ; Output frequency and precision for .xtc file
 nstxtcout                = 0
 xtc_precision            = 200

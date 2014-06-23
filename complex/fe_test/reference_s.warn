@@ -1,10 +1,4 @@
-WARNING 1 [file grompp.mdp]:
-  nstcalcenergy should be a multiple of nstlist, changing nstcalcenergy to 5
-
-WARNING 2 [file grompp.mdp]:
-  nstenergy should be a multiple of nstcalcenergy, changing nstenergy to 5
-
-WARNING 3 [file topol.top, line 48]:
+WARNING 1 [file topol.top, line 48]:
   Some parameters for bonded interaction involving perturbed atoms are
   specified explicitly in state A, but not B - copying A to B
 
