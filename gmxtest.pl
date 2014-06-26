@@ -401,7 +401,8 @@ sub how_should_we_rerun_mdrun {
             $rerun = 1;
             last;
         }
-        elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
+        elsif ($line =~ /Domain decomposition does not support simple neighbor searching/
+	    || $line =~ /Shell particles are not implemented with domain decomposition, use a single rank/) {
             my $new_mpi_processes = 1;
             print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_processes}.\n");
             if ($$mpi_processes_ref > 0) {
