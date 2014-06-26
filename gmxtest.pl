@@ -236,7 +236,7 @@ sub check_force($)
 	    print("Different number of frames!\n");
 	    $nerr_force++;
 	    next;
-	}elsif ($line =~ /^$/ || $line =~ /^[xv]\[/ || $line =~ /Both files read correctly/ ) {
+	}elsif ($line =~ /^\r?$/ || $line =~ /^[xv]\[/ || $line =~ /Both files read correctly/ ) {
 	    next;
 	}elsif (!($line =~ /^f\[/)) {
 	    print("Unknown Error: $line!\n");
@@ -509,7 +509,7 @@ sub test_systems {
 	       while(<GROMPP>) {
 		 $p=1 if /^WARNING/;
 		 print WARN if ($p);
-		 $p=0 if /^$/;
+		 $p=0 if /^\r?$/;
 	       }
 	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
 	       close(WARN) || die "Could not close file 'grompp.warn'\n";
