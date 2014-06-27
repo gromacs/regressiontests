@@ -1,6 +1,6 @@
-Log file opened on Thu Jun 26 13:32:51 2014
-Host: gromacs2  pid: 24880  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-rc1-dev-20140624-c4cfdff (double precision)
+Log file opened on Fri Jun 27 20:52:57 2014
+Host: amd2  pid: 65063  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-rc1-dev-20140627-2b1504b (double precision)
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,15 +24,15 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.0-rc1-dev-20140624-c4cfdff (double precision)
-Executable:   /nethome/mark/git/r50-make-reference/build-cmake-reference-double-gromacs2/bin/gmx_d
+GROMACS:      gmx mdrun, VERSION 5.0-rc1-dev-20140627-2b1504b (double precision)
+Executable:   /nethome/mark/git/r50-make-reference/build-cmake-reference-double-amd2/bin/gmx_d
 Library dir:  /nethome/mark/git/r50-make-reference/share/top
 Command line:
   gmx_d mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-rc1-dev-20140624-c4cfdff
-GIT SHA1 hash:      c4cfdffe96fcd14e8f57060d59e06e8899fe5941
-Branched from:      8fe4088bf76d1f72847fe43e388e08f414f8ce83 (21 newer local commits)
+Gromacs version:    VERSION 5.0-rc1-dev-20140627-2b1504b
+GIT SHA1 hash:      2b1504bd2738cf712d1115c234104f686eae057e
+Branched from:      33003ffc85b1b8d36d0400b2363d5f5eefaab82b (1 newer local commits)
 Precision:          double
 Memory model:       64 bit
 MPI library:        none
@@ -45,13 +45,13 @@ RDTSCP usage:       enabled
 C++11 compilation:  enabled
 TNG support:        enabled
 Tracing support:    disabled
-Built on:           Tue Jun 24 19:18:02 CEST 2014
-Built by:           mark@gromacs2 [CMAKE]
-Build OS/arch:      Linux 3.11.0-23-generic x86_64
-Build CPU vendor:   GenuineIntel
-Build CPU brand:    Intel(R) Core(TM) i7-2600K CPU @ 3.40GHz
-Build CPU family:   6   Model: 42   Stepping: 7
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt
+Built on:           Tue May 27 15:36:10 CEST 2014
+Built by:           mark@amd2 [CMAKE]
+Build OS/arch:      Linux 3.5.0-49-generic x86_64
+Build CPU vendor:   AuthenticAMD
+Build CPU brand:    AMD Opteron(tm) Processor 6376
+Build CPU family:   21   Model: 2   Stepping: 0
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:      -Wno-maybe-uninitialized -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
@@ -180,9 +180,9 @@ Input Parameters:
       posres-com[1]= 5.06393e-01
       posres-com[2]= 4.85252e-01
    posres-comB (3):
-      posres-comB[0]= 0.00000e+00
-      posres-comB[1]= 0.00000e+00
-      posres-comB[2]= 0.00000e+00
+      posres-comB[0]= 5.02088e-01
+      posres-comB[1]= 5.06393e-01
+      posres-comB[2]= 4.85252e-01
    QMMM                           = FALSE
    QMconstraints                  = 0
    QMMMscheme                     = 0
@@ -444,16 +444,16 @@ annealing-npoints:           0
 
 Detecting CPU SIMD instructions.
 Present hardware specification:
-Vendor: GenuineIntel
-Brand:  Intel(R) Core(TM) i7-2600K CPU @ 3.40GHz
-Family:  6  Model: 42  Stepping:  7
-Features: aes apic avx clfsh cmov cx8 cx16 htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt
-SIMD instructions most likely to fit this hardware: AVX_256
+Vendor: AuthenticAMD
+Brand:  AMD Opteron(tm) Processor 6376                 
+Family: 21  Model:  2  Stepping:  0
+Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+SIMD instructions most likely to fit this hardware: AVX_128_FMA
 SIMD instructions selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_256
+SIMD instructions most likely to fit this hardware: AVX_128_FMA
 SIMD instructions selected at GROMACS compile time: None
 
 Will do PME sum in reciprocal space for electrostatic interactions.
@@ -535,7 +535,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 6.69e-05
 Initial temperature: 292.794 K
 
-Started mdrun on node 0 Thu Jun 26 13:32:51 2014
+Started mdrun on node 0 Fri Jun 27 20:52:57 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -561,7 +561,7 @@ Started mdrun on node 0 Thu Jun 26 13:32:51 2014
            Step           Time         Lambda
               2        0.00800        0.00000
 
-Writing checkpoint, step 2 at Thu Jun 26 13:32:53 2014
+Writing checkpoint, step 2 at Fri Jun 27 20:53:00 2014
 
 
    Energies (kJ/mol)
@@ -643,31 +643,31 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          2       0.153          0.526  10.5
- Force                  1    1          3       1.094          3.763  74.9
- PME mesh               1    1          3       0.074          0.254   5.1
- NB X/F buffer ops.     1    1          4       0.001          0.002   0.0
- Write traj.            1    1          3       0.108          0.371   7.4
- Update                 1    1          3       0.002          0.005   0.1
- Constraints            1    1          3       0.009          0.032   0.6
- Coordinate swapping    1    1          1       0.002          0.005   0.1
- Rest                                           0.019          0.066   1.3
+ Neighbor search        1    1          2       0.397          0.917  10.9
+ Force                  1    1          3       2.794          6.458  76.6
+ PME mesh               1    1          3       0.177          0.409   4.8
+ NB X/F buffer ops.     1    1          4       0.002          0.004   0.1
+ Write traj.            1    1          3       0.226          0.523   6.2
+ Update                 1    1          3       0.003          0.007   0.1
+ Constraints            1    1          3       0.015          0.034   0.4
+ Coordinate swapping    1    1          1       0.004          0.010   0.1
+ Rest                                           0.031          0.071   0.8
 -----------------------------------------------------------------------------
- Total                                          1.460          5.024 100.0
+ Total                                          3.648          8.433 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1          6       0.036          0.124   2.5
- PME 3D-FFT             1    1          6       0.030          0.102   2.0
- PME solve Elec         1    1          3       0.008          0.028   0.6
+ PME spread/gather      1    1          6       0.090          0.207   2.5
+ PME 3D-FFT             1    1          6       0.070          0.162   1.9
+ PME solve Elec         1    1          3       0.017          0.039   0.5
 -----------------------------------------------------------------------------
 
-NOTE: 10 % of the run time was spent in pair search,
+NOTE: 11 % of the run time was spent in pair search,
       you might want to increase nstlist (this has no effect on accuracy)
 
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.414        1.460       96.8
+       Time:        3.571        3.648       97.9
                  (ns/day)    (hour/ns)
-Performance:        0.710       33.805
-Finished mdrun on node 0 Thu Jun 26 13:32:53 2014
+Performance:        0.284       84.449
+Finished mdrun on node 0 Fri Jun 27 20:53:01 2014
