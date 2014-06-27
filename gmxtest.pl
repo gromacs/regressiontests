@@ -14,7 +14,6 @@ use List::Util qw(sum);
 
 #disable quotes as they could screw up pattern matching
 $ENV{GMX_NO_QUOTES}='NO';
-
 my $mpi_threads = 0;
 my $omp_threads = 0;
 my $ntmpi_opt = '';
@@ -23,7 +22,8 @@ my $mpi_processes = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
-my $verbose  = 5;
+my $verbose  = 0;
+my $report  = "";
 my $xml      = 0;
 # energy file comparision tolerance (potentials, not virials or pressure)
 my $etol_rel = 0.001;
@@ -667,11 +667,11 @@ sub test_dirs {
     print XML "</testsuite>\n" if ($xml);
     my $nerror=0;
     if ($npassed < $nn) {
-	printf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
+	$report = $report . sprintf("%d out of $nn $dirs tests FAILED\n",$nn-$npassed);
 	$nerror=1;
     }
     else {
-	print("All $nn $dirs tests PASSED\n");
+	$report = $report . sprintf("All $nn $dirs tests PASSED\n");
     }
     chdir("..");
     return $nerror;
@@ -738,16 +738,16 @@ sub test_tools {
 	    chdir("..");
 	}
 	if ($nerror_cmd>0) {
-	    print "$nerror_cmd out of $ncmd $cfg_name tests FAILED\n";
+	    $report = $report . sprintf"$nerror_cmd out of $ncmd $cfg_name tests FAILED\n";
 	} elsif ($verbose>1) {
-	    print "All $ncmd $cfg_name tests PASSED\n";
+	    $report = $report . sprintf "All $ncmd $cfg_name tests PASSED\n";
 	}
 	chdir("..");
     }
     if ($nerror_cfg>0) {
-	print "$nerror_cfg out of $ncfg tools tests FAILED\n";
+	$report = $report . sprintf "$nerror_cfg out of $ncfg tools tests FAILED\n";
     } else {
-	print "All $ncfg tools tests PASSED\n";
+	$report = $report . sprintf "All $ncfg tools tests PASSED\n";
     }
     return $nerror_cfg;
 }
@@ -1116,4 +1116,7 @@ elsif (!$did_clean) {
 # Now do the work, if there is any
 my $nerror = sum 0, map { eval $_ } @work;
 print XML "</testsuites>\n" if ($xml);
+print "\n----- Final Report -----\n";
+print "\n$report\n";
+print "------------------------\n";
 exit ($nerror>0);
