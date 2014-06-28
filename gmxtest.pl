@@ -236,7 +236,7 @@ sub check_force($)
 	    print("Different number of frames!\n");
 	    $nerr_force++;
 	    next;
-	}elsif ($line =~ /^$/ || $line =~ /^[xv]\[/ || $line =~ /Both files read correctly/ ) {
+	}elsif ($line =~ /^\r?$/ || $line =~ /^[xv]\[/ || $line =~ /Both files read correctly/ ) {
 	    next;
 	}elsif (!($line =~ /^f\[/)) {
 	    print("Unknown Error: $line!\n");
@@ -421,7 +421,45 @@ sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
     my ($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $mdparams) = @_;
+    # Only one of mpi_threads or mpi_processes may be greater than zero.
 
+    # Set up and enforce the maximum number of OpenMP threads to
+    # try for this test case
+    my $max_openmp_threads_filename = 'max-openmp-threads';
+    if ( -f $max_openmp_threads_filename )
+    {
+        open my $fh, '<', $max_openmp_threads_filename or die "error opening $max_openmp_threads_filename: $!";
+        $omp_threads = do { local $/; <$fh> };
+        chomp $omp_threads;
+    }
+
+    # Set up and enforce the maximum number of MPI ranks to try
+    # for this test case
+    my $max_mpi_processes_filename = "max-mpi-processes";
+    if ( -f $max_mpi_processes_filename ) {
+        open my $fh, '<', $max_mpi_processes_filename or die "error opening $max_mpi_processes_filename: $!";
+        my $max_ranks = do { local $/; <$fh> };
+        chomp $max_ranks;
+        if ($mpi_processes > 0) {
+            $mpi_processes = ($mpi_processes < $max_ranks) ? $mpi_processes : $max_ranks;
+        } elsif ($mpi_threads > 0) {
+            $mpi_threads = ($mpi_threads < $max_ranks) ? $mpi_threads : $max_ranks;
+        } else {
+            # The user specified nothing, but the default must
+            # still honour this maximum!
+            #
+            # If mdrun is serial, this code will trigger a second run
+            # where -ntmpi will not be set. This is not ideal, but
+            # only a few test cases specify the maximum number of
+            # processes, and pretty much only Jenkins should compile
+            # the serial version of mdrun. In the absence of an
+            # explicit serial mode for this script, it should lead
+            # to a net improvement in Jenkins throughput.
+            $mpi_threads = $max_ranks;
+        }
+    }
+
+    # TODO clean this up!
     # Semi-temporary work-around for modern systems with lots of cores
     # First we try running with whatever number of whatever the user
     # wants, then adapt to the error messages
@@ -509,7 +547,7 @@ sub test_systems {
 	       while(<GROMPP>) {
 		 $p=1 if /^WARNING/;
 		 print WARN if ($p);
-		 $p=0 if /^$/;
+		 $p=0 if /^\r?$/;
 	       }
 	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
 	       close(WARN) || die "Could not close file 'grompp.warn'\n";

@@ -1,6 +1,6 @@
-Log file opened on Tue Jan 28 16:40:00 2014
-Host: amd2  pid: 20580  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140128-8cad3d1
+Log file opened on Fri Jun 27 20:52:51 2014
+Host: amd2  pid: 64281  nodeid: 0  nnodes:  1
+GROMACS:    gmx mdrun, VERSION 5.0-rc1-dev-20140627-2b1504b
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,34 +24,39 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140128-8cad3d1
-Executable: /nethome/mark/nfs-git/master/build-cmake-gcc-reference-amd2/install/bin/gmx
+GROMACS:      gmx mdrun, VERSION 5.0-rc1-dev-20140627-2b1504b
+Executable:   /nethome/mark/git/r50-make-reference/build-cmake-reference-amd2/bin/gmx
+Library dir:  /nethome/mark/git/r50-make-reference/share/top
 Command line:
   gmx mdrun -notunepme -table ../table -tablep ../tablep
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140128-8cad3d1
-GIT SHA1 hash:      8cad3d196fd4d97d2cefdfbd510f1783287dbe23
-Branched from:      5f643c7312e644b12d006dec1ae9853c05c9e075 (126 newer local commits)
+Gromacs version:    VERSION 5.0-rc1-dev-20140627-2b1504b
+GIT SHA1 hash:      2b1504bd2738cf712d1115c234104f686eae057e
+Branched from:      33003ffc85b1b8d36d0400b2363d5f5eefaab82b (1 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
 invsqrt routine:    (1.0/sqrt(x))
-CPU acceleration:   NONE
+SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
-Built on:           Sun Oct 13 16:14:06 CEST 2013
+C++11 compilation:  enabled
+TNG support:        enabled
+Tracing support:    disabled
+Built on:           Tue May 27 15:33:05 CEST 2014
 Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.5.0-41-generic x86_64
+Build OS/arch:      Linux 3.5.0-49-generic x86_64
 Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(tm) Processor 6176
-Build CPU family:   16   Model: 9   Stepping: 1
-Build CPU features: apic clfsh cmov cx8 cx16 htt lahf_lm misalignsse mmx msr nonstop_tsc pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a
+Build CPU brand:    AMD Opteron(tm) Processor 6376
+Build CPU family:   21   Model: 2   Stepping: 0
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
-C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
+C compiler flags:      -Wno-maybe-uninitialized -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
+C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
+Boost version:      1.55.0 (internal)
 
 
 
@@ -85,171 +90,154 @@ Comp. Phys. Comm. 91 (1995) pp. 43-56
 -------- -------- --- Thank You --- -------- --------
 
 Input Parameters:
-   integrator           = md
-   nsteps               = 2
-   init-step            = 0
-   cutoff-scheme        = Verlet
-   ns_type              = Grid
-   nstlist              = 10
-   ndelta               = 2
-   nstcomm              = 10
-   comm-mode            = Linear
-   nstlog               = 1
-   nstxout              = 1
-   nstvout              = 1
-   nstfout              = 1
-   nstcalcenergy        = 1
-   nstenergy            = 1
-   nstxout_compressed   = 1
-   init-t               = 0
-   delta-t              = 0.004
-   x_compression_precision = 1000
-   fourierspacing       = 0.135
-   nkx                  = 32
-   nky                  = 32
-   nkz                  = 72
-   pme-order            = 4
-   ewald-rtol           = 1e-05
-   ewald-rtol-lj        = 0.001
-   ewald-geometry       = 0
-   epsilon-surface      = 0
-   optimize-fft         = FALSE
-   lj-pme-comb-rule     = Geometric
-   ePBC                 = xyz
-   bPeriodicMols        = FALSE
-   bContinuation        = FALSE
-   bShakeSOR            = FALSE
-   etc                  = Berendsen
-   bPrintNHChains       = FALSE
-   nsttcouple           = 1
-   epc                  = Berendsen
-   epctype              = Semiisotropic
-   nstpcouple           = 10
-   tau-p                = 2
+   integrator                     = md
+   tinit                          = 0
+   dt                             = 0.004
+   nsteps                         = 2
+   init-step                      = 0
+   simulation-part                = 1
+   comm-mode                      = Linear
+   nstcomm                        = 10
+   bd-fric                        = 0
+   ld-seed                        = 1993
+   emtol                          = 10
+   emstep                         = 0.01
+   niter                          = 20
+   fcstep                         = 0
+   nstcgsteep                     = 1000
+   nbfgscorr                      = 10
+   rtpi                           = 0.05
+   nstxout                        = 1
+   nstvout                        = 1
+   nstfout                        = 1
+   nstlog                         = 1
+   nstcalcenergy                  = 1
+   nstenergy                      = 1
+   nstxout-compressed             = 1
+   compressed-x-precision         = 1000
+   cutoff-scheme                  = Verlet
+   nstlist                        = 10
+   ns-type                        = Grid
+   pbc                            = xyz
+   periodic-molecules             = FALSE
+   verlet-buffer-tolerance        = 0.005
+   rlist                          = 1.012
+   rlistlong                      = 1.012
+   nstcalclr                      = 0
+   coulombtype                    = PME
+   coulomb-modifier               = Potential-shift
+   rcoulomb-switch                = 1
+   rcoulomb                       = 1
+   epsilon-r                      = 1
+   epsilon-rf                     = 1
+   vdw-type                       = Cut-off
+   vdw-modifier                   = Potential-shift
+   rvdw-switch                    = 1
+   rvdw                           = 1
+   DispCorr                       = Ener
+   table-extension                = 1
+   fourierspacing                 = 0.135
+   fourier-nx                     = 32
+   fourier-ny                     = 32
+   fourier-nz                     = 72
+   pme-order                      = 4
+   ewald-rtol                     = 1e-05
+   ewald-rtol-lj                  = 0.001
+   lj-pme-comb-rule               = Geometric
+   ewald-geometry                 = 0
+   epsilon-surface                = 0
+   implicit-solvent               = No
+   gb-algorithm                   = Still
+   nstgbradii                     = 1
+   rgbradii                       = 1
+   gb-epsilon-solvent             = 80
+   gb-saltconc                    = 0
+   gb-obc-alpha                   = 1
+   gb-obc-beta                    = 0.8
+   gb-obc-gamma                   = 4.85
+   gb-dielectric-offset           = 0.009
+   sa-algorithm                   = Ace-approximation
+   sa-surface-tension             = 2.092
+   tcoupl                         = Berendsen
+   nsttcouple                     = 1
+   nh-chain-length                = 0
+   print-nose-hoover-chain-variables = FALSE
+   pcoupl                         = Berendsen
+   pcoupltype                     = Semiisotropic
+   nstpcouple                     = 10
+   tau-p                          = 2
+   compressibility (3x3):
+      compressibility[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
+      compressibility[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
+      compressibility[    2]={ 0.00000e+00,  0.00000e+00,  4.50000e-05}
    ref-p (3x3):
       ref-p[    0]={ 1.00000e+00,  0.00000e+00,  0.00000e+00}
       ref-p[    1]={ 0.00000e+00,  1.00000e+00,  0.00000e+00}
       ref-p[    2]={ 0.00000e+00,  0.00000e+00,  1.00000e+00}
-   compress (3x3):
-      compress[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-      compress[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-      compress[    2]={ 0.00000e+00,  0.00000e+00,  4.50000e-05}
-   refcoord-scaling     = COM
+   refcoord-scaling               = COM
    posres-com (3):
       posres-com[0]= 5.14679e-01
       posres-com[1]= 5.06393e-01
       posres-com[2]= 5.02088e-01
    posres-comB (3):
-      posres-comB[0]= 0.00000e+00
-      posres-comB[1]= 0.00000e+00
-      posres-comB[2]= 0.00000e+00
-   verlet-buffer-tolerance = 0.005
-   rlist                = 1.012
-   rlistlong            = 1.012
-   nstcalclr            = 0
-   rtpi                 = 0.05
-   coulombtype          = PME
-   coulomb-modifier     = Potential-shift
-   rcoulomb-switch      = 1
-   rcoulomb             = 1
-   vdwtype              = Cut-off
-   vdw-modifier         = Potential-shift
-   rvdw-switch          = 1
-   rvdw                 = 1
-   epsilon-r            = 1
-   epsilon-rf           = 1
-   tabext               = 1
-   implicit-solvent     = No
-   gb-algorithm         = Still
-   gb-epsilon-solvent   = 80
-   nstgbradii           = 1
-   rgbradii             = 1
-   gb-saltconc          = 0
-   gb-obc-alpha         = 1
-   gb-obc-beta          = 0.8
-   gb-obc-gamma         = 4.85
-   gb-dielectric-offset = 0.009
-   sa-algorithm         = Ace-approximation
-   sa-surface-tension   = 2.092
-   DispCorr             = Ener
-   bSimTemp             = FALSE
-   free-energy          = no
-   nwall                = 0
-   wall-type            = 9-3
-   wall-atomtype[0]     = -1
-   wall-atomtype[1]     = -1
-   wall-density[0]      = 0
-   wall-density[1]      = 0
-   wall-ewald-zfac      = 3
-   pull                 = no
-   rotation             = FALSE
-   disre                = No
-   disre-weighting      = Conservative
-   disre-mixed          = FALSE
-   dr-fc                = 1000
-   dr-tau               = 0
-   nstdisreout          = 100
-   orires-fc            = 0
-   orires-tau           = 0
-   nstorireout          = 100
-   dihre-fc             = 0
-   em-stepsize          = 0.01
-   em-tol               = 10
-   niter                = 20
-   fc-stepsize          = 0
-   nstcgsteep           = 1000
-   nbfgscorr            = 10
-   ConstAlg             = Lincs
-   shake-tol            = 0.0001
-   lincs-order          = 2
-   lincs-warnangle      = 30
-   lincs-iter           = 1
-   bd-fric              = 0
-   ld-seed              = 1993
-   cos-accel            = 0
+      posres-comB[0]= 5.14679e-01
+      posres-comB[1]= 5.06393e-01
+      posres-comB[2]= 5.02088e-01
+   QMMM                           = FALSE
+   QMconstraints                  = 0
+   QMMMscheme                     = 0
+   MMChargeScaleFactor            = 1
+qm-opts:
+   ngQM                           = 0
+   constraint-algorithm           = Lincs
+   continuation                   = FALSE
+   Shake-SOR                      = FALSE
+   shake-tol                      = 0.0001
+   lincs-order                    = 2
+   lincs-iter                     = 1
+   lincs-warnangle                = 30
+   nwall                          = 0
+   wall-type                      = 9-3
+   wall-r-linpot                  = -1
+   wall-atomtype[0]               = -1
+   wall-atomtype[1]               = -1
+   wall-density[0]                = 0
+   wall-density[1]                = 0
+   wall-ewald-zfac                = 3
+   pull                           = no
+   rotation                       = FALSE
+   interactiveMD                  = FALSE
+   disre                          = No
+   disre-weighting                = Conservative
+   disre-mixed                    = FALSE
+   dr-fc                          = 1000
+   dr-tau                         = 0
+   nstdisreout                    = 100
+   orire-fc                       = 0
+   orire-tau                      = 0
+   nstorireout                    = 100
+   free-energy                    = no
+   cos-acceleration               = 0
    deform (3x3):
       deform[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
       deform[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
       deform[    2]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-   adress               = FALSE
-   userint1             = 0
-   userint2             = 0
-   userint3             = 0
-   userint4             = 0
-   userreal1            = 0
-   userreal2            = 0
-   userreal3            = 0
-   userreal4            = 0
-grpopts:
-   nrdf:       27869
-   ref-t:         300
-   tau-t:         0.5
-anneal:          No
-ann-npoints:           0
-   acc:	           0           0           0
-   nfreeze:           N           N           N
-   energygrp-flags[  0]: 0
-   efield-x:
+   simulated-tempering            = FALSE
+   E-x:
       n = 0
-   efield-xt:
+   E-xt:
       n = 0
-   efield-y:
+   E-y:
       n = 0
-   efield-yt:
+   E-yt:
       n = 0
-   efield-z:
+   E-z:
       n = 0
-   efield-zt:
+   E-zt:
       n = 0
-   eSwapCoords          = Z
-   frequency            = 1
-   nanionsA             = 19
-   ncationsA            = 19
-   nanionsB             = 0
-   ncationsB            = 0
-   coupling_steps       = 1
-   threshold            = 1
-   splitgroup0_massw    = TRUE
+   swapcoords                     = Z
+   swap-frequency                 = 1
+   massw_split0                   = TRUE
    split atoms group 0 (83):
       split atoms group 0[0]=0
       split atoms group 0[1]=2
@@ -334,7 +322,7 @@ ann-npoints:           0
       split atoms group 0[80]=160
       split atoms group 0[81]=162
       split atoms group 0[82]=164
-   splitgroup1_massw    = FALSE
+   massw_split1                   = FALSE
    split atoms group 1 (83):
       split atoms group 1[0]=964
       split atoms group 1[1]=966
@@ -423,32 +411,50 @@ ann-npoints:           0
       swap atoms[0,...,37] = {926,...,963}
    solvent atoms (11931):
       solvent atoms[0,...,11930] = {1890,...,13820}
-   cyl0_radius          = 0.9
-   cyl0_upper           = 0.75
-   cyl0_lower           = 0.75
-   cyl1_radius          = 0.9
-   cyl1_upper           = 0.75
-   cyl1_lower           = 0.75
-   bQMMM                = FALSE
-   QMconstraints        = 0
-   QMMMscheme           = 0
-   scalefactor          = 1
-qm-opts:
-   ngQM                 = 0
+   cyl0-r                         = 0.9
+   cyl0-up                        = 0.75
+   cyl0-down                      = 0.75
+   cyl1-r                         = 0.9
+   cyl1-up                        = 0.75
+   cyl1-down                      = 0.75
+   coupl-steps                    = 1
+   anionsA                        = 19
+   cationsA                       = 19
+   anionsB                        = 0
+   cationsB                       = 0
+   threshold                      = 1
+   adress                         = FALSE
+   userint1                       = 0
+   userint2                       = 0
+   userint3                       = 0
+   userint4                       = 0
+   userreal1                      = 0
+   userreal2                      = 0
+   userreal3                      = 0
+   userreal4                      = 0
+grpopts:
+   nrdf:       27869
+   ref-t:         300
+   tau-t:         0.5
+annealing:          No
+annealing-npoints:           0
+   acc:	           0           0           0
+   nfreeze:           N           N           N
+   energygrp-flags[  0]: 0
 
-Detecting CPU-specific acceleration.
+Detecting CPU SIMD instructions.
 Present hardware specification:
 Vendor: AuthenticAMD
 Brand:  AMD Opteron(tm) Processor 6376                 
 Family: 21  Model:  2  Stepping:  0
 Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-Acceleration most likely to fit this hardware: AVX_128_FMA
-Acceleration selected at GROMACS compile time: None
+SIMD instructions most likely to fit this hardware: AVX_128_FMA
+SIMD instructions selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-Acceleration most likely to fit this hardware: AVX_128_FMA
-Acceleration selected at GROMACS compile time: None
+SIMD instructions most likely to fit this hardware: AVX_128_FMA
+SIMD instructions selected at GROMACS compile time: None
 
 Will do PME sum in reciprocal space for electrostatic interactions.
 
@@ -472,10 +478,15 @@ Tabscale = 500 points/nm
 
 Using plain C 4x4 non-bonded kernels
 
+
+WARNING: Using the slow plain C kernels. This should
+not happen during routine usage on supported platforms.
+
+
 Using geometric Lennard-Jones combination rule
 
-Potential shift: LJ r^-12: 1.000 r^-6 1.000, Ewald 1.000e-05
-Initialized non-bonded Ewald correction tables, spacing: 6.60e-04 size: 3051
+Potential shift: LJ r^-12: -1.000e+00 r^-6: -1.000e+00, Ewald -1.000e-05
+Initialized non-bonded Ewald correction tables, spacing: 9.33e-04 size: 2158
 
 Removing pbc first time
 
@@ -524,43 +535,42 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 6.68e-05
 Initial temperature: 292.794 K
 
-Started mdrun on node 0 Tue Jan 28 16:40:01 2014
-
+Started mdrun on node 0 Fri Jun 27 20:52:51 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
    Energies (kJ/mol)
           Angle Ryckaert-Bell.        LJ (SR)  Disper. corr.   Coulomb (SR)
-    1.49528e+03    2.24982e+03    2.71811e+04   -3.01245e+03   -2.13598e+05
+    1.49528e+03    2.24982e+03    2.71811e+04   -3.00777e+03   -2.13598e+05
    Coul. recip. Position Rest.      Potential    Kinetic En.   Total Energy
-    1.49658e+03    7.11911e-03   -1.84187e+05    3.40032e+04   -1.50184e+05
+    1.49658e+03    7.11911e-03   -1.84183e+05    3.40032e+04   -1.50179e+05
     Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-    2.93489e+02    0.00000e+00    3.22469e+01    2.39733e-04
+    2.93489e+02    0.00000e+00    3.21904e+01    2.39710e-04
 
            Step           Time         Lambda
               1        0.00400        0.00000
 
    Energies (kJ/mol)
           Angle Ryckaert-Bell.        LJ (SR)  Disper. corr.   Coulomb (SR)
-    1.50207e+03    2.24616e+03    2.71282e+04   -3.01245e+03   -2.13808e+05
+    1.50207e+03    2.24616e+03    2.71282e+04   -3.00777e+03   -2.13808e+05
    Coul. recip. Position Rest.      Potential    Kinetic En.   Total Energy
-    1.50790e+03    5.02204e-01   -1.84435e+05    3.42070e+04   -1.50228e+05
+    1.50790e+03    5.02207e-01   -1.84431e+05    3.42070e+04   -1.50224e+05
     Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-    2.95248e+02    0.00000e+00   -2.46613e+02    3.58876e-04
+    2.95248e+02    0.00000e+00   -2.46537e+02    3.58909e-04
 
            Step           Time         Lambda
               2        0.00800        0.00000
 
-Writing checkpoint, step 2 at Tue Jan 28 16:40:03 2014
+Writing checkpoint, step 2 at Fri Jun 27 20:52:54 2014
 
 
    Energies (kJ/mol)
           Angle Ryckaert-Bell.        LJ (SR)  Disper. corr.   Coulomb (SR)
-    1.47879e+03    2.23959e+03    3.08467e+04   -3.01229e+03   -2.05167e+05
+    1.47879e+03    2.23959e+03    3.08467e+04   -3.00761e+03   -2.05167e+05
    Coul. recip. Position Rest.      Potential    Kinetic En.   Total Energy
-    7.85455e+03    1.97757e+00   -1.65758e+05    3.54606e+04   -1.30297e+05
+    7.85457e+03    1.97758e+00   -1.65753e+05    3.54606e+04   -1.30292e+05
     Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-    3.06068e+02    0.00000e+00    2.30721e+03    3.84842e-04
+    3.06068e+02    0.00000e+00    2.30725e+03    3.84895e-04
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -570,24 +580,24 @@ Writing checkpoint, step 2 at Tue Jan 28 16:40:03 2014
 
    Energies (kJ/mol)
           Angle Ryckaert-Bell.        LJ (SR)  Disper. corr.   Coulomb (SR)
-    1.49205e+03    2.24519e+03    2.83853e+04   -3.01240e+03   -2.10858e+05
+    1.49205e+03    2.24519e+03    2.83853e+04   -3.00772e+03   -2.10857e+05
    Coul. recip. Position Rest.      Potential    Kinetic En.   Total Energy
-    3.61968e+03    8.28965e-01   -1.78127e+05    3.45569e+04   -1.43570e+05
+    3.61968e+03    8.28969e-01   -1.78122e+05    3.45569e+04   -1.43565e+05
     Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-    2.98268e+02    0.00000e+00    6.97616e+02    0.00000e+00
+    2.98268e+02    0.00000e+00    6.97635e+02    0.00000e+00
 
           Box-X          Box-Y          Box-Z
     4.31730e+00    4.31730e+00    9.64858e+00
 
    Total Virial (kJ/mol)
-    8.31182e+03    6.04255e+02    8.41644e+02
-    6.04649e+02    7.97341e+03    3.56347e+02
-    8.42036e+02    3.56201e+02    6.93820e+03
+    8.31163e+03    6.05466e+02    8.41687e+02
+    6.04312e+02    7.97463e+03    3.56315e+02
+    8.41041e+02    3.57527e+02    6.93684e+03
 
    Pressure (bar)
-    6.22359e+02   -1.21204e+02   -1.30972e+02
-   -1.21277e+02    5.98658e+02   -6.34112e+01
-   -1.31044e+02   -6.33842e+01    8.71832e+02
+    6.22393e+02   -1.21430e+02   -1.30979e+02
+   -1.21217e+02    5.98433e+02   -6.34049e+01
+   -1.30859e+02   -6.36286e+01    8.72077e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -599,10 +609,10 @@ Writing checkpoint, step 2 at Tue Jan 28 16:40:03 2014
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check               8.731530          78.584     8.7
- NxN QSTab Elec. + VdW [V&F]              7.455480         439.873    48.7
- NxN VdW [V&F]                            0.608064          26.147     2.9
- NxN QSTab Elec. [V&F]                    6.390968         262.030    29.0
+ Pair Search distance check               8.731516          78.584     8.7
+ NxN QSTab Elec. + LJ [V&F]               7.455472         439.873    48.7
+ NxN LJ [V&F]                             0.608064          26.147     2.9
+ NxN QSTab Elec. [V&F]                    6.390960         262.029    29.0
  Calc Weights                             0.124389           4.478     0.5
  Spread Q Bspline                         2.653632           5.307     0.6
  Gather F Bspline                         2.653632          15.922     1.8
@@ -622,30 +632,34 @@ Writing checkpoint, step 2 at Tue Jan 28 16:40:03 2014
  Constraint-Vir                           0.040773           0.979     0.1
  Settle                                   0.019885           6.423     0.7
 -----------------------------------------------------------------------------
- Total                                                     902.645   100.0
+ Total                                                     902.644   100.0
 -----------------------------------------------------------------------------
 
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
 
- Computing:         Nodes   Th.     Count  Wall t (s)     G-Cycles       %
+On 1 MPI rank
+
+ Computing:          Num   Num      Call    Wall time         Giga-Cycles
+                     Nodes Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          2       0.297        0.686    10.9
- Force                  1    1          3       2.140        4.935    78.4
- PME mesh               1    1          3       0.132        0.304     4.8
- NB X/F buffer ops.     1    1          4       0.001        0.002     0.0
- Write traj.            1    1          3       0.126        0.290     4.6
- Update                 1    1          3       0.003        0.006     0.1
- Constraints            1    1          3       0.013        0.031     0.5
- Coordinate swapping    1    1          1       0.003        0.006     0.1
- Rest                   1                       0.016        0.037     0.6
+ Neighbor search        1    1          2       0.357          0.822  11.0
+ Force                  1    1          3       2.470          5.697  76.2
+ PME mesh               1    1          3       0.147          0.340   4.5
+ NB X/F buffer ops.     1    1          4       0.001          0.003   0.0
+ Write traj.            1    1          3       0.222          0.512   6.8
+ Update                 1    1          3       0.004          0.009   0.1
+ Constraints            1    1          3       0.015          0.036   0.5
+ Coordinate swapping    1    1          1       0.004          0.008   0.1
+ Rest                                           0.020          0.045   0.6
 -----------------------------------------------------------------------------
- Total                  1                       2.731        6.297   100.0
+ Total                                          3.240          7.473 100.0
 -----------------------------------------------------------------------------
+ Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1          6       0.068        0.157     2.5
- PME 3D-FFT             1    1          6       0.050        0.115     1.8
- PME solve Elec         1    1          3       0.014        0.032     0.5
+ PME spread/gather      1    1          6       0.074          0.171   2.3
+ PME 3D-FFT             1    1          6       0.058          0.134   1.8
+ PME solve Elec         1    1          3       0.015          0.035   0.5
 -----------------------------------------------------------------------------
 
 NOTE: 11 % of the run time was spent in pair search,
@@ -653,7 +667,7 @@ NOTE: 11 % of the run time was spent in pair search,
 
 
                Core t (s)   Wall t (s)        (%)
-       Time:        2.698        2.731       98.8
+       Time:        3.137        3.240       96.8
                  (ns/day)    (hour/ns)
-Performance:        0.380       63.211
-Finished mdrun on node 0 Tue Jan 28 16:40:01 2014
+Performance:        0.320       74.998
+Finished mdrun on node 0 Fri Jun 27 20:52:54 2014
