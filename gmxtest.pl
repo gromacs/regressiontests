@@ -680,6 +680,7 @@ sub test_systems {
 	    my $error_detail = join(', ', @error_detail) . ' ';
 	    print XML "<testcase name=\"$dir\">\n" if ($xml);
 	    if ($nerror > 0) {
+                my $error_detail = join(', ', @error_detail) . ' ';
 		print "FAILED. Check ${error_detail}file(s) in $dir\n";
 		if ($xml) {
 		    print XML "<error message=\"Errors in ${error_detail}\">\n";
