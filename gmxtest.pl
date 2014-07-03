@@ -20,10 +20,10 @@ if(!defined $ENV{GMX_MAXBACKUP}) {
     $ENV{GMX_MAXBACKUP}=-1
 }
 
-my $mpi_threads = 0;
+my $tmpi_ranks = 0;
 my $omp_threads = 0;
-my $npme_nodes = -1;
-my $mpi_processes = 0;
+my $npme_ranks = -1;
+my $mpi_ranks = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
@@ -79,31 +79,31 @@ sub add_gpu_id
 {
     my ($gpuid_string, $pp_ranks) = @_;
 
-    # we may or may not be using GPUS and/or separate PME nodes
+    # we may or may not be using GPUS and/or separate PME ranks
     # depending on the gmxtest.pl command line and the test involved,
     # so the number of PP ranks has to be used to choose a sensible
     # subset of the gpuid string.
     return ($gpuid_string && $pp_ranks) ? "-gpu_id " . substr($gpuid_string, 0, $pp_ranks) : "";
 }
 
-sub use_separate_pme_nodes {
-    my ($mpi_threads, $mpi_processes, $npme_nodes, $pp_ranks_ref) = @_;
+sub use_separate_pme_ranks {
+    my ($tmpi_ranks, $mpi_ranks, $npme_ranks, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
     # the user asked for it
     if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", "grompp.mdp") > 0) &&
-        ($mpi_threads > 2 || $mpi_processes > 2) &&
-        ($npme_nodes >= 0))
+        ($tmpi_ranks > 2 || $mpi_ranks > 2) &&
+        ($npme_ranks >= 0))
     {
-        if ($mpi_threads > 2)
+        if ($tmpi_ranks > 2)
         {
-            $$pp_ranks_ref = $mpi_threads - $npme_nodes;
+            $$pp_ranks_ref = $tmpi_ranks - $npme_ranks;
         }
-        if ($mpi_processes > 2)
+        if ($mpi_ranks > 2)
         {
-            $$pp_ranks_ref = $mpi_processes - $npme_nodes;
+            $$pp_ranks_ref = $mpi_ranks - $npme_ranks;
         }
-        # Behaviour is undefined if both MPI threads and processes got set by the user!
-        return "-npme $npme_nodes";
+        # Behaviour is undefined if both -nt and -np got set by the user!
+        return "-npme $npme_ranks";
     }
     else {
         return "";
@@ -117,7 +117,7 @@ sub setup_vars()
     # as defined above (or over-ridden on the command line), "_d" indicates 
     # a double-precision version, and (only in the case of mdrun) "_mpi" 
     # indicates a parallel version compiled with MPI.
-    if ( $mpi_processes > 0 ) {
+    if ( $mpi_ranks > 0 ) {
 	if ($autosuffix) {
             $gmx_cmd .= "_mpi";
 	}
@@ -368,7 +368,7 @@ sub check_xvg {
 # Callback used only when mdrun has returned an error, so we can work
 # out how to try to call it so it works
 sub how_should_we_rerun_mdrun {
-    my ($mpi_threads_ref, $omp_threads_ref, $mpi_processes_ref, $gpu_id_ref) = @_;
+    my ($tmpi_ranks_ref, $omp_threads_ref, $mpi_ranks_ref, $gpu_id_ref) = @_;
 
     # Is it because we are using too many cores, or trying to use -nt
     # with a reference build, or running a test that does not run in
@@ -380,18 +380,18 @@ sub how_should_we_rerun_mdrun {
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
             my $new_mpi_ranks = 8;
-            if ($$mpi_processes_ref > 0) {
-                $$mpi_processes_ref = $new_mpi_ranks;
+            if ($$mpi_ranks_ref > 0) {
+                $$mpi_ranks_ref = $new_mpi_ranks;
             } else {
-                $$mpi_threads_ref = ${new_mpi_ranks};
+                $$tmpi_ranks_ref = ${new_mpi_ranks};
             }
             print ("Mdrun cannot use the requested (or automatic) number of ranks, retrying with $new_mpi_ranks.\n");
             $rerun = 1;
             last;
         }
-        elsif ($line =~ /Setting the number of thread-MPI threads is only supported/) {
-            printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 thread.\n");
-            $$mpi_threads_ref = 0;
+        elsif ($line =~ /Setting the number of thread-MPI .* is only supported/) {
+            printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 rank.\n");
+            $$tmpi_ranks_ref = 0;
             $rerun = 1;
             last;
         }
@@ -402,14 +402,14 @@ sub how_should_we_rerun_mdrun {
             last;
         }
         elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
-            my $new_mpi_processes = 1;
-            print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_processes}.\n");
-            if ($$mpi_processes_ref > 0) {
-                $$mpi_processes_ref = $new_mpi_processes;
+            my $new_mpi_ranks = 1;
+            print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_ranks}.\n");
+            if ($$mpi_ranks_ref > 0) {
+                $$mpi_ranks_ref = $new_mpi_ranks;
             } else {
-                $$mpi_threads_ref = ${new_mpi_processes};
+                $$tmpi_ranks_ref = ${new_mpi_ranks};
             }
-            $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_processes);
+            $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_ranks);
             $rerun = 1;
             last;
         }
@@ -420,8 +420,8 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $mdparams) = @_;
-    # Only one of mpi_threads or mpi_processes may be greater than zero.
+    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $mdparams) = @_;
+    # Only one of tmpi_ranks or mpi_ranks may be greater than zero.
 
     # Set up and enforce the maximum number of OpenMP threads to
     # try for this test case
@@ -435,15 +435,15 @@ sub run_mdrun {
 
     # Set up and enforce the maximum number of MPI ranks to try
     # for this test case
-    my $max_mpi_processes_filename = "max-mpi-processes";
-    if ( -f $max_mpi_processes_filename ) {
-        open my $fh, '<', $max_mpi_processes_filename or die "error opening $max_mpi_processes_filename: $!";
+    my $max_mpi_ranks_filename = "max-mpi-ranks";
+    if ( -f $max_mpi_ranks_filename ) {
+        open my $fh, '<', $max_mpi_ranks_filename or die "error opening $max_mpi_ranks_filename: $!";
         my $max_ranks = do { local $/; <$fh> };
         chomp $max_ranks;
-        if ($mpi_processes > 0) {
-            $mpi_processes = ($mpi_processes < $max_ranks) ? $mpi_processes : $max_ranks;
-        } elsif ($mpi_threads > 0) {
-            $mpi_threads = ($mpi_threads < $max_ranks) ? $mpi_threads : $max_ranks;
+        if ($mpi_ranks > 0) {
+            $mpi_ranks = ($mpi_ranks < $max_ranks) ? $mpi_ranks : $max_ranks;
+        } elsif ($tmpi_ranks > 0) {
+            $tmpi_ranks = ($tmpi_ranks < $max_ranks) ? $tmpi_ranks : $max_ranks;
         } else {
             # The user specified nothing, but the default must
             # still honour this maximum!
@@ -451,11 +451,11 @@ sub run_mdrun {
             # If mdrun is serial, this code will trigger a second run
             # where -ntmpi will not be set. This is not ideal, but
             # only a few test cases specify the maximum number of
-            # processes, and pretty much only Jenkins should compile
+            # ranks, and pretty much only Jenkins should compile
             # the serial version of mdrun. In the absence of an
             # explicit serial mode for this script, it should lead
             # to a net improvement in Jenkins throughput.
-            $mpi_threads = $max_ranks;
+            $tmpi_ranks = $max_ranks;
         }
     }
 
@@ -467,17 +467,17 @@ sub run_mdrun {
     {
         my $ntmpi_opt = '';
         my $ntomp_opt = '';
-        if (0 < $mpi_threads) {
-            $ntmpi_opt = "-ntmpi $mpi_threads";
+        if (0 < $tmpi_ranks) {
+            $ntmpi_opt = "-ntmpi $tmpi_ranks";
         }
         if (!find_in_file("cutoff[-_]scheme.*=.*group","grompp.mdp") > 0 && $omp_threads > 0) {
             $ntomp_opt = "-ntomp $omp_threads";
         }
 
         my $pp_ranks = undef;
-        my $npme_opt = use_separate_pme_nodes($mpi_threads, $mpi_processes, $npme_nodes, \$pp_ranks);
+        my $npme_opt = use_separate_pme_ranks($tmpi_ranks, $mpi_ranks, $npme_ranks, \$pp_ranks);
         my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks);
-        my $command = $mdprefix->($mpi_processes)
+        my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
         #do_system using the special callback will return:
@@ -485,7 +485,7 @@ sub run_mdrun {
         #0 exit value was 0 (and thus this callback wasn't called)
         #-1 unkown error
         my $nerror = do_system($command, 0,
-                               sub { how_should_we_rerun_mdrun(\$mpi_threads, \$omp_threads, \$mpi_processes, \$gpu_id) });
+                               sub { how_should_we_rerun_mdrun(\$tmpi_ranks, \$omp_threads, \$mpi_ranks, \$gpu_id) });
         return $nerror unless($nerror>0);
     }
     # mdrun always failed, so pass the error upstream
@@ -589,7 +589,7 @@ sub test_systems {
 		# this. mpirun -wdir or -wd is right for OpenMPI, no
 		# idea about others.
 		my $local_mdprefix = '';
-		if ( $mpi_processes > 0 && !($mpirun =~ /(ap|s)run/) ) {
+		if ( $mpi_ranks > 0 && !($mpirun =~ /(ap|s)run/) ) {
                     $local_mdprefix .= ($bluegene > 0 ?
                                   ' --cwd ' :
                                   ' -wdir ') . getcwd(); 
@@ -606,7 +606,7 @@ sub test_systems {
 		    $local_mdparams .= " -cpi continue -noappend";
 		    $part = ".part0002";
 		}
-                $nerror = run_mdrun($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $local_mdparams);
+                $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams);
                 if ($nerror != 0) {
 		    if ($parse_cmd eq '') {
 			push(@error_detail, ("mdrun.out", "md.log"));
@@ -955,7 +955,7 @@ sub test_pdb2gmx {
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running mdrun\n");
 		    print(LOG "****************************************************\n");
-		    open(PIPE,$mdprefix->($mpi_processes)." $progs{'mdrun'} $mdparams 2>&1 |");
+		    open(PIPE,$mdprefix->($mpi_ranks)." $progs{'mdrun'} $mdparams 2>&1 |");
 		    print LOG while <PIPE>;
 		    close PIPE;
 		    chdir("..");
@@ -1100,23 +1100,23 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $mpi_processes = $ARGV[$kk];
-	    if ($mpi_processes <= 0) {
-		$mpi_processes = 0;
+	    $mpi_ranks = $ARGV[$kk];
+	    if ($mpi_ranks <= 0) {
+		$mpi_ranks = 0;
 	    } else {
-                print "Will test on $mpi_processes MPI processors\n";
+                print "Will test on $mpi_ranks MPI ranks\n";
             }
 	}
     }
     elsif ($arg eq '-nt' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $mpi_threads = $ARGV[$kk];
-	    if ($mpi_threads <= 1) {
-		$mpi_threads = 1;
+	    $tmpi_ranks = $ARGV[$kk];
+	    if ($tmpi_ranks <= 1) {
+		$tmpi_ranks = 1;
                 # most of the tests don't scale at all well
 	    } else {
-                print "Will test on $mpi_threads tMPI threads\n";
+                print "Will test on $tmpi_ranks thread-MPI ranks\n";
 	    }
 	}
     }
@@ -1135,8 +1135,8 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-npme' ) {
         if ($kk < $#ARGV) {
             $kk++;
-            $npme_nodes = $ARGV[$kk];
-            print "Will run PME tests using $npme_nodes separate PME nodes\n";
+            $npme_ranks = $ARGV[$kk];
+            print "Will run PME tests using $npme_ranks separate PME ranks\n";
         }
     }
     elsif ($arg eq '-suffix' ) {
