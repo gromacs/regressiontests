@@ -87,10 +87,10 @@ sub add_gpu_id
 }
 
 sub use_separate_pme_ranks {
-    my ($num_ranks, $npme_ranks, $pp_ranks_ref) = @_;
+    my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
     # the user asked for it
-    if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", "grompp.mdp") > 0) &&
+    if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", $grompp_mdp) > 0) &&
         ($num_ranks > 2) &&
         ($npme_ranks >= 0))
     {
@@ -193,7 +193,7 @@ sub find_in_file {
         open(REDIRECT, ">$filename_for_redirect") || die "Could not open redirect file '$filename_for_redirect'\n";
     }
     open(FILE,$filename_to_search) || die "Could not open file '$filename_to_search'\n";
-    if ($filename_to_search eq "grompp.mdp") {
+    if ($filename_to_search =~ "grompp.mdp\$") {
         $case_sensitive=0;
     }
 
@@ -212,12 +212,12 @@ sub find_in_file {
     return $return;
 }
 
-sub check_force($)
+sub check_force($$)
 {
     my $traj = shift;
+    my $reftrr = shift;
     my $cfor = "checkforce.out";
     my $cfor2 = "checkforce.err";
-    my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
     do_system("$progs{'check'} -f $reftrr -f2 $traj -tol $ftol_rel -abstol $ftol_abs >$cfor 2>$cfor2", 0,
 	      sub { print "\ngmx check failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
@@ -269,11 +269,11 @@ sub check_force($)
     return $nerr_force;
 }
 
-sub check_virial()
+sub check_virial($)
 {
+    my $refedr = shift;
     my $cvir = "checkvir.out";
     my $cvir2 = "checkvir.err";
-    my $refedr = "${ref}.edr";
     my $nerr_vir = 0;
 
     do_system("$progs{'check'} -e $refedr -e2 ener -tol $virtol_rel -abstol $virtol_abs -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
@@ -430,7 +430,7 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $mdparams) = @_;
+    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
     # Only one of tmpi_ranks or mpi_ranks may be greater than zero, but
     # this is checked for sanity after parsing user input.
 
@@ -491,13 +491,13 @@ sub run_mdrun {
         if (0 < $tmpi_ranks) {
             $ntmpi_opt = "-ntmpi $tmpi_ranks";
         }
-        if (!find_in_file("cutoff[-_]scheme.*=.*group","grompp.mdp") > 0 && $omp_threads > 0) {
+        if (!find_in_file("cutoff[-_]scheme.*=.*group", $grompp_mdp) > 0 && $omp_threads > 0) {
             $ntomp_opt = "-ntomp $omp_threads";
         }
 
         my $pp_ranks = undef;
         my $num_ranks = $tmpi_ranks < $mpi_ranks ? $mpi_ranks : $tmpi_ranks;
-        my $npme_opt = use_separate_pme_ranks($num_ranks, $npme_ranks, \$pp_ranks);
+        my $npme_opt = use_separate_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
         my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks);
         my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
@@ -519,23 +519,28 @@ sub run_mdrun {
 }
 
 # Parameters:
-#  dir        : The directory in which the test will run, and output and reference files will be created
+#  dir        : The directory in which the test will run, and output files will be created/found
+#  input_dir  : The relative path to the directory in which the input and reference files can be found (normally ".")
+#  test_name  : The name of the test case to report to the user
 #
 # Returns : 1 for success, 0 for failure
 sub test_case {
-    my ($dir) = @_;
+    my ($dir, $input_dir, $test_name) = @_;
     my $success = 0;
+
+    my $cwd = getcwd();
     chdir($dir);
     if ($verbose > 1) {
-        print "Testing $dir . . . ";
+        print "Testing $test_name . . . ";
     }
 
     my $nerror = 0;
     my $ndx = "";
-    if ( -f "index.ndx" ) {
-        $ndx = "-n index";
+    if ( -f "$input_dir/index.ndx" ) {
+        $ndx = "-n $input_dir/index";
     }
-    $nerror = do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
+    my $grompp_mdp = "$input_dir/grompp.mdp";
+    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >grompp.out 2>&1");
 
     my @error_detail;
     if (! -f "topol.tpr") {
@@ -543,10 +548,10 @@ sub test_case {
         $nerror = 1;
     }
     if ($nerror == 0) {
-        my $reftpr = "${ref}.tpr";
+        my $reftpr = "$input_dir/${ref}.tpr";
         if (! -f $reftpr) {
-            print ("No $reftpr file in $dir\n");
-            print ("This means you are not really testing $dir\n");
+            print ("No $reftpr file for $test_name\n");
+            print ("This means you are not really testing $test_name\n");
             copy('topol.tpr', $reftpr);
         } else {
             my $tprout="checktpr.out";
@@ -556,7 +561,7 @@ sub test_case {
             $nerror |= find_in_file("^(?!comparing)","$tprout");
             if ($nerror > 0) {
                 push(@error_detail, ("checktpr.out", "checktpr.err"));
-                print "topol.tpr file different from $reftpr. Check files in $dir\n";
+                print "topol.tpr file different from $reftpr. Check files in $dir for $test_name\n";
             }
             if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
                 print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
@@ -581,10 +586,10 @@ sub test_case {
         }
         close(GROMPP) || die "Could not close file 'grompp.out'\n";
         close(WARN) || die "Could not close file 'grompp.warn'\n";
-        my $refwarn = "${ref}.warn";
+        my $refwarn = "$input_dir/${ref}.warn";
         if (! -f $refwarn) {
-            print("No $refwarn file in $dir\n");
-            print ("This means you are not really testing $dir\n");
+            print("No $refwarn file for $test_name\n");
+            print ("This means you are not really testing $test_name\n");
             copy('grompp.warn', $refwarn);
         } else {
             open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
@@ -596,6 +601,14 @@ sub test_case {
                     next;
                 }
                 $line1 =~ s/(e[-+])0([0-9][0-9])/$1$2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
+
+                # Hack to avoid issues based only on a difference in
+                # relative path to grompp.mdp, which might happen in a
+                # non-problematic way when the same test case is run
+                # in a different output directory
+                $line1 =~ s/file .*grompp.mdp/file grompp.mdp/;
+                $line2 =~ s/file .*grompp.mdp/file grompp.mdp/;
+
                 $nerror++ unless ("$line2" eq "$line1");
             }
             while (my $line2=<WARN2>) {#FILE2 has more lines
@@ -628,15 +641,15 @@ sub test_case {
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
         #adress has it's own tables
-        unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
-            $local_mdparams .= " -table ../table -tablep ../tablep";
+        unless (find_in_file("adress.*yes", $grompp_mdp) > 0) {
+            $local_mdparams .= " -table $input_dir/../table -tablep $input_dir/../tablep";
         }
         my $part = "";
         if ( -f "continue.cpt" ) {
             $local_mdparams .= " -cpi continue -noappend";
             $part = ".part0002";
         }
-        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams);
+        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
         if ($nerror != 0) {
             if ($parse_cmd eq '') {
                 push(@error_detail, ("mdrun.out", "md.log"));
@@ -653,10 +666,10 @@ sub test_case {
             $nerror=1;
         } elsif ((-f "$ener" ) && (-f "$traj")) {  # Check whether we have any output
             # Now check whether we have any reference files
-            my $refedr = "${ref}.edr";
+            my $refedr = "$input_dir/${ref}.edr";
             if (! -f  $refedr) {
-                print ("No $refedr file in $dir.\n");
-                print ("This means you are not really testing $dir\n");
+                print ("No $refedr file for $test_name.\n");
+                print ("This means you are not really testing $test_name\n");
                 copy("$ener", $refedr);
             } else {
                 my $potout="checkpot.out";
@@ -680,14 +693,14 @@ sub test_case {
                 $nerror |= $nerr_pot | $nerr_vir;
                 unlink($potout,$poterr) unless $nerr_pot;
             }
-            my $reftrr = "${ref}.trr";
+            my $reftrr = "$input_dir/${ref}.trr";
             if (! -f $reftrr ) {
-                print ("No $reftrr file in $dir.\n");
-                print ("This means you are not really testing $dir\n");
+                print ("No $reftrr file for $test_name.\n");
+                print ("This means you are not really testing $test_name\n");
                 copy("$traj", $reftrr);
             } else {
                 # Now do the real tests
-                my $nerr_force = check_force($traj);
+                my $nerr_force = check_force($traj, $reftrr);
                 push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
                 $nerror |= $nerr_force;
             }
@@ -697,7 +710,7 @@ sub test_case {
             }
 
             # This bit below is only relevant for free energy tests
-            my $refxvg = "${ref}.xvg";
+            my $refxvg = "$input_dir/${ref}.xvg";
             my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1);
             push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
             $nerror |= $nerr_xvg;
@@ -708,10 +721,10 @@ sub test_case {
         }
     }
     my $error_detail = join(', ', @error_detail) . ' ';
-    print XML "<testcase name=\"$dir\">\n" if ($xml);
+    print XML "<testcase name=\"$test_name\">\n" if ($xml);
     if ($nerror > 0) {
         my $error_detail = join(', ', @error_detail) . ' ';
-        print "FAILED. Check ${error_detail}file(s) in $dir\n";
+        print "FAILED. Check ${error_detail}file(s) in $dir for $test_name\n";
         if ($xml) {
             print XML "<error message=\"Errors in ${error_detail}\">\n";
             print XML "<![CDATA[\n";
@@ -739,7 +752,7 @@ sub test_case {
         #unlink(@args);
 
         if ($verbose > 0) {
-            if (find_in_file(".","grompp.mdp") < 50) {
+            if (find_in_file(".", $grompp_mdp) < 50) {
                 # if the input .mdp file is trivially short, then
                 # the diff test below will always fail, however this
                 # is normal and expected for the usefully-short
@@ -749,9 +762,9 @@ sub test_case {
             }
             else {
                 my $mdp_result = 0;
-                foreach my $reference_mdp ( 'grompp.mdp' ) {
+                foreach my $reference_mdp ( $grompp_mdp ) {
                     if (-f $reference_mdp) {
-                        open(FILE1,"$reference_mdp") || die "Could not open file '$reference_mdp'\n";
+                        open(FILE1,$reference_mdp) || die "Could not open file '$reference_mdp'\n";
                         open(FILE2,"mdout.mdp") || die "Could not open file 'mdout.mdp'\n";
                         my $diff=0;
                         while (my $line1=<FILE1>) {
@@ -784,14 +797,16 @@ sub test_case {
         $success = 1;
     }
     print XML "</testcase>\n" if ($xml);
-    chdir("..");
+    chdir($cwd);
     return $success;
 }
 
 sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
-        $npassed += test_case $dir
+        my $test_name = $dir;
+        my $input_dir = ".";
+        $npassed += test_case $dir, $input_dir, $test_name;
     }
     return $npassed;
 }
