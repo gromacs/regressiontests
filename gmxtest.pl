@@ -649,6 +649,9 @@ sub test_case {
             $local_mdparams .= " -cpi continue -noappend";
             $part = ".part0002";
         }
+        if ($test_name =~ /-cpu-only/) {
+            $local_mdparams .= " -nb cpu";
+        }
         $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
         if ($nerror != 0) {
             if ($parse_cmd eq '') {
@@ -748,9 +751,6 @@ sub test_case {
         }
     }
     else {
-        my @args = glob("#*# *.out topol.tpr confout*.gro ener*.edr md.log traj*.trr");
-        #unlink(@args);
-
         if ($verbose > 0) {
             if (find_in_file(".", $grompp_mdp) < 50) {
                 # if the input .mdp file is trivially short, then
@@ -802,13 +802,36 @@ sub test_case {
 }
 
 sub test_systems {
-    my $npassed = 0;
-    foreach my $dir ( @_ ) {
+    my ($npassed, $nn, @subdirs) = @_;
+    $$npassed = 0;
+    $$nn = 0;
+    foreach my $dir ( @subdirs ) {
         my $test_name = $dir;
         my $input_dir = ".";
-        $npassed += test_case $dir, $input_dir, $test_name;
+        $$nn++;
+        $$npassed += test_case $dir, $input_dir, $test_name;
+
+        # Only nbnxn test cases can execute GPU-based non-bonded
+        # kernels. If GPU kernels were used to run this test case
+        # (whether natively or in emulation), run it again in CPU-only
+        # mode. This relies on test_case() not clearing up md.log.
+        if ($test_name =~ /nbnxn/ && 0 < find_in_file("^Using .* 8x8 non-bonded kernels", "$dir/md.log")) {
+            if ($mdparams =~ /-nb/) {
+                print("Test case $test_name has been run using GPU non-bonded kernels,\n" .
+                      "and would normally be run again using only CPU-based non-bonded\n" .
+                      "kernels, but because you have set -nb in the -mdparam string,\n" .
+                      "the test harness will stay out of your way.\n");
+            } else {
+                print("Re-running $test_name using only CPU-based non-bonded kernels\n");
+                $dir .= "/cpu-only";
+                $input_dir = "..";
+                $test_name .= "-cpu-only";
+                mkdir $dir;
+                $$nn++;
+                $$npassed += test_case $dir, $input_dir, $test_name;
+            }
+        }
     }
-    return $npassed;
 }
 
 sub cleandirs {
@@ -818,7 +841,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -850,9 +873,9 @@ sub test_dirs {
     chdir($dirs);
     # glob all files, but retain only directories that match the regular expression
     my @subdirs = map { (-d $_ && $_ =~ $only_subdir) ? $_ : () } <*>;
-    my $nn = $#subdirs + 1;
     print XML "<testsuite name=\"$dirs\">\n" if ($xml);
-    my $npassed = test_systems(@subdirs);
+    my ($nn, $npassed);
+    test_systems(\$npassed, \$nn, @subdirs);
     print XML "</testsuite>\n" if ($xml);
     my $nerror=0;
     if ($npassed < $nn) {
