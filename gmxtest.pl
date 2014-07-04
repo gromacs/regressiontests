@@ -518,270 +518,281 @@ sub run_mdrun {
     return 1;
 }
 
+# Parameters:
+#  dir        : The directory in which the test will run, and output and reference files will be created
+#
+# Returns : 1 for success, 0 for failure
+sub test_case {
+    my ($dir) = @_;
+    my $success = 0;
+    chdir($dir);
+    if ($verbose > 1) {
+        print "Testing $dir . . . ";
+    }
+
+    my $nerror = 0;
+    my $ndx = "";
+    if ( -f "index.ndx" ) {
+        $ndx = "-n index";
+    }
+    $nerror = do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
+
+    my @error_detail;
+    if (! -f "topol.tpr") {
+        print ("No topol.tpr file in $dir. grompp failed\n");
+        $nerror = 1;
+    }
+    if ($nerror == 0) {
+        my $reftpr = "${ref}.tpr";
+        if (! -f $reftpr) {
+            print ("No $reftpr file in $dir\n");
+            print ("This means you are not really testing $dir\n");
+            copy('topol.tpr', $reftpr);
+        } else {
+            my $tprout="checktpr.out";
+            my $tprerr="checktpr.err";
+            do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0,
+                      sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
+            $nerror |= find_in_file("^(?!comparing)","$tprout");
+            if ($nerror > 0) {
+                push(@error_detail, ("checktpr.out", "checktpr.err"));
+                print "topol.tpr file different from $reftpr. Check files in $dir\n";
+            }
+            if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
+                print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
+                $addversionnote = 1;
+            }
+            if ($nerror == 0) {
+                unlink($tprout,$tprerr);
+            }
+        }
+    } else {
+        push(@error_detail, ("grompp.out"));
+    }
+
+    if ($nerror == 0) {
+        open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
+        open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
+        my $p=0;
+        while(<GROMPP>) {
+            $p=1 if /^WARNING/;
+            print WARN if ($p);
+            $p=0 if /^\r?$/;
+        }
+        close(GROMPP) || die "Could not close file 'grompp.out'\n";
+        close(WARN) || die "Could not close file 'grompp.warn'\n";
+        my $refwarn = "${ref}.warn";
+        if (! -f $refwarn) {
+            print("No $refwarn file in $dir\n");
+            print ("This means you are not really testing $dir\n");
+            copy('grompp.warn', $refwarn);
+        } else {
+            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
+            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
+            while (my $line1=<WARN1>) {
+                my $line2=<WARN2>;
+                if (not defined($line2)){#FILE1 has more lines
+                    $nerror++;
+                    next;
+                }
+                $line1 =~ s/(e[-+])0([0-9][0-9])/$1$2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
+                $nerror++ unless ("$line2" eq "$line1");
+            }
+            while (my $line2=<WARN2>) {#FILE2 has more lines
+                $nerror++
+            }
+            if ($nerror>0) {
+                print("Different warnings in $refwarn and grompp.warn\n");
+                push(@error_detail, ("grompp.out"));
+            } else {
+                unlink("grompp.warn");
+            }
+        }
+    }
+    if ($nerror == 0) {
+        # Do the mdrun at last!
+
+        # mpirun usually needs to be told the current working
+        # directory on the command line (or with some
+        # environment variable such as MPIRUN_CWD for
+        # BlueGene), so after the chdir we need to deal with
+        # this. mpirun -wdir or -wd is right for OpenMPI, no
+        # idea about others.
+        my $local_mdprefix = '';
+        if ( $mpi_ranks > 0 && !($mpirun =~ /(ap|s)run/) ) {
+            $local_mdprefix .= ($bluegene > 0 ?
+                                ' --cwd ' :
+                                ' -wdir ') . getcwd();
+            $local_mdprefix .= ' : ' if($bluegene);
+        }
+        # With tunepme Coul-Sr/Recip isn't reproducible
+        my $local_mdparams = $mdparams . " -notunepme";
+        #adress has it's own tables
+        unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
+            $local_mdparams .= " -table ../table -tablep ../tablep";
+        }
+        my $part = "";
+        if ( -f "continue.cpt" ) {
+            $local_mdparams .= " -cpi continue -noappend";
+            $part = ".part0002";
+        }
+        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams);
+        if ($nerror != 0) {
+            if ($parse_cmd eq '') {
+                push(@error_detail, ("mdrun.out", "md.log"));
+            } else {
+                do_system("$parse_cmd <mdrun.out >mdrun_parsed.out");
+                push(@error_detail, ("mdrun_parsed.out", "md.log"));
+            }
+        }
+
+        my $ener = "ener${part}.edr";
+        my $traj = "traj${part}.trr";
+        my $log = "md${part}.log";
+        if ($nerror!=0) {
+            $nerror=1;
+        } elsif ((-f "$ener" ) && (-f "$traj")) {  # Check whether we have any output
+            # Now check whether we have any reference files
+            my $refedr = "${ref}.edr";
+            if (! -f  $refedr) {
+                print ("No $refedr file in $dir.\n");
+                print ("This means you are not really testing $dir\n");
+                copy("$ener", $refedr);
+            } else {
+                my $potout="checkpot.out";
+                my $poterr="checkpot.err";
+                # Now do the real tests
+                do_system("$progs{'check'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
+                          sub {
+                              if($nerror != 0) {
+                                  print "\ngmx check failed on the .edr file, probably because mdrun also failed";
+                              } else {
+                                  print "\ngmx check FAILED on the .edr file";
+                                  $nerror = 1;
+                              }
+                          });
+                my $nerr_pot = find_in_file("step","$potout");
+                push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
+
+                my $nerr_vir   = 0; #TODO: check_virial();
+                push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
+
+                $nerror |= $nerr_pot | $nerr_vir;
+                unlink($potout,$poterr) unless $nerr_pot;
+            }
+            my $reftrr = "${ref}.trr";
+            if (! -f $reftrr ) {
+                print ("No $reftrr file in $dir.\n");
+                print ("This means you are not really testing $dir\n");
+                copy("$traj", $reftrr);
+            } else {
+                # Now do the real tests
+                my $nerr_force = check_force($traj);
+                push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
+                $nerror |= $nerr_force;
+            }
+            my $reflog = "${ref}.log";
+            if (! -f $reflog ) {
+                copy($log, $reflog);
+            }
+
+            # This bit below is only relevant for free energy tests
+            my $refxvg = "${ref}.xvg";
+            my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1);
+            push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
+            $nerror |= $nerr_xvg;
+        }
+        else {
+            print "No mdrun output files.\n";
+            $nerror = 1;
+        }
+    }
+    my $error_detail = join(', ', @error_detail) . ' ';
+    print XML "<testcase name=\"$dir\">\n" if ($xml);
+    if ($nerror > 0) {
+        my $error_detail = join(', ', @error_detail) . ' ';
+        print "FAILED. Check ${error_detail}file(s) in $dir\n";
+        if ($xml) {
+            print XML "<error message=\"Errors in ${error_detail}\">\n";
+            print XML "<![CDATA[\n";
+            foreach my $err (@error_detail) {
+                my @err = split(/ /, $err);
+                my $errfn = $err[0];
+                print XML "$errfn:\n";
+                if (!open FH, $errfn) {
+                    print XML "failed to open $errfn";
+                } else {
+                    while(my $line=<FH>) {
+                        $line=~s/\x00//g; #remove invalid XML characters
+                        print XML $line;
+                    }
+                }
+                print XML "\n--------------------------------\n";
+                close FH;
+            }
+            print XML "]]>\n";
+            print XML "</error>";
+        }
+    }
+    else {
+        my @args = glob("#*# *.out topol.tpr confout*.gro ener*.edr md.log traj*.trr");
+        #unlink(@args);
+
+        if ($verbose > 0) {
+            if (find_in_file(".","grompp.mdp") < 50) {
+                # if the input .mdp file is trivially short, then
+                # the diff test below will always fail, however this
+                # is normal and expected for the usefully-short
+                # kernel test .mdp files, so we don't compare the
+                # .mdp files in this case
+                print "PASSED\n";
+            }
+            else {
+                my $mdp_result = 0;
+                foreach my $reference_mdp ( 'grompp.mdp' ) {
+                    if (-f $reference_mdp) {
+                        open(FILE1,"$reference_mdp") || die "Could not open file '$reference_mdp'\n";
+                        open(FILE2,"mdout.mdp") || die "Could not open file 'mdout.mdp'\n";
+                        my $diff=0;
+                        while (my $line1=<FILE1>) {
+                            my $line2=<FILE2>;
+                            next if $line1 =~ /(data|host|user|generated)/;
+                            next if $line2 =~ /(data|host|user|generated)/;
+                            if (not defined($line2)){#FILE1 has more lines
+                                $diff++;
+                                next;
+                            }
+                            $diff++ unless ("$line2" eq "$line1");
+                        }
+                        while (my $line2=<FILE2>) {#FILE2 has more lines
+                            $diff++
+                        }
+                        $mdp_result++ if $diff > 2;
+                        close(FILE1) || die "Could not close file '$reference_mdp'\n";
+                        close(FILE2) || die "Could not close file 'mdout.mdp'\n";
+                    }
+                }
+                if ($mdp_result > 0) {
+                    print("PASSED but check mdp file differences\n");
+                }
+                else {
+                    print "PASSED\n";
+                    unlink("mdout.mdp");
+                }
+            }
+        }
+        $success = 1;
+    }
+    print XML "</testcase>\n" if ($xml);
+    chdir("..");
+    return $success;
+}
+
 sub test_systems {
     my $npassed = 0;
     foreach my $dir ( @_ ) {
-	    chdir($dir);
-	    if ($verbose > 1) {
-		print "Testing $dir . . . ";
-	    }
-	    
-	    my $nerror = 0;
-	    my $ndx = "";
-	    if ( -f "index.ndx" ) {
-		$ndx = "-n index";
-	    }
-	    $nerror = do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
-	    
-	    my @error_detail;
-	    if (! -f "topol.tpr") {
-		print ("No topol.tpr file in $dir. grompp failed\n");	    
-		$nerror = 1;
-	    }
-	    if ($nerror == 0) {
-		my $reftpr = "${ref}.tpr";
-		if (! -f $reftpr) {
-		    print ("No $reftpr file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-		    copy('topol.tpr', $reftpr);
-		} else {
-		    my $tprout="checktpr.out";
-		    my $tprerr="checktpr.err";
-		    do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0, 
-			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-		    $nerror |= find_in_file("^(?!comparing)","$tprout");
-		    if ($nerror > 0) {
-			push(@error_detail, ("checktpr.out", "checktpr.err"));
-			print "topol.tpr file different from $reftpr. Check files in $dir\n";
-		    }
-		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
-			print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
-			$addversionnote = 1;
-		    }
-		    if ($nerror == 0) {			
-			unlink($tprout,$tprerr);
-		    }
-		}
-	    } else {
-		push(@error_detail, ("grompp.out"));
-	    }
-
-	    if ($nerror == 0) {
-	       open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
-	       open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
-	       my $p=0;
-	       while(<GROMPP>) {
-		 $p=1 if /^WARNING/;
-		 print WARN if ($p);
-		 $p=0 if /^\r?$/;
-	       }
-	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
-	       close(WARN) || die "Could not close file 'grompp.warn'\n";
-		my $refwarn = "${ref}.warn";
-		if (! -f $refwarn) {
-		    print("No $refwarn file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-                    copy('grompp.warn', $refwarn);
-		} else {
-	            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
-	            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
-                    while (my $line1=<WARN1>) {
-                      my $line2=<WARN2>;
-                      if (not defined($line2)){#FILE1 has more lines
-                        $nerror++;
-                        next;
-                      }
-		      $line1 =~ s/(e[-+])0([0-9][0-9])/$1$2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
-                      $nerror++ unless ("$line2" eq "$line1");
-                    }
-                    while (my $line2=<WARN2>) {#FILE2 has more lines
-                      $nerror++
-                    }
-		    if ($nerror>0) {
-			print("Different warnings in $refwarn and grompp.warn\n");
-			push(@error_detail, ("grompp.out"));
-		    } else {
-		      unlink("grompp.warn");
-		    }
-		}
-	    }
-	    if ($nerror == 0) {
-		# Do the mdrun at last!
-
-		# mpirun usually needs to be told the current working
-		# directory on the command line (or with some
-		# environment variable such as MPIRUN_CWD for
-		# BlueGene), so after the chdir we need to deal with
-		# this. mpirun -wdir or -wd is right for OpenMPI, no
-		# idea about others.
-		my $local_mdprefix = '';
-		if ( $mpi_ranks > 0 && !($mpirun =~ /(ap|s)run/) ) {
-                    $local_mdprefix .= ($bluegene > 0 ?
-                                  ' --cwd ' :
-                                  ' -wdir ') . getcwd(); 
-                    $local_mdprefix .= ' : ' if($bluegene);
-	        }
-                # With tunepme Coul-Sr/Recip isn't reproducible
-		my $local_mdparams = $mdparams . " -notunepme";
-		#adress has it's own tables
-		unless (find_in_file("adress.*yes","grompp.mdp") > 0) {
-		    $local_mdparams .= " -table ../table -tablep ../tablep";
-		}
-               my $part = "";
-		if ( -f "continue.cpt" ) {
-		    $local_mdparams .= " -cpi continue -noappend";
-		    $part = ".part0002";
-		}
-                $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams);
-                if ($nerror != 0) {
-		    if ($parse_cmd eq '') {
-			push(@error_detail, ("mdrun.out", "md.log"));
-		    } else {
-			do_system("$parse_cmd <mdrun.out >mdrun_parsed.out");
-			push(@error_detail, ("mdrun_parsed.out", "md.log"));
-		    }
-		}
-		
-		my $ener = "ener${part}.edr";
-		my $traj = "traj${part}.trr";
-		my $log = "md${part}.log";
-		if ($nerror!=0) {
-		    $nerror=1;
-		} elsif ((-f "$ener" ) && (-f "$traj")) {  # Check whether we have any output
-		    # Now check whether we have any reference files
-		    my $refedr = "${ref}.edr";
-		    if (! -f  $refedr) {
-			print ("No $refedr file in $dir.\n");
-			print ("This means you are not really testing $dir\n");
-			copy("$ener", $refedr);
-		    } else {
-		        my $potout="checkpot.out";
-		        my $poterr="checkpot.err";
-			# Now do the real tests
-			do_system("$progs{'check'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
-				  sub {
-				      if($nerror != 0) {
-					  print "\ngmx check failed on the .edr file, probably because mdrun also failed";
-				      } else {
-					  print "\ngmx check FAILED on the .edr file"; 
-					  $nerror = 1;
-				      }
-				  });
-			my $nerr_pot = find_in_file("step","$potout");
-			push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
-
-			my $nerr_vir   = 0; #TODO: check_virial();
-			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
-
-			$nerror |= $nerr_pot | $nerr_vir;
-			unlink($potout,$poterr) unless $nerr_pot;
-		    }
-		    my $reftrr = "${ref}.trr";
-		    if (! -f $reftrr ) {
-			print ("No $reftrr file in $dir.\n");
-			print ("This means you are not really testing $dir\n");
-			copy("$traj", $reftrr);
-		    } else {
-			# Now do the real tests
-			my $nerr_force = check_force($traj);
-			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
-			$nerror |= $nerr_force;
-		    }
-		    my $reflog = "${ref}.log";
-		    if (! -f $reflog ) {
-                        copy($log, $reflog);
-                    }
-
-		    # This bit below is only relevant for free energy tests
-		    my $refxvg = "${ref}.xvg";
-		    my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1);
-		    push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
-		    $nerror |= $nerr_xvg;
-		}
-		else {
-		    print "No mdrun output files.\n";
-		    $nerror = 1;
-		}
-	    }
-	    my $error_detail = join(', ', @error_detail) . ' ';
-	    print XML "<testcase name=\"$dir\">\n" if ($xml);
-	    if ($nerror > 0) {
-                my $error_detail = join(', ', @error_detail) . ' ';
-		print "FAILED. Check ${error_detail}file(s) in $dir\n";
-		if ($xml) {
-		    print XML "<error message=\"Errors in ${error_detail}\">\n";
-		    print XML "<![CDATA[\n";
-		    foreach my $err (@error_detail) {
-			my @err = split(/ /, $err);
-			my $errfn = $err[0];
-			print XML "$errfn:\n";
-			if (!open FH, $errfn) {
-			    print XML "failed to open $errfn";
-			} else {
-			    while(my $line=<FH>) {
-				$line=~s/\x00//g; #remove invalid XML characters
-				print XML $line;
-			    }
-			}
-			print XML "\n--------------------------------\n";
-			close FH;
-		    }
-		    print XML "]]>\n";
-		    print XML "</error>";
-		}
-	    }
-	    else {
-		my @args = glob("#*# *.out topol.tpr confout*.gro ener*.edr md.log traj*.trr");
-		#unlink(@args);
-		
-		if ($verbose > 0) {
-		    if (find_in_file(".","grompp.mdp") < 50) { 
-			# if the input .mdp file is trivially short, then 
-			# the diff test below will always fail, however this
-			# is normal and expected for the usefully-short
-			# kernel test .mdp files, so we don't compare the
-			# .mdp files in this case
-			print "PASSED\n";
-		    }
-		    else {
-			my $mdp_result = 0;
-			foreach my $reference_mdp ( 'grompp.mdp' ) {
-			    if (-f $reference_mdp) {
-			    	open(FILE1,"$reference_mdp") || die "Could not open file '$reference_mdp'\n";
-				open(FILE2,"mdout.mdp") || die "Could not open file 'mdout.mdp'\n";
-				my $diff=0;
-				while (my $line1=<FILE1>) {
-				  my $line2=<FILE2>;
-				  next if $line1 =~ /(data|host|user|generated)/;
-				  next if $line2 =~ /(data|host|user|generated)/;
-				  if (not defined($line2)){#FILE1 has more lines
-				    $diff++;
-				    next;
-				  }
-				  $diff++ unless ("$line2" eq "$line1");
-				}
-				while (my $line2=<FILE2>) {#FILE2 has more lines
-				  $diff++
-				}
-			      	$mdp_result++ if $diff > 2;
-				close(FILE1) || die "Could not close file '$reference_mdp'\n";
-				close(FILE2) || die "Could not close file 'mdout.mdp'\n";
-			    } 
-			}
-			if ($mdp_result > 0) {
-			    print("PASSED but check mdp file differences\n");
-			}
-			else {
-			    print "PASSED\n";
-			    unlink("mdout.mdp");
-			}
-		    }
-		}
-		$npassed++;
-	    }
-	    print XML "</testcase>\n" if ($xml);
-	    chdir("..");
-	}
+        $npassed += test_case $dir
+    }
     return $npassed;
 }
 
