@@ -1,0 +1,7 @@
+Code-Review+2: Szilárd Páll <pall.szilard@gmail.com>
+Verified+2: Jenkins Buildbot
+Submitted-by: Roland Schulz <roland@rschulz.eu>
+Submitted-at: Sat, 05 Jul 2014 08:09:30 +0200
+Reviewed-on: https://gerrit.gromacs.org/3746
+Project: regressiontests
+Branch: refs/heads/release-5-0
