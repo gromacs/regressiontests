@@ -1,6 +1,6 @@
-Log file opened on Tue Oct 14 14:46:41 2014
-Host: gromacs  pid: 4455  rank ID: 0  number of ranks:  1
-GROMACS:    gmx mdrun, VERSION 5.1-dev-20141012-6b359ba (double precision)
+Log file opened on Mon Dec 15 23:26:24 2014
+Host: gromacs  pid: 4304  rank ID: 0  number of ranks:  1
+GROMACS:    gmx mdrun, VERSION 5.1-dev-20141215-ecf34b7 (double precision)
 
 GROMACS is written by:
 Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
@@ -24,14 +24,14 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.1-dev-20141012-6b359ba (double precision)
+GROMACS:      gmx mdrun, VERSION 5.1-dev-20141215-ecf34b7 (double precision)
 Executable:   /nethome/mark/git/master-make-reference/build-cmake-reference-double-gromacs/install/bin/gmx_d
-Library dir:  /nethome/mark/git/master-make-reference/share/top
+Library dir:  /nethome/mark/git/master-make-reference/build-cmake-reference-double-gromacs/install/share/gromacs/top
 Command line:
   gmx_d mdrun -notunepme
 
-Gromacs version:    VERSION 5.1-dev-20141012-6b359ba
-GIT SHA1 hash:      6b359ba8c0025d16168da1af4e5479b6a5e2858f
+Gromacs version:    VERSION 5.1-dev-20141215-ecf34b7
+GIT SHA1 hash:      ecf34b76eac39cb4603a8a2a3ccecda2f757df91
 Precision:          double
 Memory model:       64 bit
 MPI library:        none
@@ -91,7 +91,7 @@ Comp. Phys. Comm. 91 (1995) pp. 43-56
 Input Parameters:
    integrator                     = md-vv
    tinit                          = 0
-   dt                             = 0.001
+   dt                             = 0.0005
    nsteps                         = 12
    init-step                      = 0
    simulation-part                = 1
@@ -278,7 +278,7 @@ temperature-lambdas =            0           0           0           0          
    userreal3                      = 0
    userreal4                      = 0
 grpopts:
-   nrdf:        5484
+   nrdf:        8115
    ref-t:         298
    tau-t:           2
 annealing:          No
@@ -341,26 +341,15 @@ Initialized non-bonded Ewald correction tables, spacing: 8.41e-04 size: 2260
 
 There are 74 atoms and 74 charges for free energy perturbation
 Removing pbc first time
-
-++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
-S. Miyamoto and P. A. Kollman
-SETTLE: An Analytical Version of the SHAKE and RATTLE Algorithms for Rigid
-Water Models
-J. Comp. Chem. 13 (1992) pp. 952-962
--------- -------- --- Thank You --- -------- --------
-
 Initial vector of lambda components:[     0.0000     0.0000     1.0000     0.6000     0.6000     0.0000     0.0000 ]
 There are: 2705 Atoms
 Max number of connections per atom is 99
-Total number of connections is 5996
+Total number of connections is 9504
 Max number of graph edges per atom is 4
 Total number of graph edges is 3660
+Initial temperature: 297.959 K
 
-Constraining the starting coordinates (step 0)
-RMS relative constraint deviation after constraining: 0.00e+00
-Initial temperature: 298.405 K
-
-Started mdrun on rank 0 Tue Oct 14 14:46:41 2014
+Started mdrun on rank 0 Mon Dec 15 23:26:24 2014
            Step           Time         Lambda
               0        0.00000        0.00000
 
@@ -368,33 +357,33 @@ Started mdrun on rank 0 Tue Oct 14 14:46:41 2014
 Grid: 5 x 5 x 4 cells
    Energies (kJ/mol)
            Bond          Angle Ryckaert-Bell.          LJ-14     Coulomb-14
-    2.36907e+00    1.42758e+02    9.65646e+01    8.58054e+01    5.54716e+02
+    7.94894e+01    1.53759e+02    9.65646e+01    8.58054e+01    5.54716e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip. Position Rest.
-    5.81647e+03   -4.17261e+02   -3.53254e+04   -6.29338e+03    0.00000e+00
+    5.81642e+03   -4.17261e+02   -3.53228e+04   -6.29173e+03    0.00000e+00
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.53374e+04    6.80316e+03   -2.85342e+04   -2.85326e+04    2.98405e+02
+   -3.52450e+04    1.00520e+04   -2.51930e+04   -2.51913e+04    2.97959e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl
-   -2.53552e+02    5.70228e+02    0.00000e+00   -5.02848e+00    5.39633e+01
+   -2.53552e+02    2.48164e+04    0.00000e+00   -5.01256e+00    5.39615e+01
     dVbonded/dl
    -3.13886e+01
 
            Step           Time         Lambda
-             12        0.01200        0.00000
+             12        0.00600        0.00000
 
-Writing checkpoint, step 12 at Tue Oct 14 14:46:43 2014
+Writing checkpoint, step 12 at Mon Dec 15 23:26:26 2014
 
 
    Energies (kJ/mol)
            Bond          Angle Ryckaert-Bell.          LJ-14     Coulomb-14
-    5.25431e+01    1.16470e+02    1.01995e+02    7.57256e+01    5.48812e+02
+    3.77753e+03    2.46416e+03    9.91388e+01    7.89446e+01    5.53651e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip. Position Rest.
-    5.71002e+03   -4.17086e+02   -3.50538e+04   -6.25671e+03    8.21795e+00
+    5.72628e+03   -4.16660e+02   -3.90497e+04   -7.04620e+03    3.48190e+00
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.51138e+04    6.58140e+03   -2.85324e+04   -2.85307e+04    2.88678e+02
+   -3.38094e+04    8.64056e+03   -2.51688e+04   -2.51567e+04    2.56122e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl
-   -2.53338e+02   -1.83151e+02    0.00000e+00   -5.33258e+00    5.42447e+01
+   -2.52821e+02   -1.07995e+04    0.00000e+00   -4.87391e+00    5.30635e+01
     dVbonded/dl
-   -3.13074e+01
+   -3.16682e+01
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -404,28 +393,28 @@ Writing checkpoint, step 12 at Tue Oct 14 14:46:43 2014
 
    Energies (kJ/mol)
            Bond          Angle Ryckaert-Bell.          LJ-14     Coulomb-14
-    5.04804e+01    1.32043e+02    9.91321e+01    8.01409e+01    5.53022e+02
+    3.04965e+03    1.29721e+03    9.67711e+01    8.25660e+01    5.54286e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip. Position Rest.
-    5.77728e+03   -4.17181e+02   -3.52078e+04   -6.27297e+03    3.74990e+00
+    5.74631e+03   -4.16773e+02   -3.79283e+04   -6.74246e+03    1.40007e+00
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.52021e+04    6.67009e+03   -2.85320e+04   -2.85303e+04    2.92568e+02
+   -3.42594e+04    9.07851e+03   -2.51809e+04   -2.51679e+04    2.69104e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl
-   -2.53455e+02    1.49422e+02    0.00000e+00   -2.67688e+00    5.94888e+01
+   -2.52958e+02   -6.54974e+03    0.00000e+00   -2.15416e+00    5.94167e+01
     dVbonded/dl
-   -7.25975e+00
+   -7.27154e+00
 
           Box-X          Box-Y          Box-Z
-    3.28674e+00    3.09877e+00    2.68361e+00
+    3.28781e+00    3.09978e+00    2.68449e+00
 
    Total Virial (kJ/mol)
-    2.41115e+03   -4.89319e+02   -2.23040e+02
-   -4.89319e+02    2.17987e+03    2.98960e+02
-   -2.23040e+02    2.98960e+02    1.71026e+03
+    8.72487e+03   -6.02154e+02   -5.86498e+02
+   -6.02154e+02    8.34019e+03    1.08147e+02
+   -5.86498e+02    1.08147e+02    8.23027e+03
 
    Pressure (bar)
-   -2.61792e+02    6.74576e+02    3.44118e+02
-    6.74576e+02    3.61643e+01   -1.89312e+02
-    3.44118e+02   -1.89312e+02    6.73893e+02
+   -6.94721e+03    8.42124e+02    7.09656e+02
+    8.42124e+02   -6.46215e+03   -1.77645e+01
+    7.09656e+02   -1.77645e+01   -6.23986e+03
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -437,31 +426,28 @@ Writing checkpoint, step 12 at Tue Oct 14 14:46:43 2014
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NB Elec. [W3,V&F]                       18.921841          18.922     2.0
- NB VdW & Elec. [W3,V&F]                 11.815490          11.815     1.3
- NB VdW & Elec. [W3-W3,V&F]             193.593568         193.594    20.9
- NB Free energy kernel                  224.664900         224.665    24.3
+ NB Elec. [W3,V&F]                       18.958156          18.958     2.1
+ NB VdW & Elec. [W3,V&F]                 11.838229          11.838     1.3
+ NB VdW & Elec. [W3-W3,V&F]             193.351600         193.352    21.4
+ NB Free energy kernel                  224.567160         224.567    24.8
  1,4 nonbonded interactions               0.016036           1.443     0.2
  Calc Weights                             0.105495           3.798     0.4
- Spread Q Bspline                        15.191280          30.383     3.3
- Gather F Bspline                        15.191280          91.148     9.9
- 3D-FFT                                  37.628448         301.028    32.5
+ Spread Q Bspline                        15.191280          30.383     3.4
+ Gather F Bspline                        15.191280          91.148    10.1
+ 3D-FFT                                  37.628448         301.028    33.3
  Solve PME                                0.033696           2.157     0.2
- NS-Pairs                                 0.882165          18.525     2.0
+ NS-Pairs                                 0.881765          18.517     2.0
  Reset In Box                             0.004755           0.014     0.0
- Shift-X                                  0.248860           1.493     0.2
+ Shift-X                                  0.140660           0.844     0.1
  CG-CoM                                   0.013525           0.041     0.0
- Bonds                                    0.000988           0.058     0.0
- Angles                                   0.001885           0.317     0.0
+ Bonds                                    0.023790           1.404     0.2
+ Angles                                   0.013286           2.232     0.2
  RB-Dihedrals                             0.007707           1.904     0.2
  Pos. Restr.                              0.000962           0.048     0.0
  Virial                                   0.035750           0.643     0.1
- Calc-Ekin                                0.078445           2.118     0.2
- Constraint-V                             0.086823           0.695     0.1
- Constraint-Vir                           0.086823           2.084     0.2
- Settle                                   0.056128          18.129     2.0
+ Calc-Ekin                                0.035165           0.949     0.1
 -----------------------------------------------------------------------------
- Total                                                     925.021   100.0
+ Total                                                     905.267   100.0
 -----------------------------------------------------------------------------
 
 
@@ -472,25 +458,24 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          5       0.067          0.178   3.2
- Force                  1    1         13       1.324          3.546  64.3
- PME mesh               1    1         13       0.584          1.565  28.4
- Write traj.            1    1          2       0.031          0.083   1.5
- Update                 1    1        104       0.015          0.040   0.7
- Constraints            1    1         62       0.023          0.061   1.1
- Rest                                           0.016          0.044   0.8
+ Neighbor search        1    1          5       0.064          0.171   3.2
+ Force                  1    1         13       1.332          3.566  66.1
+ PME mesh               1    1         13       0.574          1.536  28.5
+ Write traj.            1    1          2       0.031          0.082   1.5
+ Update                 1    1         52       0.005          0.014   0.3
+ Rest                                           0.009          0.025   0.5
 -----------------------------------------------------------------------------
- Total                                          2.061          5.518 100.0
+ Total                                          2.015          5.394 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1         52       0.249          0.666  12.1
- PME 3D-FFT             1    1         52       0.262          0.700  12.7
- PME solve Elec         1    1         26       0.074          0.198   3.6
+ PME spread/gather      1    1         52       0.249          0.665  12.3
+ PME 3D-FFT             1    1         52       0.256          0.685  12.7
+ PME solve Elec         1    1         26       0.069          0.186   3.4
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        2.048        2.061       99.4
+       Time:        2.004        2.015       99.4
                  (ns/day)    (hour/ns)
-Performance:        0.545       44.030
-Finished mdrun on rank 0 Tue Oct 14 14:46:43 2014
+Performance:        0.279       86.112
+Finished mdrun on rank 0 Mon Dec 15 23:26:26 2014

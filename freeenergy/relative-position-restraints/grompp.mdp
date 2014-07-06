@@ -10,13 +10,13 @@
 ; e.g.: -I/home/joe/doe -I/home/mary/roe
 include                  = 
 ; e.g.: -DPOSRES -DFLEXIBLE (note these variable names are case sensitive)
-define                   = -DPOSRES
+define                   = -DPOSRES -DFLEXIBLE
 
 ; RUN CONTROL PARAMETERS
 integrator               = md-vv
 ; Start time and timestep in ps
 tinit                    = 0
-dt                       = 0.001
+dt                       = 0.0005
 nsteps                   = 12
 ; For exact run continuation or redoing part of a run
 init-step                = 0
