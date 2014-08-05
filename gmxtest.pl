@@ -120,13 +120,13 @@ sub setup_vars()
 	}
 	if ( $bluegene > 0 )
 	{
-	    # edit the next line if you need to customize the call to runjob
-	    $mdprefix = sub { "runjob -n $_[0]" };
+	    # edit the next line if you need to customize the call to mpirun
+	    $mdprefix = sub { "$mpirun -n $_[0] --cwd " . getcwd() . " :" };
 	} elsif ( $mpirun =~ /(ap|s)run/ ) {
 	    $mdprefix = sub { "$mpirun -n $_[0]" };
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = sub { "$mpirun -np $_[0]" };
+	    $mdprefix = sub { "$mpirun -np $_[0] -wdir " . getcwd() };
 	}
     }
     if ($autosuffix && ( $double > 0)) {
@@ -625,19 +625,6 @@ sub test_case {
     if ($nerror == 0) {
         # Do the mdrun at last!
 
-        # mpirun usually needs to be told the current working
-        # directory on the command line (or with some
-        # environment variable such as MPIRUN_CWD for
-        # BlueGene), so after the chdir we need to deal with
-        # this. mpirun -wdir or -wd is right for OpenMPI, no
-        # idea about others.
-        my $local_mdprefix = '';
-        if ( $mpi_ranks > 0 && !($mpirun =~ /(ap|s)run/) ) {
-            $local_mdprefix .= ($bluegene > 0 ?
-                                ' --cwd ' :
-                                ' -wdir ') . getcwd();
-            $local_mdprefix .= ' : ' if($bluegene);
-        }
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
         if ($dir =~ /nb_kernel.*CSTab/) {
@@ -1171,7 +1158,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-bluegene') {
         $crosscompiling = 1;
 	$bluegene = 1;
-	print "Will test BlueGene\n";
+	print "Will test BlueGene. You should probably set '-mpirun runjob' if you have not already.\n";
     }
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
