@@ -20,10 +20,10 @@ if(!defined $ENV{GMX_MAXBACKUP}) {
     $ENV{GMX_MAXBACKUP}=-1
 }
 
-my $mpi_threads = 0;
+my $tmpi_ranks = 0;
 my $omp_threads = 0;
-my $npme_nodes = -1;
-my $mpi_processes = 0;
+my $npme_ranks = -1;
+my $mpi_ranks = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
@@ -79,33 +79,30 @@ sub add_gpu_id
 {
     my ($gpuid_string, $pp_ranks) = @_;
 
-    # we may or may not be using GPUS and/or separate PME nodes
+    # we may or may not be using GPUS and/or separate PME ranks
     # depending on the gmxtest.pl command line and the test involved,
     # so the number of PP ranks has to be used to choose a sensible
     # subset of the gpuid string.
     return ($gpuid_string && $pp_ranks) ? "-gpu_id " . substr($gpuid_string, 0, $pp_ranks) : "";
 }
 
-sub use_separate_pme_nodes {
-    my ($mpi_threads, $mpi_processes, $npme_nodes, $pp_ranks_ref) = @_;
+sub use_separate_pme_ranks {
+    my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
     # the user asked for it
-    if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", "grompp.mdp") > 0) &&
-        ($mpi_threads > 2 || $mpi_processes > 2) &&
-        ($npme_nodes >= 0))
+    if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", $grompp_mdp) > 0) &&
+        ($num_ranks > 2) &&
+        ($npme_ranks >= 0))
     {
-        if ($mpi_threads > 2)
+        if ($num_ranks > 2)
         {
-            $$pp_ranks_ref = $mpi_threads - $npme_nodes;
+            $$pp_ranks_ref = $num_ranks - $npme_ranks;
         }
-        if ($mpi_processes > 2)
-        {
-            $$pp_ranks_ref = $mpi_processes - $npme_nodes;
-        }
-        # Behaviour is undefined if both MPI threads and processes got set by the user!
-        return "-npme $npme_nodes";
+        return "-npme $npme_ranks";
     }
     else {
+        # Do not use separate PME-only ranks
+        $$pp_ranks_ref = $num_ranks;
         return "";
     }
 }
@@ -117,7 +114,7 @@ sub setup_vars()
     # as defined above (or over-ridden on the command line), "_d" indicates 
     # a double-precision version, and (only in the case of mdrun) "_mpi" 
     # indicates a parallel version compiled with MPI.
-    if ( $mpi_processes > 0 ) {
+    if ( $mpi_ranks > 0 ) {
 	if ($autosuffix) {
             $gmx_cmd .= "_mpi";
 	}
@@ -196,7 +193,7 @@ sub find_in_file {
         open(REDIRECT, ">$filename_for_redirect") || die "Could not open redirect file '$filename_for_redirect'\n";
     }
     open(FILE,$filename_to_search) || die "Could not open file '$filename_to_search'\n";
-    if ($filename_to_search eq "grompp.mdp") {
+    if ($filename_to_search =~ "grompp.mdp\$") {
         $case_sensitive=0;
     }
 
@@ -215,12 +212,12 @@ sub find_in_file {
     return $return;
 }
 
-sub check_force($)
+sub check_force($$)
 {
     my $traj = shift;
+    my $reftrr = shift;
     my $cfor = "checkforce.out";
     my $cfor2 = "checkforce.err";
-    my $reftrr = "${ref}.trr";
     my $nerr_force = 0;
     do_system("$progs{'check'} -f $reftrr -f2 $traj -tol $ftol_rel -abstol $ftol_abs >$cfor 2>$cfor2", 0,
 	      sub { print "\ngmx check failed on the .edr file while checking the forces\n"; $nerr_force = 1; });
@@ -272,11 +269,11 @@ sub check_force($)
     return $nerr_force;
 }
 
-sub check_virial()
+sub check_virial($)
 {
+    my $refedr = shift;
     my $cvir = "checkvir.out";
     my $cvir2 = "checkvir.err";
-    my $refedr = "${ref}.edr";
     my $nerr_vir = 0;
 
     do_system("$progs{'check'} -e $refedr -e2 ener -tol $virtol_rel -abstol $virtol_abs -lastener Vir-ZZ >$cvir 2>$cvir2", 0,
@@ -368,7 +365,7 @@ sub check_xvg {
 # Callback used only when mdrun has returned an error, so we can work
 # out how to try to call it so it works
 sub how_should_we_rerun_mdrun {
-    my ($mpi_threads_ref, $omp_threads_ref, $mpi_processes_ref, $gpu_id_ref) = @_;
+    my ($tmpi_ranks_ref, $omp_threads_ref, $mpi_ranks_ref, $gpu_id_ref) = @_;
 
     # Is it because we are using too many cores, or trying to use -nt
     # with a reference build, or running a test that does not run in
@@ -380,18 +377,18 @@ sub how_should_we_rerun_mdrun {
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
             my $new_mpi_ranks = 8;
-            if ($$mpi_processes_ref > 0) {
-                $$mpi_processes_ref = $new_mpi_ranks;
+            if ($$mpi_ranks_ref > 0) {
+                $$mpi_ranks_ref = $new_mpi_ranks;
             } else {
-                $$mpi_threads_ref = ${new_mpi_ranks};
+                $$tmpi_ranks_ref = ${new_mpi_ranks};
             }
             print ("Mdrun cannot use the requested (or automatic) number of ranks, retrying with $new_mpi_ranks.\n");
             $rerun = 1;
             last;
         }
-        elsif ($line =~ /Setting the number of thread-MPI threads is only supported/) {
-            printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 thread.\n");
-            $$mpi_threads_ref = 0;
+        elsif ($line =~ /Setting the number of thread-MPI .* is only supported/) {
+            printf ("Mdrun was compiled without thread-MPI or MPI support. Retrying with only 1 rank.\n");
+            $$tmpi_ranks_ref = 0;
             $rerun = 1;
             last;
         }
@@ -402,14 +399,27 @@ sub how_should_we_rerun_mdrun {
             last;
         }
         elsif ($line =~ /Domain decomposition does not support simple neighbor searching/) {
-            my $new_mpi_processes = 1;
-            print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_processes}.\n");
-            if ($$mpi_processes_ref > 0) {
-                $$mpi_processes_ref = $new_mpi_processes;
+            my $new_mpi_ranks = 1;
+            print ("Mdrun cannot use the requested (or automatic) number of MPI ranks, retrying with ${new_mpi_ranks}.\n");
+            if ($$mpi_ranks_ref > 0) {
+                $$mpi_ranks_ref = $new_mpi_ranks;
             } else {
-                $$mpi_threads_ref = ${new_mpi_processes};
+                $$tmpi_ranks_ref = ${new_mpi_ranks};
             }
-            $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_processes);
+            $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_ranks);
+            $rerun = 1;
+            last;
+        }
+        elsif ($line =~ " was started with .* PP .*, but .* (.*) GPU") {
+            # The above will match the strings generated by mdrun for
+            # the default behaviour, and when -gpu_id was specified.
+            my $new_mpi_ranks = $1;
+            if ($$mpi_ranks_ref > 0) {
+                $$mpi_ranks_ref = $new_mpi_ranks;
+            } else {
+                $$tmpi_ranks_ref = ${new_mpi_ranks};
+            }
+            $$gpu_id_ref = substr($$gpu_id_ref, 0, $new_mpi_ranks);
             $rerun = 1;
             last;
         }
@@ -420,8 +430,9 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $mdparams) = @_;
-    # Only one of mpi_threads or mpi_processes may be greater than zero.
+    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
+    # Only one of tmpi_ranks or mpi_ranks may be greater than zero, but
+    # this is checked for sanity after parsing user input.
 
     # Set up and enforce the maximum number of OpenMP threads to
     # try for this test case
@@ -435,15 +446,15 @@ sub run_mdrun {
 
     # Set up and enforce the maximum number of MPI ranks to try
     # for this test case
-    my $max_mpi_processes_filename = "max-mpi-processes";
-    if ( -f $max_mpi_processes_filename ) {
-        open my $fh, '<', $max_mpi_processes_filename or die "error opening $max_mpi_processes_filename: $!";
+    my $max_mpi_ranks_filename = "max-mpi-ranks";
+    if ( -f $max_mpi_ranks_filename ) {
+        open my $fh, '<', $max_mpi_ranks_filename or die "error opening $max_mpi_ranks_filename: $!";
         my $max_ranks = do { local $/; <$fh> };
         chomp $max_ranks;
-        if ($mpi_processes > 0) {
-            $mpi_processes = ($mpi_processes < $max_ranks) ? $mpi_processes : $max_ranks;
-        } elsif ($mpi_threads > 0) {
-            $mpi_threads = ($mpi_threads < $max_ranks) ? $mpi_threads : $max_ranks;
+        if ($mpi_ranks > 0) {
+            $mpi_ranks = ($mpi_ranks < $max_ranks) ? $mpi_ranks : $max_ranks;
+        } elsif ($tmpi_ranks > 0) {
+            $tmpi_ranks = ($tmpi_ranks < $max_ranks) ? $tmpi_ranks : $max_ranks;
         } else {
             # The user specified nothing, but the default must
             # still honour this maximum!
@@ -451,311 +462,376 @@ sub run_mdrun {
             # If mdrun is serial, this code will trigger a second run
             # where -ntmpi will not be set. This is not ideal, but
             # only a few test cases specify the maximum number of
-            # processes, and pretty much only Jenkins should compile
+            # ranks, and pretty much only Jenkins should compile
             # the serial version of mdrun. In the absence of an
             # explicit serial mode for this script, it should lead
             # to a net improvement in Jenkins throughput.
-            $mpi_threads = $max_ranks;
+            $tmpi_ranks = $max_ranks;
         }
     }
 
-    # TODO clean this up!
-    # Semi-temporary work-around for modern systems with lots of cores
-    # First we try running with whatever number of whatever the user
-    # wants, then adapt to the error messages
+    # There is no general way to make all the tests pass by default on
+    # all possible hardware, because there's not yet a good way for
+    # the harness to find out about the hardware and mdrun
+    # configuration in time to moderate the user (or default) choice
+    # for various parallelism settings. Some tests can't run with more
+    # than a few domains, yet machines might have many cores and/or
+    # inconvenient ratios of cores to GPUs, or mdrun might be
+    # deliberately compiled without OpenMP, etc. So we're forced to
+    # inspect the output of mdrun when it fails, and try to react
+    # in an appropriate way.
+    #
+    # First, we try running with whatever number of whatever the
+    # user/default wants, then adapt to the error messages, for
+    # at most three attempts.
     for my $attempt (0 .. 2)
     {
         my $ntmpi_opt = '';
         my $ntomp_opt = '';
-        if (0 < $mpi_threads) {
-            $ntmpi_opt = "-ntmpi $mpi_threads";
+        if (0 < $tmpi_ranks) {
+            $ntmpi_opt = "-ntmpi $tmpi_ranks";
         }
-        if (!find_in_file("cutoff[-_]scheme.*=.*group","grompp.mdp") > 0 && $omp_threads > 0) {
+        if (!find_in_file("cutoff[-_]scheme.*=.*group", $grompp_mdp) > 0 && $omp_threads > 0) {
             $ntomp_opt = "-ntomp $omp_threads";
         }
 
         my $pp_ranks = undef;
-        my $npme_opt = use_separate_pme_nodes($mpi_threads, $mpi_processes, $npme_nodes, \$pp_ranks);
+        my $num_ranks = $tmpi_ranks < $mpi_ranks ? $mpi_ranks : $tmpi_ranks;
+        my $npme_opt = use_separate_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
         my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks);
-        my $command = $mdprefix->($mpi_processes)
+        my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
         #do_system using the special callback will return:
         #1 for known error: rerun
         #0 exit value was 0 (and thus this callback wasn't called)
-        #-1 unkown error
+        #-1 unknown error
         my $nerror = do_system($command, 0,
-                               sub { how_should_we_rerun_mdrun(\$mpi_threads, \$omp_threads, \$mpi_processes, \$gpu_id) });
-        return $nerror unless($nerror>0);
+                               sub { how_should_we_rerun_mdrun(\$tmpi_ranks, \$omp_threads, \$mpi_ranks, \$gpu_id) });
+        if ($nerror > 0) {
+            print "Retrying mdrun with better settings...\n";
+        } else {
+            return $nerror;
+        }
     }
     # mdrun always failed, so pass the error upstream
     return 1;
 }
 
+# Parameters:
+#  dir        : The directory in which the test will run, and output files will be created/found
+#  input_dir  : The relative path to the directory in which the input and reference files can be found (normally ".")
+#  test_name  : The name of the test case to report to the user
+#
+# Returns : 1 for success, 0 for failure
+sub test_case {
+    my ($dir, $input_dir, $test_name) = @_;
+    my $success = 0;
+
+    my $cwd = getcwd();
+    chdir($dir);
+    if ($verbose > 1) {
+        print "Testing $test_name . . . ";
+    }
+
+    my $nerror = 0;
+    my $ndx = "";
+    if ( -f "$input_dir/index.ndx" ) {
+        $ndx = "-n $input_dir/index";
+    }
+    my $grompp_mdp = "$input_dir/grompp.mdp";
+    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >grompp.out 2>&1");
+
+    my @error_detail;
+    if (! -f "topol.tpr") {
+        print ("No topol.tpr file in $dir. grompp failed\n");
+        $nerror = 1;
+    }
+    if ($nerror == 0) {
+        my $reftpr = "$input_dir/${ref}.tpr";
+        if (! -f $reftpr) {
+            print ("No $reftpr file for $test_name\n");
+            print ("This means you are not really testing $test_name\n");
+            copy('topol.tpr', $reftpr);
+        } else {
+            my $tprout="checktpr.out";
+            my $tprerr="checktpr.err";
+            do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0,
+                      sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
+            $nerror |= find_in_file("^(?!comparing)","$tprout");
+            if ($nerror > 0) {
+                push(@error_detail, ("checktpr.out", "checktpr.err"));
+                print "topol.tpr file different from $reftpr. Check files in $dir for $test_name\n";
+            }
+            if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
+                print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
+                $addversionnote = 1;
+            }
+            if ($nerror == 0) {
+                unlink($tprout,$tprerr);
+            }
+        }
+    } else {
+        push(@error_detail, ("grompp.out"));
+    }
+
+    if ($nerror == 0) {
+        open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
+        open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
+        my $p=0;
+        while(<GROMPP>) {
+            $p=1 if /^WARNING/;
+            print WARN if ($p);
+            $p=0 if /^\r?$/;
+        }
+        close(GROMPP) || die "Could not close file 'grompp.out'\n";
+        close(WARN) || die "Could not close file 'grompp.warn'\n";
+        my $refwarn = "$input_dir/${ref}.warn";
+        if (! -f $refwarn) {
+            print("No $refwarn file for $test_name\n");
+            print ("This means you are not really testing $test_name\n");
+            copy('grompp.warn', $refwarn);
+        } else {
+            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
+            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
+            while (my $line1=<WARN1>) {
+                my $line2=<WARN2>;
+                if (not defined($line2)){#FILE1 has more lines
+                    $nerror++;
+                    next;
+                }
+                $line1 =~ s/(e[-+])0([0-9][0-9])/$1$2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
+
+                # Hack to avoid issues based only on a difference in
+                # relative path to grompp.mdp, which might happen in a
+                # non-problematic way when the same test case is run
+                # in a different output directory
+                $line1 =~ s/file .*grompp.mdp/file grompp.mdp/;
+                $line2 =~ s/file .*grompp.mdp/file grompp.mdp/;
+
+                $nerror++ unless ("$line2" eq "$line1");
+            }
+            while (my $line2=<WARN2>) {#FILE2 has more lines
+                $nerror++
+            }
+            if ($nerror>0) {
+                print("Different warnings in $refwarn and grompp.warn\n");
+                push(@error_detail, ("grompp.out"));
+            } else {
+                unlink("grompp.warn");
+            }
+        }
+    }
+    if ($nerror == 0) {
+        # Do the mdrun at last!
+
+        # mpirun usually needs to be told the current working
+        # directory on the command line (or with some
+        # environment variable such as MPIRUN_CWD for
+        # BlueGene), so after the chdir we need to deal with
+        # this. mpirun -wdir or -wd is right for OpenMPI, no
+        # idea about others.
+        my $local_mdprefix = '';
+        if ( $mpi_ranks > 0 && !($mpirun =~ /(ap|s)run/) ) {
+            $local_mdprefix .= ($bluegene > 0 ?
+                                ' --cwd ' :
+                                ' -wdir ') . getcwd();
+            $local_mdprefix .= ' : ' if($bluegene);
+        }
+        # With tunepme Coul-Sr/Recip isn't reproducible
+        my $local_mdparams = $mdparams . " -notunepme";
+        #adress has it's own tables
+        unless (find_in_file("adress.*yes", $grompp_mdp) > 0) {
+            $local_mdparams .= " -table $input_dir/../table -tablep $input_dir/../tablep";
+        }
+        my $part = "";
+        if ( -f "continue.cpt" ) {
+            $local_mdparams .= " -cpi continue -noappend";
+            $part = ".part0002";
+        }
+        if ($test_name =~ /-cpu-only/) {
+            $local_mdparams .= " -nb cpu";
+        }
+        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
+        if ($nerror != 0) {
+            if ($parse_cmd eq '') {
+                push(@error_detail, ("mdrun.out", "md.log"));
+            } else {
+                do_system("$parse_cmd <mdrun.out >mdrun_parsed.out");
+                push(@error_detail, ("mdrun_parsed.out", "md.log"));
+            }
+        }
+
+        my $ener = "ener${part}.edr";
+        my $traj = "traj${part}.trr";
+        my $log = "md${part}.log";
+        if ($nerror!=0) {
+            $nerror=1;
+        } elsif ((-f "$ener" ) && (-f "$traj")) {  # Check whether we have any output
+            # Now check whether we have any reference files
+            my $refedr = "$input_dir/${ref}.edr";
+            if (! -f  $refedr) {
+                print ("No $refedr file for $test_name.\n");
+                print ("This means you are not really testing $test_name\n");
+                copy("$ener", $refedr);
+            } else {
+                my $potout="checkpot.out";
+                my $poterr="checkpot.err";
+                # Now do the real tests
+                do_system("$progs{'check'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
+                          sub {
+                              if($nerror != 0) {
+                                  print "\ngmx check failed on the .edr file, probably because mdrun also failed";
+                              } else {
+                                  print "\ngmx check FAILED on the .edr file";
+                                  $nerror = 1;
+                              }
+                          });
+                my $nerr_pot = find_in_file("step","$potout");
+                push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
+
+                my $nerr_vir   = 0; #TODO: check_virial();
+                push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
+
+                $nerror |= $nerr_pot | $nerr_vir;
+                unlink($potout,$poterr) unless $nerr_pot;
+            }
+            my $reftrr = "$input_dir/${ref}.trr";
+            if (! -f $reftrr ) {
+                print ("No $reftrr file for $test_name.\n");
+                print ("This means you are not really testing $test_name\n");
+                copy("$traj", $reftrr);
+            } else {
+                # Now do the real tests
+                my $nerr_force = check_force($traj, $reftrr);
+                push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
+                $nerror |= $nerr_force;
+            }
+            my $reflog = "${ref}.log";
+            if (! -f $reflog ) {
+                copy($log, $reflog);
+            }
+
+            # This bit below is only relevant for free energy tests
+            my $refxvg = "$input_dir/${ref}.xvg";
+            my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1);
+            push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
+            $nerror |= $nerr_xvg;
+        }
+        else {
+            print "No mdrun output files.\n";
+            $nerror = 1;
+        }
+    }
+    my $error_detail = join(', ', @error_detail) . ' ';
+    print XML "<testcase name=\"$test_name\">\n" if ($xml);
+    if ($nerror > 0) {
+        my $error_detail = join(', ', @error_detail) . ' ';
+        print "FAILED. Check ${error_detail}file(s) in $dir for $test_name\n";
+        if ($xml) {
+            print XML "<error message=\"Errors in ${error_detail}\">\n";
+            print XML "<![CDATA[\n";
+            foreach my $err (@error_detail) {
+                my @err = split(/ /, $err);
+                my $errfn = $err[0];
+                print XML "$errfn:\n";
+                if (!open FH, $errfn) {
+                    print XML "failed to open $errfn";
+                } else {
+                    while(my $line=<FH>) {
+                        $line=~s/\x00//g; #remove invalid XML characters
+                        print XML $line;
+                    }
+                }
+                print XML "\n--------------------------------\n";
+                close FH;
+            }
+            print XML "]]>\n";
+            print XML "</error>";
+        }
+    }
+    else {
+        if ($verbose > 0) {
+            if (find_in_file(".", $grompp_mdp) < 50) {
+                # if the input .mdp file is trivially short, then
+                # the diff test below will always fail, however this
+                # is normal and expected for the usefully-short
+                # kernel test .mdp files, so we don't compare the
+                # .mdp files in this case
+                print "PASSED\n";
+            }
+            else {
+                my $mdp_result = 0;
+                foreach my $reference_mdp ( $grompp_mdp ) {
+                    if (-f $reference_mdp) {
+                        open(FILE1,$reference_mdp) || die "Could not open file '$reference_mdp'\n";
+                        open(FILE2,"mdout.mdp") || die "Could not open file 'mdout.mdp'\n";
+                        my $diff=0;
+                        while (my $line1=<FILE1>) {
+                            my $line2=<FILE2>;
+                            next if $line1 =~ /(data|host|user|generated)/;
+                            next if $line2 =~ /(data|host|user|generated)/;
+                            if (not defined($line2)){#FILE1 has more lines
+                                $diff++;
+                                next;
+                            }
+                            $diff++ unless ("$line2" eq "$line1");
+                        }
+                        while (my $line2=<FILE2>) {#FILE2 has more lines
+                            $diff++
+                        }
+                        $mdp_result++ if $diff > 2;
+                        close(FILE1) || die "Could not close file '$reference_mdp'\n";
+                        close(FILE2) || die "Could not close file 'mdout.mdp'\n";
+                    }
+                }
+                if ($mdp_result > 0) {
+                    print("PASSED but check mdp file differences\n");
+                }
+                else {
+                    print "PASSED\n";
+                    unlink("mdout.mdp");
+                }
+            }
+        }
+        $success = 1;
+    }
+    print XML "</testcase>\n" if ($xml);
+    chdir($cwd);
+    return $success;
+}
+
 sub test_systems {
-    my $npassed = 0;
-    foreach my $dir ( @_ ) {
-	    chdir($dir);
-	    if ($verbose > 1) {
-		print "Testing $dir . . . ";
-	    }
-	    
-	    my $nerror = 0;
-	    my $ndx = "";
-	    if ( -f "index.ndx" ) {
-		$ndx = "-n index";
-	    }
-	    $nerror = do_system("$progs{'grompp'} -maxwarn 10 $ndx >grompp.out 2>&1");
-	    
-	    my @error_detail;
-	    if (! -f "topol.tpr") {
-		print ("No topol.tpr file in $dir. grompp failed\n");	    
-		$nerror = 1;
-	    }
-	    if ($nerror == 0) {
-		my $reftpr = "${ref}.tpr";
-		if (! -f $reftpr) {
-		    print ("No $reftpr file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-		    copy('topol.tpr', $reftpr);
-		} else {
-		    my $tprout="checktpr.out";
-		    my $tprerr="checktpr.err";
-		    do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0, 
-			sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-		    $nerror |= find_in_file("^(?!comparing)","$tprout");
-		    if ($nerror > 0) {
-			push(@error_detail, ("checktpr.out", "checktpr.err"));
-			print "topol.tpr file different from $reftpr. Check files in $dir\n";
-		    }
-		    if (find_in_file ('reading tpx file (reference_[sd].tpr) version .* with version .* program',"$tprout") > 0) {
-			print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
-			$addversionnote = 1;
-		    }
-		    if ($nerror == 0) {			
-			unlink($tprout,$tprerr);
-		    }
-		}
-	    } else {
-		push(@error_detail, ("grompp.out"));
-	    }
+    my ($npassed, $nn, @subdirs) = @_;
+    $$npassed = 0;
+    $$nn = 0;
+    foreach my $dir ( @subdirs ) {
+        my $test_name = $dir;
+        my $input_dir = ".";
+        $$nn++;
+        $$npassed += test_case $dir, $input_dir, $test_name;
 
-	    if ($nerror == 0) {
-	       open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
-	       open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
-	       my $p=0;
-	       while(<GROMPP>) {
-		 $p=1 if /^WARNING/;
-		 print WARN if ($p);
-		 $p=0 if /^\r?$/;
-	       }
-	       close(GROMPP) || die "Could not close file 'grompp.out'\n";
-	       close(WARN) || die "Could not close file 'grompp.warn'\n";
-		my $refwarn = "${ref}.warn";
-		if (! -f $refwarn) {
-		    print("No $refwarn file in $dir\n");
-		    print ("This means you are not really testing $dir\n");
-                    copy('grompp.warn', $refwarn);
-		} else {
-	            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
-	            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
-                    while (my $line1=<WARN1>) {
-                      my $line2=<WARN2>;
-                      if (not defined($line2)){#FILE1 has more lines
-                        $nerror++;
-                        next;
-                      }
-		      $line1 =~ s/(e[-+])0([0-9][0-9])/$1$2/g; #hack on windows X.Xe-00X -> X.Xe-0X (posix)
-                      $nerror++ unless ("$line2" eq "$line1");
-                    }
-                    while (my $line2=<WARN2>) {#FILE2 has more lines
-                      $nerror++
-                    }
-		    if ($nerror>0) {
-			print("Different warnings in $refwarn and grompp.warn\n");
-			push(@error_detail, ("grompp.out"));
-		    } else {
-		      unlink("grompp.warn");
-		    }
-		}
-	    }
-	    if ($nerror == 0) {
-		# Do the mdrun at last!
-
-		# mpirun usually needs to be told the current working
-		# directory on the command line (or with some
-		# environment variable such as MPIRUN_CWD for
-		# BlueGene), so after the chdir we need to deal with
-		# this. mpirun -wdir or -wd is right for OpenMPI, no
-		# idea about others.
-		my $local_mdprefix = '';
-		if ( $mpi_processes > 0 && !($mpirun =~ /(ap|s)run/) ) {
-                    $local_mdprefix .= ($bluegene > 0 ?
-                                  ' --cwd ' :
-                                  ' -wdir ') . getcwd(); 
-                    $local_mdprefix .= ' : ' if($bluegene);
-	        }
-                # With tunepme Coul-Sr/Recip isn't reproducible
-		my $local_mdparams = $mdparams . " -notunepme";
-                # Alternative would be to check whether this is a kernel test
-                if (-f "../table.xvg" && -f "../tablep.xvg") {
-		    $local_mdparams .= " -table ../table -tablep ../tablep";
-		}
-               my $part = "";
-		if ( -f "continue.cpt" ) {
-		    $local_mdparams .= " -cpi continue -noappend";
-		    $part = ".part0002";
-		}
-                $nerror = run_mdrun($mpi_threads, $omp_threads, $mpi_processes, $npme_nodes, $gpu_id, $mdprefix, $local_mdparams);
-                if ($nerror != 0) {
-		    if ($parse_cmd eq '') {
-			push(@error_detail, ("mdrun.out", "md.log"));
-		    } else {
-			do_system("$parse_cmd <mdrun.out >mdrun_parsed.out");
-			push(@error_detail, ("mdrun_parsed.out", "md.log"));
-		    }
-		}
-		
-		my $ener = "ener${part}.edr";
-		my $traj = "traj${part}.trr";
-		my $log = "md${part}.log";
-		if ($nerror!=0) {
-		    $nerror=1;
-		} elsif ((-f "$ener" ) && (-f "$traj")) {  # Check whether we have any output
-		    # Now check whether we have any reference files
-		    my $refedr = "${ref}.edr";
-		    if (! -f  $refedr) {
-			print ("No $refedr file in $dir.\n");
-			print ("This means you are not really testing $dir\n");
-			copy("$ener", $refedr);
-		    } else {
-		        my $potout="checkpot.out";
-		        my $poterr="checkpot.err";
-			# Now do the real tests
-			do_system("$progs{'check'} -e $refedr -e2 $ener -tol $etol_rel -abstol $etol_abs -lastener Potential >$potout 2>$poterr", 0,
-				  sub {
-				      if($nerror != 0) {
-					  print "\ngmx check failed on the .edr file, probably because mdrun also failed";
-				      } else {
-					  print "\ngmx check FAILED on the .edr file"; 
-					  $nerror = 1;
-				      }
-				  });
-			my $nerr_pot = find_in_file("step","$potout");
-			push(@error_detail, "$potout ($nerr_pot errors)") if ($nerr_pot > 0);
-
-			my $nerr_vir   = 0; #TODO: check_virial();
-			push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
-
-			$nerror |= $nerr_pot | $nerr_vir;
-			unlink($potout,$poterr) unless $nerr_pot;
-		    }
-		    my $reftrr = "${ref}.trr";
-		    if (! -f $reftrr ) {
-			print ("No $reftrr file in $dir.\n");
-			print ("This means you are not really testing $dir\n");
-			copy("$traj", $reftrr);
-		    } else {
-			# Now do the real tests
-			my $nerr_force = check_force($traj);
-			push(@error_detail, "checkforce.out ($nerr_force errors)") if ($nerr_force > 0);
-			$nerror |= $nerr_force;
-		    }
-		    my $reflog = "${ref}.log";
-		    if (! -f $reflog ) {
-                        copy($log, $reflog);
-                    }
-
-		    # This bit below is only relevant for free energy tests
-		    my $refxvg = "${ref}.xvg";
-		    my $nerr_xvg = check_xvg($refxvg,'dgdl.xvg',1);
-		    push(@error_detail, "$refxvg ($nerr_xvg errors)") if ($nerr_xvg > 0);
-		    $nerror |= $nerr_xvg;
-		}
-		else {
-		    print "No mdrun output files.\n";
-		    $nerror = 1;
-		}
-	    }
-	    my $error_detail = join(', ', @error_detail) . ' ';
-	    print XML "<testcase name=\"$dir\">\n" if ($xml);
-	    if ($nerror > 0) {
-		print "FAILED. Check ${error_detail}file(s) in $dir\n";
-		if ($xml) {
-		    print XML "<error message=\"Errors in ${error_detail}\">\n";
-		    print XML "<![CDATA[\n";
-		    foreach my $err (@error_detail) {
-			my @err = split(/ /, $err);
-			my $errfn = $err[0];
-			print XML "$errfn:\n";
-			if (!open FH, $errfn) {
-			    print XML "failed to open $errfn";
-			} else {
-			    while(my $line=<FH>) {
-				$line=~s/\x00//g; #remove invalid XML characters
-				print XML $line;
-			    }
-			}
-			print XML "\n--------------------------------\n";
-			close FH;
-		    }
-		    print XML "]]>\n";
-		    print XML "</error>";
-		}
-	    }
-	    else {
-		my @args = glob("#*# *.out topol.tpr confout*.gro ener*.edr md.log traj*.trr");
-		#unlink(@args);
-		
-		if ($verbose > 0) {
-		    if (find_in_file(".","grompp.mdp") < 50) { 
-			# if the input .mdp file is trivially short, then 
-			# the diff test below will always fail, however this
-			# is normal and expected for the usefully-short
-			# kernel test .mdp files, so we don't compare the
-			# .mdp files in this case
-			print "PASSED\n";
-		    }
-		    else {
-			my $mdp_result = 0;
-			foreach my $reference_mdp ( 'grompp.mdp' ) {
-			    if (-f $reference_mdp) {
-			    	open(FILE1,"$reference_mdp") || die "Could not open file '$reference_mdp'\n";
-				open(FILE2,"mdout.mdp") || die "Could not open file 'mdout.mdp'\n";
-				my $diff=0;
-				while (my $line1=<FILE1>) {
-				  my $line2=<FILE2>;
-				  next if $line1 =~ /(data|host|user|generated)/;
-				  next if $line2 =~ /(data|host|user|generated)/;
-				  if (not defined($line2)){#FILE1 has more lines
-				    $diff++;
-				    next;
-				  }
-				  $diff++ unless ("$line2" eq "$line1");
-				}
-				while (my $line2=<FILE2>) {#FILE2 has more lines
-				  $diff++
-				}
-			      	$mdp_result++ if $diff > 2;
-				close(FILE1) || die "Could not close file '$reference_mdp'\n";
-				close(FILE2) || die "Could not close file 'mdout.mdp'\n";
-			    } 
-			}
-			if ($mdp_result > 0) {
-			    print("PASSED but check mdp file differences\n");
-			}
-			else {
-			    print "PASSED\n";
-			    unlink("mdout.mdp");
-			}
-		    }
-		}
-		$npassed++;
-	    }
-	    print XML "</testcase>\n" if ($xml);
-	    chdir("..");
-	}
-    return $npassed;
+        # Only nbnxn test cases can execute GPU-based non-bonded
+        # kernels. If GPU kernels were used to run this test case
+        # (whether natively or in emulation), run it again in CPU-only
+        # mode. This relies on test_case() not clearing up md.log.
+        if ($test_name =~ /nbnxn/ && 0 < find_in_file("^Using .* 8x8 non-bonded kernels", "$dir/md.log")) {
+            if ($mdparams =~ /-nb/) {
+                print("Test case $test_name has been run using GPU non-bonded kernels,\n" .
+                      "and would normally be run again using only CPU-based non-bonded\n" .
+                      "kernels, but because you have set -nb in the -mdparam string,\n" .
+                      "the test harness will stay out of your way.\n");
+            } else {
+                print("Re-running $test_name using only CPU-based non-bonded kernels\n");
+                $dir .= "/cpu-only";
+                $input_dir = "..";
+                $test_name .= "-cpu-only";
+                mkdir $dir;
+                $$nn++;
+                $$npassed += test_case $dir, $input_dir, $test_name;
+            }
+        }
+    }
 }
 
 sub cleandirs {
@@ -765,7 +841,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -797,9 +873,9 @@ sub test_dirs {
     chdir($dirs);
     # glob all files, but retain only directories that match the regular expression
     my @subdirs = map { (-d $_ && $_ =~ $only_subdir) ? $_ : () } <*>;
-    my $nn = $#subdirs + 1;
     print XML "<testsuite name=\"$dirs\">\n" if ($xml);
-    my $npassed = test_systems(@subdirs);
+    my ($nn, $npassed);
+    test_systems(\$npassed, \$nn, @subdirs);
     print XML "</testsuite>\n" if ($xml);
     my $nerror=0;
     if ($npassed < $nn) {
@@ -954,7 +1030,7 @@ sub test_pdb2gmx {
 		    print(LOG "****************************************************\n");
 		    print(LOG "**  Running mdrun\n");
 		    print(LOG "****************************************************\n");
-		    open(PIPE,$mdprefix->($mpi_processes)." $progs{'mdrun'} $mdparams 2>&1 |");
+		    open(PIPE,$mdprefix->($mpi_ranks)." $progs{'mdrun'} $mdparams 2>&1 |");
 		    print LOG while <PIPE>;
 		    close PIPE;
 		    chdir("..");
@@ -1099,23 +1175,23 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $mpi_processes = $ARGV[$kk];
-	    if ($mpi_processes <= 0) {
-		$mpi_processes = 0;
+	    $mpi_ranks = $ARGV[$kk];
+	    if ($mpi_ranks <= 0) {
+		$mpi_ranks = 0;
 	    } else {
-                print "Will test on $mpi_processes MPI processors\n";
+                print "Will test on $mpi_ranks MPI ranks (if possible)\n";
             }
 	}
     }
     elsif ($arg eq '-nt' ) {
 	if ($kk <$#ARGV) {
 	    $kk++;
-	    $mpi_threads = $ARGV[$kk];
-	    if ($mpi_threads <= 1) {
-		$mpi_threads = 1;
+	    $tmpi_ranks = $ARGV[$kk];
+	    if ($tmpi_ranks <= 1) {
+		$tmpi_ranks = 1;
                 # most of the tests don't scale at all well
 	    } else {
-                print "Will test on $mpi_threads tMPI threads\n";
+                print "Will test on $tmpi_ranks thread-MPI ranks (if possible)\n";
 	    }
 	}
     }
@@ -1127,15 +1203,15 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 		$omp_threads = 1;
                 # most of the tests don't scale at all well
 	    } else {
-                print "Will test on $omp_threads OpenMP threads\n";
+                print "Will test on $omp_threads OpenMP threads (if possible)\n";
 	    }
 	}
     }
     elsif ($arg eq '-npme' ) {
         if ($kk < $#ARGV) {
             $kk++;
-            $npme_nodes = $ARGV[$kk];
-            print "Will run PME tests using $npme_nodes separate PME nodes\n";
+            $npme_ranks = $ARGV[$kk];
+            print "Will run PME tests using $npme_ranks separate PME ranks (if possible)\n";
         }
     }
     elsif ($arg eq '-suffix' ) {
@@ -1181,7 +1257,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	if ($kk <$#ARGV) {
 	    $kk++;
 	    $gpu_id .= $ARGV[$kk];
-	    print "Will test using 'mdrun -gpu_id ${gpu_id}'\n";
+	    print "Will test using 'mdrun -gpu_id ${gpu_id}' (if possible)\n";
 	}
     }
     elsif ($arg eq '-only' ) {
@@ -1212,6 +1288,8 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 	usage();
     }
 }
+
+die "FAILED: Cannot specify both -nt and -np greater than zero!" if ($mpi_ranks > 0 && $tmpi_ranks > 0);
 
 # Set up to write XML output if wanted
 
