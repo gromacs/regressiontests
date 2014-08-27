@@ -640,8 +640,9 @@ sub test_case {
         }
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
-        #adress has it's own tables
-        unless (find_in_file("adress.*yes", $grompp_mdp) > 0) {
+        if ($dir =~ /nb_kernel.*CSTab/) {
+            # All group-kernel test cases with cubic splines need
+            # tables for their interactions.
             $local_mdparams .= " -table $input_dir/../table -tablep $input_dir/../tablep";
         }
         my $part = "";
