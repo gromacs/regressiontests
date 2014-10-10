@@ -71,6 +71,11 @@ my %progs = ( 'grompp'   => '',
 	      'check' => '',
 	      'editconf' => '' );
 
+# Names for filenames used by individual test cases to limit the
+# amount of parallelism that mdrun can attempt
+my $max_openmp_threads_filename = 'max-openmp-threads';
+my $max_mpi_ranks_filename = "max-mpi-ranks";
+
 # List of all the generic subdirectories of tests; pdb2gmx is treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
@@ -436,7 +441,6 @@ sub run_mdrun {
 
     # Set up and enforce the maximum number of OpenMP threads to
     # try for this test case
-    my $max_openmp_threads_filename = 'max-openmp-threads';
     if ( -f $max_openmp_threads_filename )
     {
         open my $fh, '<', $max_openmp_threads_filename or die "error opening $max_openmp_threads_filename: $!";
@@ -446,7 +450,6 @@ sub run_mdrun {
 
     # Set up and enforce the maximum number of MPI ranks to try
     # for this test case
-    my $max_mpi_ranks_filename = "max-mpi-ranks";
     if ( -f $max_mpi_ranks_filename ) {
         open my $fh, '<', $max_mpi_ranks_filename or die "error opening $max_mpi_ranks_filename: $!";
         my $max_ranks = do { local $/; <$fh> };
@@ -824,12 +827,23 @@ sub test_systems {
                       "the test harness will stay out of your way.\n");
             } else {
                 print("Re-running $test_name using only CPU-based non-bonded kernels\n");
-                $dir .= "/cpu-only";
-                $input_dir = "..";
-                $test_name .= "-cpu-only";
-                mkdir $dir;
+
+                # Set up new variables that control where the test
+                # case does its I/O
+                my $new_dir = "$dir/cpu-only";
+                my $new_input_dir = "..";
+                my $new_test_name = "${test_name}-cpu-only";
+                mkdir $new_dir;
+
+                # Copy the files that limit parallelism
+                foreach my $limiter_file ($max_openmp_threads_filename, $max_mpi_ranks_filename) {
+                    if (-f "$dir/$limiter_file") {
+                        copy("$dir/$limiter_file", $new_dir);
+                    }
+                }
+
                 $$nn++;
-                $$npassed += test_case $dir, $input_dir, $test_name;
+                $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
             }
         }
     }
