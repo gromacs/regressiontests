@@ -828,6 +828,15 @@ sub test_systems {
                 $input_dir = "..";
                 $test_name .= "-cpu-only";
                 mkdir $dir;
+                my $limiter_file = $dir . '/' . $input_dir . '/max-mpi-ranks';
+                if (-e $limiter_file) {
+                    copy($limiter_file, $dir);
+                }
+                $limiter_file = $dir . '/' . $input_dir . '/max-openmp-threads';
+                if (-e $limiter_file) {
+                    copy($limiter_file, $dir);
+                }
+
                 $$nn++;
                 $$npassed += test_case $dir, $input_dir, $test_name;
             }
