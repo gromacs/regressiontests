@@ -192,7 +192,12 @@ sub find_in_file {
     if ($do_redirect) {
         open(REDIRECT, ">$filename_for_redirect") || die "Could not open redirect file '$filename_for_redirect'\n";
     }
-    open(FILE,$filename_to_search) || die "Could not open file '$filename_to_search'\n";
+
+    # If the file doesn't exist, then the pattern doesn't
+    # match. Fortunately, the clients of find_in_file that care about
+    # the number of matches found use the name of a file that always
+    # exists.
+    open(FILE,$filename_to_search) || return 0;
     if ($filename_to_search =~ "grompp.mdp\$") {
         $case_sensitive=0;
     }
@@ -1320,6 +1325,13 @@ elsif (!$did_clean) {
 }
 
 # Now do the work, if there is any
-my $nerror = sum 0, map { eval $_ } @work;
+my $nerror = sum 0, map
+{
+    eval $_;
+    if ('' ne $@) {
+        die "$@"
+    }
+} @work;
+
 print XML "</testsuites>\n" if ($xml);
 exit ($nerror>0);
