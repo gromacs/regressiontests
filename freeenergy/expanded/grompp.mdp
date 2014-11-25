@@ -1,8 +1,9 @@
 ;
 ;	File 'mdout.mdp' was generated
 ;	By user: mark (1302)
-;	On host: amd2
-;	At date: Wed Dec 19 13:44:41 2012
+;	On host: gromacs
+;	At date: Tue Nov 25 17:49:41 2014
+
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
@@ -56,30 +57,31 @@ nstvout                  = 20
 nstfout                  = 20
 ; Output frequency for energies to log file and energy file
 nstlog                   = 10
-nstcalcenergy            = 100
+nstcalcenergy            = 1
 nstenergy                = 1
 ; Output frequency and precision for .xtc file
-nstxtcout                = 5000
-xtc-precision            = 10000
-; This selects the subset of atoms for the .xtc file. You can
-; select multiple groups. By default all atoms will be written.
-xtc-grps                 = 
+nstxout-compressed       = 5000
+compressed-x-precision   = 10000
+; This selects the subset of atoms for the compressed
+; trajectory file. You can select multiple groups. By
+; default, all atoms will be written.
+compressed-x-grps        = 
 ; Selection of energy groups
 energygrps               = 
 
 ; NEIGHBORSEARCHING PARAMETERS
-; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
-cutoff-scheme            = Group
+; cut-off scheme (Verlet: particle based cut-offs, group: using charge groups)
+cutoff-scheme            = Verlet
 ; nblist update frequency
-nstlist                  = -1
+nstlist                  = 10
 ; ns algorithm (simple or grid)
 ns_type                  = grid
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
-; Allowed energy drift due to the Verlet buffer in kJ/mol/ps per atom,
+; Allowed energy error due to the Verlet buffer in kJ/mol/ps per atom,
 ; a value of -1 means: use rlist
-verlet-buffer-drift      = 0.005
+verlet-buffer-tolerance  = 0.005
 ; nblist cut-off        
 rlist                    = 1.2
 ; long-range cut-off for switched potentials
@@ -105,7 +107,7 @@ rvdw                     = 1.0
 DispCorr                 = AllEnerPres
 ; Extension of the potential lookup tables beyond the cut-off
 table-extension          = 1
-; Seperate tables between energy group pairs
+; Separate tables between energy group pairs
 energygrp-table          = 
 ; Spacing for the PME/PPPM FFT grid
 fourierspacing           = 0.10
@@ -116,9 +118,10 @@ fourier_nz               = 0
 ; EWALD/PME/PPPM parameters
 pme_order                = 6
 ewald_rtol               = 1e-06
+ewald-rtol-lj            = 0.001
+lj-pme-comb-rule         = Geometric
 ewald_geometry           = 3d
 epsilon_surface          = 0
-optimize_fft             = no
 
 ; IMPLICIT SOLVENT ALGORITHM
 implicit-solvent         = No
@@ -213,7 +216,7 @@ gen_seed                 = 13
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds
 ; Type of constraint algorithm
-constraint-algorithm     = shake
+constraint-algorithm     = lincs
 ; Do not constrain the start configuration
 continuation             = no
 ; Use successive overrelaxation to reduce the number of shake iterations
@@ -253,6 +256,9 @@ pull                     = no
 ; Enforced rotation: No or Yes
 rotation                 = no
 
+; Group to display and/or manipulate in interactive MD session
+IMD-group                = 
+
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
 disre                    = No
@@ -290,6 +296,7 @@ vdw-lambdas              = 0.0 0.0  0.0 0.0  0.0 0.2 0.4 0.6 0.7 0.8 0.9 1.0
 bonded-lambdas           = 
 restraint-lambdas        = 
 temperature-lambdas      = 
+calc-lambda-neighbors    = 1
 init-lambda-weights      = 
 dhdl-print-energy        = no
 sc-alpha                 = 0.5
@@ -351,6 +358,10 @@ E-y                      =
 E-yt                     = 
 E-z                      = 
 E-zt                     = 
+
+; Ion/water position swapping for computational electrophysiology setups
+; Swap positions along direction: no, X, Y, Z
+swapcoords               = no
 
 ; AdResS parameters    
 adress                   = no
