@@ -1,0 +1,8 @@
+Verified+2: Jenkins Buildbot
+Code-Review+1: Roland Schulz <roland@rschulz.eu>
+Code-Review+2: Magnus Lundborg <magnus.lundborg@scilifelab.se>
+Submitted-by: Magnus Lundborg <magnus.lundborg@scilifelab.se>
+Submitted-at: Mon, 01 Dec 2014 13:44:44 +0100
+Reviewed-on: https://gerrit.gromacs.org/4142
+Project: regressiontests
+Branch: refs/heads/release-5-0
