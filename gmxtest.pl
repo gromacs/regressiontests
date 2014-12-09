@@ -71,6 +71,11 @@ my %progs = ( 'grompp'   => '',
 	      'check' => '',
 	      'editconf' => '' );
 
+# Names for filenames used by individual test cases to limit the
+# amount of parallelism that mdrun can attempt
+my $max_openmp_threads_filename = 'max-openmp-threads';
+my $max_mpi_ranks_filename = "max-mpi-ranks";
+
 # List of all the generic subdirectories of tests; pdb2gmx is treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
@@ -120,13 +125,13 @@ sub setup_vars()
 	}
 	if ( $bluegene > 0 )
 	{
-	    # edit the next line if you need to customize the call to runjob
-	    $mdprefix = sub { "runjob -n $_[0]" };
+	    # edit the next line if you need to customize the call to mpirun
+	    $mdprefix = sub { "$mpirun -n $_[0] --cwd " . getcwd() . " :" };
 	} elsif ( $mpirun =~ /(ap|s)run/ ) {
 	    $mdprefix = sub { "$mpirun -n $_[0]" };
 	} else {
 	    # edit the next line if you need to customize the call to mpirun
-	    $mdprefix = sub { "$mpirun -np $_[0]" };
+	    $mdprefix = sub { "$mpirun -np $_[0] -wdir " . getcwd() };
 	}
     }
     if ($autosuffix && ( $double > 0)) {
@@ -192,7 +197,12 @@ sub find_in_file {
     if ($do_redirect) {
         open(REDIRECT, ">$filename_for_redirect") || die "Could not open redirect file '$filename_for_redirect'\n";
     }
-    open(FILE,$filename_to_search) || die "Could not open file '$filename_to_search'\n";
+
+    # If the file doesn't exist, then the pattern doesn't
+    # match. Fortunately, the clients of find_in_file that care about
+    # the number of matches found use the name of a file that always
+    # exists.
+    open(FILE,$filename_to_search) || return 0;
     if ($filename_to_search =~ "grompp.mdp\$") {
         $case_sensitive=0;
     }
@@ -436,7 +446,6 @@ sub run_mdrun {
 
     # Set up and enforce the maximum number of OpenMP threads to
     # try for this test case
-    my $max_openmp_threads_filename = 'max-openmp-threads';
     if ( -f $max_openmp_threads_filename )
     {
         open my $fh, '<', $max_openmp_threads_filename or die "error opening $max_openmp_threads_filename: $!";
@@ -446,7 +455,6 @@ sub run_mdrun {
 
     # Set up and enforce the maximum number of MPI ranks to try
     # for this test case
-    my $max_mpi_ranks_filename = "max-mpi-ranks";
     if ( -f $max_mpi_ranks_filename ) {
         open my $fh, '<', $max_mpi_ranks_filename or die "error opening $max_mpi_ranks_filename: $!";
         my $max_ranks = do { local $/; <$fh> };
@@ -625,19 +633,6 @@ sub test_case {
     if ($nerror == 0) {
         # Do the mdrun at last!
 
-        # mpirun usually needs to be told the current working
-        # directory on the command line (or with some
-        # environment variable such as MPIRUN_CWD for
-        # BlueGene), so after the chdir we need to deal with
-        # this. mpirun -wdir or -wd is right for OpenMPI, no
-        # idea about others.
-        my $local_mdprefix = '';
-        if ( $mpi_ranks > 0 && !($mpirun =~ /(ap|s)run/) ) {
-            $local_mdprefix .= ($bluegene > 0 ?
-                                ' --cwd ' :
-                                ' -wdir ') . getcwd();
-            $local_mdprefix .= ' : ' if($bluegene);
-        }
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
         if ($dir =~ /nb_kernel.*CSTab/) {
@@ -824,12 +819,23 @@ sub test_systems {
                       "the test harness will stay out of your way.\n");
             } else {
                 print("Re-running $test_name using only CPU-based non-bonded kernels\n");
-                $dir .= "/cpu-only";
-                $input_dir = "..";
-                $test_name .= "-cpu-only";
-                mkdir $dir;
+
+                # Set up new variables that control where the test
+                # case does its I/O
+                my $new_dir = "$dir/cpu-only";
+                my $new_input_dir = "..";
+                my $new_test_name = "${test_name}-cpu-only";
+                mkdir $new_dir;
+
+                # Copy the files that limit parallelism
+                foreach my $limiter_file ($max_openmp_threads_filename, $max_mpi_ranks_filename) {
+                    if (-f "$dir/$limiter_file") {
+                        copy("$dir/$limiter_file", $new_dir);
+                    }
+                }
+
                 $$nn++;
-                $$npassed += test_case $dir, $input_dir, $test_name;
+                $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
             }
         }
     }
@@ -1171,7 +1177,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq '-bluegene') {
         $crosscompiling = 1;
 	$bluegene = 1;
-	print "Will test BlueGene\n";
+	print "Will test BlueGene. You should probably set '-mpirun runjob' if you have not already.\n";
     }
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
@@ -1320,6 +1326,13 @@ elsif (!$did_clean) {
 }
 
 # Now do the work, if there is any
-my $nerror = sum 0, map { eval $_ } @work;
+my $nerror = sum 0, map
+{
+    eval $_;
+    if ('' ne $@) {
+        die "$@"
+    }
+} @work;
+
 print XML "</testsuites>\n" if ($xml);
 exit ($nerror>0);
