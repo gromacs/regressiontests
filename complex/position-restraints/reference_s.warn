@@ -1,4 +1,5 @@
-WARNING 1 [file grompp.mdp]:
-  Removing the rotation around the center of mass in a periodic system
-  (this is not a problem when you have only one molecule).
+WARNING 1 [file ./grompp.mdp]:
+  Removing the rotation around the center of mass in a periodic system,
+  this can lead to artifacts. Only use this on a single (cluster of)
+  molecules. This cluster should not cross periodic boundaries.
 
