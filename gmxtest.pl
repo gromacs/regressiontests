@@ -548,7 +548,9 @@ sub test_case {
         $ndx = "-n $input_dir/index";
     }
     my $grompp_mdp = "$input_dir/grompp.mdp";
-    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >grompp.out 2>&1");
+    my $grompp_out = "grompp.out";
+    my $grompp_err = "grompp.err";
+    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >$grompp_out 2>$grompp_err");
 
     my @error_detail;
     if (! -f "topol.tpr") {
@@ -580,31 +582,33 @@ sub test_case {
             }
         }
     } else {
-        push(@error_detail, ("grompp.out"));
+        push(@error_detail, ($grompp_err, $grompp_out));
     }
 
     if ($nerror == 0) {
-        open(GROMPP,"grompp.out") || die "Could not open file 'grompp.out'\n";
-        open(WARN,"> grompp.warn") || die "Could not open file 'grompp.warn'\n";
+        my $grompp_warn = "grompp.warn";
+        open(GROMPP,$grompp_err) || die "Could not open file '$grompp_err'\n";
+        open(WARN,"> $grompp_warn") || die "Could not open file '$grompp_warn'\n";
         my $p=0;
         while(<GROMPP>) {
             $p=1 if /^WARNING/;
             print WARN if ($p);
-            $p=0 if /^\r?$/;
+            $p=0 if /^\r?$/; # match a blank line, even with Windows line ending
         }
-        close(GROMPP) || die "Could not close file 'grompp.out'\n";
-        close(WARN) || die "Could not close file 'grompp.warn'\n";
-        my $refwarn = "$input_dir/${ref}.warn";
-        if (! -f $refwarn) {
-            print("No $refwarn file for $test_name\n");
+        close(GROMPP) || die "Could not close file '$grompp_err'\n";
+        close(WARN) || die "Could not close file '$grompp_warn'\n";
+        my $ref_warn = "$input_dir/${ref}.warn";
+        if (! -f $ref_warn) {
+            print("No $ref_warn file for $test_name\n");
             print ("This means you are not really testing $test_name\n");
-            copy('grompp.warn', $refwarn);
+            copy($grompp_warn, $ref_warn);
         } else {
-            open(WARN1,"grompp.warn") || die "Could not open file 'grompp.warn'\n";
-            open(WARN2,"$refwarn") || die "Could not open file 'grompp.warn'\n";
+            open(WARN1,$grompp_warn) || die "Could not open file '$grompp_warn'\n";
+            open(WARN2,"$ref_warn") || die "Could not open file '$grompp_warn'\n";
             while (my $line1=<WARN1>) {
                 my $line2=<WARN2>;
                 if (not defined($line2)){#FILE1 has more lines
+                    print("$grompp_warn has more lines than $ref_warn\n");
                     $nerror++;
                     next;
                 }
@@ -617,16 +621,23 @@ sub test_case {
                 $line1 =~ s/file .*grompp.mdp/file grompp.mdp/;
                 $line2 =~ s/file .*grompp.mdp/file grompp.mdp/;
 
-                $nerror++ unless ("$line2" eq "$line1");
+                if ("$line2" ne "$line1") {
+                    $nerror++;
+                    # Note that the next line uses the fact that
+                    # $line1 and $line2 still have their end-of-line
+                    # termination characters
+                    print("$grompp_warn had line\n$line1 which did not match line\n$line2 from $ref_warn\n");
+                }
             }
             while (my $line2=<WARN2>) {#FILE2 has more lines
+                print("$grompp_warn has fewer lines than $ref_warn\n");
                 $nerror++
             }
             if ($nerror>0) {
-                print("Different warnings in $refwarn and grompp.warn\n");
-                push(@error_detail, ("grompp.out"));
+                print("Different warnings in $ref_warn and $grompp_warn\n");
+                push(@error_detail, ($grompp_err, $grompp_out));
             } else {
-                unlink("grompp.warn");
+                unlink($grompp_warn);
             }
         }
     }
