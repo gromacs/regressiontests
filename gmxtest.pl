@@ -605,6 +605,7 @@ sub test_case {
             while (my $line1=<WARN1>) {
                 my $line2=<WARN2>;
                 if (not defined($line2)){#FILE1 has more lines
+                    print("grompp.warn has more lines than $refwarn\n");
                     $nerror++;
                     next;
                 }
@@ -617,9 +618,13 @@ sub test_case {
                 $line1 =~ s/file .*grompp.mdp/file grompp.mdp/;
                 $line2 =~ s/file .*grompp.mdp/file grompp.mdp/;
 
-                $nerror++ unless ("$line2" eq "$line1");
+                if ("$line2" ne "$line1") {
+                    $nerror++;
+                    print("grompp.warn had line\n$line1 which did not match line\n$line2 from $refwarn\n");
+                }
             }
             while (my $line2=<WARN2>) {#FILE2 has more lines
+                print("grompp.warn has fewer lines than $refwarn\n");
                 $nerror++
             }
             if ($nerror>0) {
