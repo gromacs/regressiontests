@@ -715,7 +715,7 @@ sub test_case {
             $nerror |= $nerr_xvg;
         }
         else {
-            print "No mdrun output files.\n";
+            print "mdrun output files ${ener} and/or ${traj} were not found.\n";
             $nerror = 1;
         }
     }
