@@ -1,0 +1,8 @@
+Verified+1: Mark Abraham <mark.j.abraham@gmail.com>
+Code-Review+2: Berk Hess <hess@kth.se>
+Verified+2: Jenkins Buildbot
+Submitted-by: Roland Schulz <roland@rschulz.eu>
+Submitted-at: Thu, 29 Jan 2015 02:19:57 +0100
+Reviewed-on: https://gerrit.gromacs.org/4393
+Project: regressiontests
+Branch: refs/heads/master
