@@ -91,22 +91,21 @@ sub add_gpu_id
     return ($gpuid_string && $pp_ranks) ? "-gpu_id " . substr($gpuid_string, 0, $pp_ranks) : "";
 }
 
-sub use_separate_pme_ranks {
+sub specify_number_of_pme_ranks {
     my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
-    # the user asked for it
+    # the user asked for it. Note that mdrun -npme > 0 is supported
+    # only with 3+ total ranks.
     if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", $grompp_mdp) > 0) &&
-        ($num_ranks > 2) &&
-        ($npme_ranks >= 0))
+        (($npme_ranks == 0) ||
+         (($npme_ranks > 0) && ($num_ranks >= 3))))
     {
-        if ($num_ranks > 2)
-        {
-            $$pp_ranks_ref = $num_ranks - $npme_ranks;
-        }
+        # Specify number of PME-only ranks
+        $$pp_ranks_ref = $num_ranks - $npme_ranks;
         return "-npme $npme_ranks";
     }
     else {
-        # Do not use separate PME-only ranks
+        # Use default behaviour for MPMD with PME
         $$pp_ranks_ref = $num_ranks;
         return "";
     }
@@ -505,7 +504,7 @@ sub run_mdrun {
 
         my $pp_ranks = undef;
         my $num_ranks = $tmpi_ranks < $mpi_ranks ? $mpi_ranks : $tmpi_ranks;
-        my $npme_opt = use_separate_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
+        my $npme_opt = specify_number_of_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
         my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks);
         my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
