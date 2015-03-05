@@ -567,7 +567,7 @@ sub test_case {
             my $tprerr="checktpr.err";
             do_system("$progs{'check'} -s1 $reftpr -s2 topol.tpr -tol $ttol_rel -abstol $ttol_abs >$tprout 2>$tprerr", 0,
                       sub { print "Comparison of input .tpr files failed!\n"; $nerror = 1; });
-            $nerror |= find_in_file("^(?!comparing)","$tprout");
+            $nerror |= find_in_file("^(?!comparing|WARNING)","$tprout");
             if ($nerror > 0) {
                 push(@error_detail, ("checktpr.out", "checktpr.err"));
                 print "topol.tpr file different from $reftpr. Check files in $dir for $test_name\n";

@@ -23,6 +23,11 @@ nstcomm                  = 20
 ; group(s) for center of mass motion removal
 comm-grps                = 
 
+; LANGEVIN DYNAMICS OPTIONS
+; Friction coefficient (amu/ps) and random seed
+bd-fric                  = 0
+ld_seed                  = 1993
+
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
 nstxout                  = 20

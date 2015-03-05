@@ -16,5 +16,6 @@ topol.tpr
 *.orig
 *.tmp
 *.xtc
+grompp.err
 grompp.warn
 rot*.log
