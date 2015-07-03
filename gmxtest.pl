@@ -432,6 +432,26 @@ sub how_should_we_rerun_mdrun {
             $rerun = 1;
             last;
         }
+        elsif ($line =~ "Your choice of .* MPI rank.* and the use of .* total threads .* leads to the use of .* OpenMP threads, whereas we expect the optimum to be with more MPI ranks" ||
+               $line =~ "Your choice of number of MPI ranks and amount of resources results in using .* OpenMP threads per rank, which is most likely inefficient. The optimum is usually .*" ) {
+            # On large nodes this error needs to be handled.  It can
+            # be converted to a warning with setting the environment
+            # variable GMX_BYPASS_EFFICIENCY_CHECK, but we don't want
+            # anybody testing GROMACS to have to do that, whether with
+            # "make check" or stand-alone.
+            my $new_omp_threads = 6; # matches nthreads_omp_mpi_target_max in the code
+            if ($$omp_threads_ref > 6)
+            {
+                $$omp_threads_ref = $new_omp_threads;
+            }
+            else
+            {
+                # Do something that will work!
+                $$omp_threads_ref = 1;
+            }
+            $rerun = 1;
+            last;
+        }
     }
     return $rerun;
 }
