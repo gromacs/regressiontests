@@ -76,9 +76,11 @@ my %progs = ( 'grompp'   => '',
 my $max_openmp_threads_filename = 'max-openmp-threads';
 my $max_mpi_ranks_filename = "max-mpi-ranks";
 
-# List of all the generic subdirectories of tests; pdb2gmx is treated
-# separately.
-my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
+# List of all the generic subdirectories of tests that should be
+# tested by the "all" target. pdb2gmx is treated separately. kernel
+# may only be run manually, since we plan to remove the group scheme
+# entirely.
+my @all_dirs = ('simple', 'complex', 'freeenergy', 'rotation', 'extra');
 
 sub add_gpu_id
 {
