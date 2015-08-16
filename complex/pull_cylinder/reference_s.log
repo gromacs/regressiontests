@@ -1,17 +1,18 @@
-Log file opened on Thu Mar  5 14:26:03 2015
-Host: amd2  pid: 51652  rank ID: 0  number of ranks:  1
-GROMACS:    gmx mdrun, VERSION 5.1-dev-20150305-db95456
+Log file opened on Sat Oct 10 23:29:35 2015
+Host: tcbs14  pid: 26437  rank ID: 0  number of ranks:  1
+      :-) GROMACS - gmx mdrun, VERSION 5.2-dev-20151010-f1eb5b3-dirty (-:
 
-GROMACS is written by:
-Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
-Aldert van Buuren  Rudi van Drunen    Anton Feenstra     Sebastian Fritsch  
-Gerrit Groenhof    Christoph Junghans Peter Kasson       Carsten Kutzner    
-Per Larsson        Justin A. Lemkul   Magnus Lundborg    Pieter Meulenhoff  
-Erik Marklund      Teemu Murtola      Szilard Pall       Sander Pronk       
-Roland Schulz      Alexey Shvetsov    Michael Shirts     Alfons Sijbers     
-Peter Tieleman     Christian Wennberg Maarten Wolf       
-and the project leaders:
-Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra   Sebastian Fritsch 
+  Gerrit Groenhof   Christoph Junghans   Anca Hamuraru    Vincent Hindriksen
+ Dimitrios Karkoulis    Peter Kasson        Jiri Kraus      Carsten Kutzner  
+    Per Larsson      Justin A. Lemkul   Magnus Lundborg   Pieter Meulenhoff 
+   Erik Marklund      Teemu Murtola       Szilard Pall       Sander Pronk   
+   Roland Schulz     Alexey Shvetsov     Michael Shirts     Alfons Sijbers  
+   Peter Tieleman    Teemu Virolainen  Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
 
 Copyright (c) 1991-2000, University of Groningen, The Netherlands.
 Copyright (c) 2001-2015, The GROMACS development team at
@@ -24,39 +25,81 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.1-dev-20150305-db95456
-Executable:   /nethome/mark/git/master-make-reference/build-cmake-reference-amd2/install/bin/gmx
-Data prefix:  /nethome/mark/git/master-make-reference/build-cmake-reference-amd2/install
+GROMACS:      gmx mdrun, VERSION 5.2-dev-20151010-f1eb5b3-dirty
+Executable:   /nethome/lindahl/Code/gmx/git/master/reference/bin/gmx
+Data prefix:  /nethome/lindahl/Code/gmx/git/master/gromacs (source tree)
 Command line:
   gmx mdrun -notunepme
 
-Gromacs version:    VERSION 5.1-dev-20150305-db95456
-GIT SHA1 hash:      db95456bb59cc7e7d61b3f2115885ccf4b5969c8
+GROMACS version:    VERSION 5.2-dev-20151010-f1eb5b3-dirty
+GIT SHA1 hash:      f1eb5b34e81c61336efc90c1a4082a3537cdeae0 (dirty)
+Branched from:      009f2bd7e12ae1288c08e02a5e82f3c23666ef02 (6 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
-invsqrt routine:    (1.0/sqrt(x))
+OpenCL support:     disabled
+invsqrt routine:    (1.0/sqrtf(x))
 SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
-C++11 compilation:  enabled
 TNG support:        enabled
 Tracing support:    disabled
-Built on:           Thu Mar  5 13:59:49 CET 2015
-Built by:           mark@amd2 [CMAKE]
-Build OS/arch:      Linux 3.13.0-45-generic x86_64
-Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(tm) Processor 6376
-Build CPU family:   21   Model: 2   Stepping: 0
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+Built on:           Sat Oct 10 13:46:03 CEST 2015
+Built by:           lindahl@tcbs14 [CMAKE]
+Build OS/arch:      Linux 3.13.0-65-generic x86_64
+Build CPU vendor:   GenuineIntel
+Build CPU brand:    Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+Build CPU family:   6   Model: 63   Stepping: 2
+Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
-C compiler flags:       -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
+C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:    -std=c++0x  -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
+C++ compiler flags:    -std=c++0x  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
 Boost version:      1.55.0 (internal)
 
+
+Running on 1 node with total 8 cores, 16 logical cores
+Hardware detected:
+  CPU info:
+    Vendor: GenuineIntel
+    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+    Family:  6  model: 63  stepping:  2
+    CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    SIMD instructions most likely to fit this hardware: AVX2_256
+    SIMD instructions selected at GROMACS compile time: None
+
+
+Binary not matching hardware - you might be losing performance.
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: None
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess, E.
+Lindahl
+GROMACS: High performance molecular simulations through multi-level
+parallelism from laptops to supercomputers
+SoftwareX 1 (2015) pp. 19-25
+-------- -------- --- Thank You --- -------- --------
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+S. Páll, M. J. Abraham, C. Kutzner, B. Hess, E. Lindahl
+Tackling Exascale Software Challenges in Molecular Dynamics Simulations with
+GROMACS
+In S. Markidis & E. Laure (Eds.), Solving Software Challenges for Exascale 8759 (2015) pp. 3-27
+-------- -------- --- Thank You --- -------- --------
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+S. Pronk, S. Páll, R. Schulz, P. Larsson, P. Bjelkmar, R. Apostolov, M. R.
+Shirts, J. C. Smith, P. M. Kasson, D. van der Spoel, B. Hess, and E. Lindahl
+GROMACS 4.5: a high-throughput and highly parallel open source molecular
+simulation toolkit
+Bioinformatics 29 (2013) pp. 845-54
+-------- -------- --- Thank You --- -------- --------
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -349,19 +392,8 @@ annealing-npoints:           0
    nfreeze:           N           N           N
    energygrp-flags[  0]: 0
 
-Detecting CPU SIMD instructions.
-Present hardware specification:
-Vendor: AuthenticAMD
-Brand:  AMD Opteron(tm) Processor 6376                 
-Family: 21  Model:  2  Stepping:  0
-Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
-SIMD instructions selected at GROMACS compile time: None
 
-
-Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
-SIMD instructions selected at GROMACS compile time: None
+NOTE: GROMACS was compiled without OpenMP and (thread-)MPI support, can only use a single CPU core
 
 Cut-off's:   NS: 0.944   Coulomb: 0.9   LJ: 0.9
 Long Range LJ corr.: <C6> 2.8773e-03
@@ -381,6 +413,7 @@ Generated table with 972 data points for 1-4 LJ6.
 Tabscale = 500 points/nm
 Generated table with 972 data points for 1-4 LJ12.
 Tabscale = 500 points/nm
+Potential shift: LJ r^-12: -3.541e+00 r^-6: -1.882e+00
 
 Using plain C 4x4 non-bonded kernels
 
@@ -391,7 +424,6 @@ not happen during routine usage on supported platforms.
 
 Using geometric Lennard-Jones combination rule
 
-Potential shift: LJ r^-12: -3.541e+00 r^-6: -1.882e+00
 Removing pbc first time
 
 Will apply potential COM pulling
@@ -432,38 +464,38 @@ There are: 2400 Atoms
 Constraining the starting coordinates (step 0)
 
 Constraining the coordinates at t0-dt (step 0)
-RMS relative constraint deviation after constraining: 1.08e-06
-Initial temperature: 293.002 K
+RMS relative constraint deviation after constraining: 1.10e-06
+Initial temperature: 293.004 K
 
-Started mdrun on rank 0 Thu Mar  5 14:26:03 2015
-           Step           Time         Lambda
-              0        0.00000        0.00000
+Started mdrun on rank 0 Sat Oct 10 23:29:35 2015
+           Step           Time
+              0        0.00000
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.09331e+03    9.76630e+02   -4.05103e+02    0.00000e+00   -1.44761e+03
+    1.09331e+03    9.76631e+02   -4.05103e+02    0.00000e+00   -1.44761e+03
   Disper. corr.   Coulomb (SR)   COM Pull En.      Potential    Kinetic En.
    -1.73022e+03   -2.12979e+04    1.62272e+01   -2.27946e+04    6.08079e+03
    Total Energy  Conserved En.    Temperature Pres. DC (bar) Pressure (bar)
-   -1.67138e+04   -1.67138e+04    2.92714e+02   -5.25950e+02   -8.74526e+01
+   -1.67138e+04   -1.67138e+04    2.92716e+02   -5.25950e+02   -8.72857e+01
    Constr. rmsd
-    1.17759e-06
+    1.16974e-06
 
-           Step           Time         Lambda
-             20        0.04000        0.00000
+           Step           Time
+             20        0.04000
 
-Writing checkpoint, step 20 at Thu Mar  5 14:26:05 2015
+Writing checkpoint, step 20 at Sat Oct 10 23:29:36 2015
 
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.01281e+03    9.24639e+02   -3.60368e+02    0.00000e+00   -1.46119e+03
+    1.00997e+03    9.22098e+02   -3.60867e+02    0.00000e+00   -1.46657e+03
   Disper. corr.   Coulomb (SR)   COM Pull En.      Potential    Kinetic En.
-   -1.73022e+03   -2.11561e+04    1.12576e+01   -2.27591e+04    6.03002e+03
+   -1.73022e+03   -2.11642e+04    1.12620e+01   -2.27786e+04    6.00238e+03
    Total Energy  Conserved En.    Temperature Pres. DC (bar) Pressure (bar)
-   -1.67291e+04   -1.67123e+04    2.90270e+02   -5.25950e+02   -9.48923e+01
+   -1.67762e+04   -1.67123e+04    2.88941e+02   -5.25950e+02   -1.08287e+02
    Constr. rmsd
-    1.07292e-06
+    1.05097e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -473,23 +505,23 @@ Writing checkpoint, step 20 at Thu Mar  5 14:26:05 2015
 
    Energies (kJ/mol)
        G96Angle    Proper Dih.          LJ-14     Coulomb-14        LJ (SR)
-    1.05306e+03    9.50635e+02   -3.82735e+02    0.00000e+00   -1.45440e+03
+    1.05164e+03    9.49364e+02   -3.82985e+02    0.00000e+00   -1.45709e+03
   Disper. corr.   Coulomb (SR)   COM Pull En.      Potential    Kinetic En.
-   -1.73022e+03   -2.12270e+04    1.37424e+01   -2.27769e+04    6.05540e+03
+   -1.73022e+03   -2.12311e+04    1.37446e+01   -2.27866e+04    6.04159e+03
    Total Energy  Conserved En.    Temperature Pres. DC (bar) Pressure (bar)
-   -1.67215e+04   -1.67131e+04    2.91492e+02   -5.25950e+02   -9.11724e+01
+   -1.67450e+04   -1.67131e+04    2.90829e+02   -5.25950e+02   -9.77863e+01
    Constr. rmsd
     0.00000e+00
 
    Total Virial (kJ/mol)
-    2.03045e+03   -7.94927e+01    7.31883e+01
-   -7.92141e+01    2.38572e+03    8.09437e+01
-    7.34511e+01    8.08658e+01    2.09081e+03
+    2.03518e+03   -8.13018e+01    7.26741e+01
+   -8.09941e+01    2.39156e+03    8.09284e+01
+    7.30462e+01    8.07667e+01    2.09920e+03
 
    Pressure (bar)
-    7.05856e+00    4.67416e+01   -9.06965e+01
-    4.65728e+01   -2.38111e+02   -7.23702e+01
-   -9.08557e+01   -7.23230e+01   -4.24647e+01
+    1.35294e+00    4.78941e+01   -9.03345e+01
+    4.77077e+01   -2.44292e+02   -7.23405e+01
+   -9.05599e+01   -7.22425e+01   -5.04196e+01
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -501,13 +533,13 @@ Writing checkpoint, step 20 at Thu Mar  5 14:26:05 2015
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check               1.269058          11.422     2.8
- NxN RF Elec. + LJ [F]                    3.667584         139.368    34.3
- NxN RF Elec. + LJ [V&F]                  0.390936          21.111     5.2
- NxN LJ [F]                               3.100688         102.323    25.2
- NxN LJ [V&F]                             0.325536          13.998     3.4
- NxN RF Electrostatics [F]                3.024544          93.761    23.1
- NxN RF Electrostatics [V&F]              0.314104          11.308     2.8
+ Pair Search distance check               1.270098          11.431     2.8
+ NxN RF Elec. + LJ [F]                    3.673584         139.596    34.3
+ NxN RF Elec. + LJ [V&F]                  0.390952          21.111     5.2
+ NxN LJ [F]                               3.094448         102.117    25.1
+ NxN LJ [V&F]                             0.325808          14.010     3.4
+ NxN RF Electrostatics [F]                3.030064          93.932    23.1
+ NxN RF Electrostatics [V&F]              0.314152          11.309     2.8
  1,4 nonbonded interactions               0.012600           1.134     0.3
  Shift-X                                  0.007200           0.043     0.0
  Angles                                   0.016800           2.822     0.7
@@ -521,7 +553,7 @@ Writing checkpoint, step 20 at Thu Mar  5 14:26:05 2015
  Constraint-Vir                           0.004400           0.106     0.0
  Settle                                   0.009200           2.972     0.7
 -----------------------------------------------------------------------------
- Total                                                     406.627   100.0
+ Total                                                     406.844   100.0
 -----------------------------------------------------------------------------
 
 
@@ -532,20 +564,20 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.047          0.108   3.2
- Force                  1    1         21       1.342          3.090  92.2
- NB X/F buffer ops.     1    1         39       0.002          0.003   0.1
- COM pull force         1    1         21       0.009          0.020   0.6
- Write traj.            1    1          2       0.027          0.062   1.8
- Update                 1    1         21       0.004          0.009   0.3
- Constraints            1    1         21       0.021          0.047   1.4
- Rest                                           0.005          0.011   0.3
+ Neighbor search        1    1          3       0.032          0.097   3.6
+ Force                  1    1         21       0.769          2.322  85.8
+ NB X/F buffer ops.     1    1         39       0.001          0.003   0.1
+ COM pull force         1    1         21       0.004          0.013   0.5
+ Write traj.            1    1          2       0.069          0.208   7.7
+ Update                 1    1         21       0.002          0.007   0.3
+ Constraints            1    1         21       0.011          0.034   1.3
+ Rest                                           0.007          0.021   0.8
 -----------------------------------------------------------------------------
- Total                                          1.455          3.350 100.0
+ Total                                          0.897          2.705 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.448        1.455       99.5
+       Time:        0.842        0.897       94.0
                  (ns/day)    (hour/ns)
-Performance:        2.494        9.623
-Finished mdrun on rank 0 Thu Mar  5 14:26:05 2015
+Performance:        4.048        5.929
+Finished mdrun on rank 0 Sat Oct 10 23:29:36 2015
