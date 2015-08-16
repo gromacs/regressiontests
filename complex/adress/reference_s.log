@@ -1,20 +1,21 @@
-Log file opened on Fri Jun 27 23:16:17 2014
-Host: linux  pid: 33703  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-rc1-dev-20140628-1bc0208
+Log file opened on Sat Oct 10 13:51:38 2015
+Host: tcbs14  pid: 14533  rank ID: 0  number of ranks:  1
+         :-) GROMACS - gmx mdrun, VERSION 5.2-dev-20151010-f1eb5b3 (-:
 
-GROMACS is written by:
-Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
-Aldert van Buuren  Rudi van Drunen    Anton Feenstra     Sebastian Fritsch  
-Gerrit Groenhof    Christoph Junghans Peter Kasson       Carsten Kutzner    
-Per Larsson        Justin A. Lemkul   Magnus Lundborg    Pieter Meulenhoff  
-Erik Marklund      Teemu Murtola      Szilard Pall       Sander Pronk       
-Roland Schulz      Alexey Shvetsov    Michael Shirts     Alfons Sijbers     
-Peter Tieleman     Christian Wennberg Maarten Wolf       
-and the project leaders:
-Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra   Sebastian Fritsch 
+  Gerrit Groenhof   Christoph Junghans   Anca Hamuraru    Vincent Hindriksen
+ Dimitrios Karkoulis    Peter Kasson        Jiri Kraus      Carsten Kutzner  
+    Per Larsson      Justin A. Lemkul   Magnus Lundborg   Pieter Meulenhoff 
+   Erik Marklund      Teemu Murtola       Szilard Pall       Sander Pronk   
+   Roland Schulz     Alexey Shvetsov     Michael Shirts     Alfons Sijbers  
+   Peter Tieleman    Teemu Virolainen  Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
 
 Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-Copyright (c) 2001-2014, The GROMACS development team at
+Copyright (c) 2001-2015, The GROMACS development team at
 Uppsala University, Stockholm University and
 the Royal Institute of Technology, Sweden.
 check out http://www.gromacs.org for more information.
@@ -24,40 +25,81 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.0-rc1-dev-20140628-1bc0208
-Executable:   /home/rschulz/download/gromacs5.0.test/gcc.ref/bin/gmx
-Library dir:  /home/rschulz/download/gromacs5.0.test/share/top
+GROMACS:      gmx mdrun, VERSION 5.2-dev-20151010-f1eb5b3
+Executable:   /nethome/lindahl/Code/gmx/git/master/reference/bin/gmx
+Data prefix:  /nethome/lindahl/Code/gmx/git/master/gromacs (source tree)
 Command line:
   gmx mdrun -notunepme
 
-Gromacs version:    VERSION 5.0-rc1-dev-20140628-1bc0208
-GIT SHA1 hash:      1bc02089aff73dc3ad166431377a0dca7b9054a7
-Branched from:      0e80bfd460b0faa686b3723e36852cbde0f859d0 (2 newer local commits)
+GROMACS version:    VERSION 5.2-dev-20151010-f1eb5b3
+GIT SHA1 hash:      f1eb5b34e81c61336efc90c1a4082a3537cdeae0
+Branched from:      009f2bd7e12ae1288c08e02a5e82f3c23666ef02 (6 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
-invsqrt routine:    (1.0/sqrt(x))
+OpenCL support:     disabled
+invsqrt routine:    (1.0/sqrtf(x))
 SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
-C++11 compilation:  enabled
 TNG support:        enabled
 Tracing support:    disabled
-Built on:           Fri Jun 27 19:55:57 EDT 2014
-Built by:           rschulz@linux [CMAKE]
-Build OS/arch:      Linux 3.11.10-11-desktop x86_64
+Built on:           Sat Oct 10 13:46:03 CEST 2015
+Built by:           lindahl@tcbs14 [CMAKE]
+Build OS/arch:      Linux 3.13.0-65-generic x86_64
 Build CPU vendor:   GenuineIntel
-Build CPU brand:    Intel(R) Core(TM) i7-4700HQ CPU @ 2.40GHz
-Build CPU family:   6   Model: 60   Stepping: 3
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 x2apic
-C compiler:         /usr/bin/cc GNU 4.8.1
-C compiler flags:      -Wno-maybe-uninitialized -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
-C++ compiler:       /usr/bin/c++ GNU 4.8.1
-C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
-Boost version:      1.53.0 (external)
+Build CPU brand:    Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+Build CPU family:   6   Model: 63   Stepping: 2
+Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
+C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
+C++ compiler flags:    -std=c++0x  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
+Boost version:      1.55.0 (internal)
 
+
+Running on 1 node with total 8 cores, 16 logical cores
+Hardware detected:
+  CPU info:
+    Vendor: GenuineIntel
+    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+    Family:  6  model: 63  stepping:  2
+    CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    SIMD instructions most likely to fit this hardware: AVX2_256
+    SIMD instructions selected at GROMACS compile time: None
+
+
+Binary not matching hardware - you might be losing performance.
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: None
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess, E.
+Lindahl
+GROMACS: High performance molecular simulations through multi-level
+parallelism from laptops to supercomputers
+SoftwareX 1 (2015) pp. 19-25
+-------- -------- --- Thank You --- -------- --------
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+S. Páll, M. J. Abraham, C. Kutzner, B. Hess, E. Lindahl
+Tackling Exascale Software Challenges in Molecular Dynamics Simulations with
+GROMACS
+In S. Markidis & E. Laure (Eds.), Solving Software Challenges for Exascale 8759 (2015) pp. 3-27
+-------- -------- --- Thank You --- -------- --------
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+S. Pronk, S. Páll, R. Schulz, P. Larsson, P. Bjelkmar, R. Apostolov, M. R.
+Shirts, J. C. Smith, P. M. Kasson, D. van der Spoel, B. Hess, and E. Lindahl
+GROMACS 4.5: a high-throughput and highly parallel open source molecular
+simulation toolkit
+Bioinformatics 29 (2013) pp. 845-54
+-------- -------- --- Thank You --- -------- --------
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -204,7 +246,7 @@ qm-opts:
    wall-density[0]                = 0
    wall-density[1]                = 0
    wall-ewald-zfac                = 3
-   pull                           = no
+   pull                           = FALSE
    rotation                       = FALSE
    interactiveMD                  = FALSE
    disre                          = No
@@ -268,19 +310,8 @@ annealing-npoints:           0
    energygrp-flags[  0]: 2 1
    energygrp-flags[  1]: 1 0
 
-Detecting CPU SIMD instructions.
-Present hardware specification:
-Vendor: GenuineIntel
-Brand:  Intel(R) Core(TM) i7-4700HQ CPU @ 2.40GHz
-Family:  6  Model: 60  Stepping:  3
-Features: aes apic avx clfsh cmov cx8 cx16 f16c fma lahf_lm mmx msr nonstop_tsc pcid pclmuldq pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 x2apic
-SIMD instructions most likely to fit this hardware: AVX_256
-SIMD instructions selected at GROMACS compile time: None
 
-
-Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_256
-SIMD instructions selected at GROMACS compile time: None
+NOTE: GROMACS was compiled without OpenMP and (thread-)MPI support, can only use a single CPU core
 
 
 NOTE: This file uses the deprecated 'group' cutoff_scheme. This will be
@@ -358,27 +389,27 @@ Constraining the starting coordinates (step 0)
 
 Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 0.00e+00
-Initial temperature: 4.19587e-09 K
+Initial temperature: 4.19947e-09 K
 
-Started mdrun on node 0 Fri Jun 27 23:16:17 2014
-           Step           Time         Lambda
-              0        0.00000        0.00000
+Started mdrun on rank 0 Sat Oct 10 13:51:38 2015
+           Step           Time
+              0        0.00000
 
 
 Grid: 4 x 4 x 4 cells
    Energies (kJ/mol)
     Kinetic En.    Temperature
-    1.28707e+01    2.39441e+00
+    1.24363e+01    2.31361e+00
 
-           Step           Time         Lambda
-              5        0.01000        0.00000
+           Step           Time
+              5        0.01000
 
-Writing checkpoint, step 5 at Fri Jun 27 23:16:17 2014
+Writing checkpoint, step 5 at Sat Oct 10 13:51:38 2015
 
 
    Energies (kJ/mol)
     Kinetic En.    Temperature
-    3.23538e+02    6.01894e+01
+    3.24420e+02    6.03539e+01
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -388,7 +419,7 @@ Writing checkpoint, step 5 at Fri Jun 27 23:16:17 2014
 
    Energies (kJ/mol)
     Kinetic En.    Temperature
-    1.53704e+02    2.85943e+01
+    1.52680e+02    2.84039e+01
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -400,8 +431,8 @@ Writing checkpoint, step 5 at Fri Jun 27 23:16:17 2014
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NB VdW [V&F]                             0.008820           0.009     0.0
- NB Generic AdResS kernel                33.476820          33.477    89.0
+ NB VdW [V&F]                             0.008742           0.009     0.0
+ NB Generic AdResS kernel                33.476736          33.477    89.0
  NS-Pairs                                 0.111598           2.344     6.2
  Reset In Box                             0.000432           0.001     0.0
  Shift-X                                  0.010368           0.062     0.2
@@ -424,22 +455,22 @@ Writing checkpoint, step 5 at Fri Jun 27 23:16:17 2014
 On 1 MPI rank
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
-                     Nodes Threads  Count      (s)         total sum    %
+                     Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Vsite constr.          1    1          6       0.000          0.000   0.3
- Neighbor search        1    1          1       0.007          0.017  10.3
- Force                  1    1          6       0.038          0.090  54.7
- Vsite spread           1    1         12       0.000          0.001   0.3
- Write traj.            1    1          6       0.020          0.047  28.6
- Update                 1    1          6       0.000          0.000   0.3
- Constraints            1    1         12       0.001          0.002   1.2
- Rest                                           0.003          0.007   4.3
+ Vsite constr.          1    1          6       0.000          0.001   0.2
+ Neighbor search        1    1          1       0.013          0.039  12.5
+ Force                  1    1          6       0.038          0.117  37.3
+ Vsite spread           1    1         12       0.000          0.001   0.2
+ Write traj.            1    1          6       0.041          0.126  40.3
+ Update                 1    1         12       0.004          0.012   3.7
+ Constraints            1    1         12       0.001          0.003   1.0
+ Rest                                           0.005          0.015   4.9
 -----------------------------------------------------------------------------
- Total                                          0.069          0.165 100.0
+ Total                                          0.101          0.313 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.056        0.069       81.5
+       Time:        0.069        0.101       68.3
                  (ns/day)    (hour/ns)
-Performance:       15.063        1.593
-Finished mdrun on node 0 Fri Jun 27 23:16:17 2014
+Performance:       10.282        2.334
+Finished mdrun on rank 0 Sat Oct 10 13:51:38 2015
