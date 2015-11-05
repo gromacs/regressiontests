@@ -2,7 +2,8 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: ckutzne (21504)
 ;	On host: ckutzne
-;	At date: Mon Dec 16 16:28:02 2013
+;	At date: Thu Nov  5 16:35:42 2015
+
 ;
 
 ; VARIOUS PREPROCESSING OPTIONS
@@ -59,11 +60,12 @@ nstlog                   = 1
 nstcalcenergy            = 1
 nstenergy                = 1
 ; Output frequency and precision for .xtc file
-nstxtcout                = 1
-xtc_precision            = 1000
-; This selects the subset of atoms for the .xtc file. You can
-; select multiple groups. By default all atoms will be written.
-xtc-grps                 = 
+nstxout-compressed       = 1
+compressed-x-precision   = 1000
+; This selects the subset of atoms for the compressed
+; trajectory file. You can select multiple groups. By
+; default, all atoms will be written.
+compressed-x-grps        = 
 ; Selection of energy groups
 energygrps               = 
 
@@ -120,7 +122,6 @@ ewald-rtol-lj            = 0.001
 lj-pme-comb-rule         = Geometric
 ewald_geometry           = 3d
 epsilon_surface          = 0
-optimize_fft             = no
 
 ; IMPLICIT SOLVENT ALGORITHM
 implicit_solvent         = No
@@ -248,12 +249,14 @@ wall-density             =
 wall_ewald_zfac          = 3
 
 ; COM PULLING          
-; Pull type: no, umbrella, constraint or constant-force
 pull                     = no
 
 ; ENFORCED ROTATION    
 ; Enforced rotation: No or Yes
 rotation                 = no
+
+; Group to display and/or manipulate in interactive MD session
+IMD-group                = 
 
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
@@ -323,29 +326,33 @@ sim-temp-high            = 300
 ; Format is number of terms (int) and for all terms an amplitude (real)
 ; and a phase angle (real)
 E-x                      = 
+; Time dependent (pulsed) electric field. Format is omega, time for pulse
+; peak, and sigma (width) for pulse. Sigma = 0 removes pulse, leaving
+; the field to be a cosine function.
 E-xt                     = 
 E-y                      = 
 E-yt                     = 
 E-z                      = 0
 E-zt                     = 
 
-; Swap positions dimension: no, X, Y, Z
+; Ion/water position swapping for computational electrophysiology setups
+; Swap positions along direction: no, X, Y, Z
 swapcoords               = Z
 ; Swap attempt frequency
 swap_frequency           = 1
+; Number of ion types to be controlled
+iontypes                 = 2
 ; Two index groups that contain the compartment-partitioning atoms
 split_group0             = Ch0
 split_group1             = Ch1
 ; Use center of mass of split groups (yes/no), otherwise center of geometry is used
 massw_split0             = yes
 massw_split1             = no
-; Group name of ions that can be exchanged with solvent molecules
-swap_group               = NA+_CL-
-; Group name of solvent molecules
+; Name of solvent molecules
 solvent_group            = SOL
 ; Split cylinder: radius, upper and lower extension (nm) (this will define the channels)
 ; Note that the split cylinder settings do not have an influence on the swapping protocol,
-; however, if correctly defined, the ion permeation events are counted per channel
+; however, if correctly defined, the permeation events are recorded per channel
 cyl0_r                   = 0.9
 cyl0_up                  = 0.75
 cyl0_down                = 0.75
@@ -354,12 +361,21 @@ cyl1_up                  = 0.75
 cyl1_down                = 0.75
 ; Average the number of ions per compartment over these many swap attempt steps
 coupl_steps              = 1
-; Requested number of anions and cations for each of the two compartments
-; -1 means fix the numbers as found in time step 0
-anionsA                  = 19
-cationsA                 = 19
-anionsB                  = 0
-cationsB                 = 0
+; Names of the ion types that can be exchanged with solvent molecules,
+; and the requested number of ions of this type in compartments A and B
+; -1 means fix the numbers as found in step 0
+iontype0-name            = NA+
+iontype0-in-A            = 19
+iontype0-in-B            = 0
+iontype1-name            = CL-
+iontype1-in-A            = 19
+iontype1-in-B            = 0
+; By default (i.e. bulk offset = 0.0), ion/water exchanges happen between layers
+; at maximum distance (= bulk concentration) to the split group layers. However,
+; an offset b (-1.0 < b < +1.0) can be specified to offset the bulk layer from the middle at 0.0
+; towards one of the compartment-partitioning layers (at +/- 1.0).
+bulk-offsetA             = 0
+bulk-offsetB             = 0
 ; Start to swap ions if threshold difference to requested count is reached
 threshold                = 1
 
