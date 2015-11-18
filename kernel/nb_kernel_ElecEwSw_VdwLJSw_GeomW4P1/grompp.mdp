@@ -81,9 +81,7 @@ periodic-molecules       = no
 ; a value of -1 means: use rlist
 verlet-buffer-drift      = 0.005
 ; nblist cut-off        
-rlist                    = 0.01
-; long-range cut-off for switched potentials
-rlistlong                = -1
+rlist                    = 0.9
 nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW

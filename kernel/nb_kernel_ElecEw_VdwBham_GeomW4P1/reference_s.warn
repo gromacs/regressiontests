@@ -4,6 +4,6 @@ WARNING 1 [file topol.top, line 197]:
   the time step of 2.0e-03 ps.
   Maybe you asked for fexible water.
 
-WARNING 2 [file grompp.mdp]:
+WARNING 2 [file ./grompp.mdp]:
   Can not exclude the lattice Coulomb energy between energy groups
 

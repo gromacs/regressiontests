@@ -81,9 +81,7 @@ periodic-molecules       = no
 ; a value of -1 means: use rlist
 verlet-buffer-drift      = 0.005
 ; nblist cut-off        
-rlist                    = 0.01
-; long-range cut-off for switched potentials
-rlistlong                = 0.99
+rlist                    = 0.99
 nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
@@ -91,7 +89,7 @@ nstcalclr                = -1
 coulombtype              = cut-off
 coulomb-modifier         = None
 rcoulomb-switch          = 0.7
-rcoulomb                 = 0.01
+rcoulomb                 = 0.99
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
 epsilon-rf               = 0
