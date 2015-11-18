@@ -1,4 +1,4 @@
-WARNING 1 [file grompp.mdp]:
+WARNING 1 [file ./grompp.mdp]:
   The switching range should be 5% or less (currently 22.22% using a
   switching range of 0.700000-0.900000) for accurate electrostatic
   energies, energy conservation will be good regardless, since ewald_rtol =
@@ -10,10 +10,10 @@ WARNING 2 [file topol.top, line 103]:
   the time step of 2.0e-03 ps.
   Maybe you forgot to change the constraints mdp option.
 
-WARNING 3 [file grompp.mdp]:
+WARNING 3 [file ./grompp.mdp]:
   Can not exclude the lattice Coulomb energy between energy groups
 
-WARNING 4 [file grompp.mdp]:
+WARNING 4 [file ./grompp.mdp]:
   The sum of the two largest charge group radii (0.168825) is larger than
   rlist (0.900000) - rcoulomb (0.900000).
   With exact cut-offs, better performance can be obtained with

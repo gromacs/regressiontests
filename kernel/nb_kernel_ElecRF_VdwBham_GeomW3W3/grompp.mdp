@@ -82,8 +82,6 @@ periodic-molecules       = no
 verlet-buffer-drift      = 0.005
 ; nblist cut-off        
 rlist                    = 0.99
-; long-range cut-off for switched potentials
-rlistlong                = -1
 nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW

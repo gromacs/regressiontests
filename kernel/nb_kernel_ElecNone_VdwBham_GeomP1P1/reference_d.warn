@@ -4,7 +4,3 @@ WARNING 1 [file topol.top, line 187]:
   the time step of 2.0e-03 ps.
   Maybe you forgot to change the constraints mdp option.
 
-WARNING 2 [file grompp.mdp]:
-  The sum of the two largest charge group radii (0.272388) is larger than
-  rlist (0.010000)
-
