@@ -69,7 +69,8 @@ my %progs = ( 'grompp'   => '',
 	      'mdrun'    => '',
 	      'pdb2gmx'  => '',
 	      'check' => '',
-	      'editconf' => '' );
+	      'editconf' => '',
+              'nmeig' => '' );
 
 # Names for filenames used by individual test cases to limit the
 # amount of parallelism that mdrun can attempt
@@ -1001,6 +1002,56 @@ sub test_tools {
     return $nerror_cfg;
 }
 
+sub compare_xvg {
+  my $xvg_ref = shift;
+  my $xvg_test = shift;
+  my $rel_toler = shift;
+  
+  open(REF, "$xvg_ref") || die("FAILED: Can not read $xvg_ref");
+  my @ref = <REF>;
+  close REF;
+  open(TEST, "$xvg_test") || die("FAILED: Can not read $xvg_test");
+  my @test = <TEST>;
+  close TEST;
+  die("FAILED: test $xvg_test has different size than reference $xvg_ref") if ($#ref != $#test);
+  for(my $i = 0; ($i<=$#ref); $i++) {
+    my @r = split(' ', $ref[$i]);
+    my @t = split(' ', $test[$i]);
+    die("FAILED: test $i = $t[1]  ref $i = $r[1]") if (abs($r[1]-$t[1])/$r[1] > $rel_toler);
+  }
+}
+
+sub test_normal_modes {
+  my $logfn = "normal_modes.log";
+  
+# Only run this test in double precision
+  return if ($double == 0);
+  
+  chdir("normal_modes");
+  open(LOG,">$logfn")  || die("FAILED: Opening $logfn for writing");
+  foreach my $dir ( glob("*") ) {
+    if ( -d $dir) {
+      chdir $dir;
+      open(PIPE,"$progs{'grompp'} -c conf.g96 2>&1 |");
+      print LOG while <PIPE>;
+      close PIPE;
+      my $mtx = "nm.mtx";
+      open(PIPE,"$progs{'mdrun'} -mtx $mtx 2>&1 |");
+      print LOG while <PIPE>;
+      close PIPE;
+      open(PIPE,"$progs{'nmeig'} -f $mtx -first 7 -xvg no 2>&1 |");
+      print LOG while <PIPE>;
+      close PIPE;
+      my $rel_tol = 1e-3;
+      compare_xvg("eigenval_reference.xvg", "eigenval.xvg", $rel_tol);
+      compare_xvg("eigenfreq_reference.xvg", "eigenfreq.xvg", $rel_tol);
+      chdir "..";
+    }
+  }
+  close LOG;
+  chdir "..";
+}
+  
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
@@ -1163,12 +1214,16 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'pdb2gmx' ) {
 	push @work, "test_pdb2gmx()";
     }
+    elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
+        push @work, "test_normal_modes()";
+    }
 #    elsif ($arg eq 'tools' ) {
 #	push @work, "test_tools()";
 #    }
     elsif ($arg eq 'all' ) {
         map { push @work, "test_dirs('$_')" } @all_dirs;
 	push @work, "test_pdb2gmx()";
+	push @work, "test_normal_modes()";
 	#push @work, "test_tools()";
     }
     elsif ($arg eq 'clean' ) {
