@@ -1,10 +1,10 @@
 import os
 
 def do_build(context):
-    # The environment variables are intended to be set as a build
-    # parameter (or otherwise in the Jenkins job configuration).
-    version = os.getenv('PACKAGE_VERSION_STRING', 'unknown')
-    release = os.getenv('RELEASE', None)
+    version = context.params.get('PACKAGE_VERSION_STRING', Parameter.string)
+    release = context.params.get('RELEASE', Parameter.bool)
+    if not version:
+        version = 'unknown'
     if not release:
         version += '-dev'
 
