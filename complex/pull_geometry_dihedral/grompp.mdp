@@ -1,0 +1,64 @@
+integrator               = md
+dt                       = 0.002
+nsteps                   = 20;
+
+nstxout                  = 20
+nstxout-compressed	 = 20
+nstvout                  = 1
+nstfout                  = 1
+nstlog                   = 0
+
+cutoff-scheme		 = Verlet
+ns-type                  = grid
+pbc                      = xyz
+
+coulombtype              = PME
+coulomb-modifier         = Potential-shift-Verlet
+rcoulomb     		 = 1.0
+
+fourierspacing           = 0.13
+pme_order                = 4
+ewald-rtol               = 1e-6
+
+vdw-type		 = cut-off	
+vdw-modifier 		 = Potential-shift
+rvdw                     = 1.0
+DispCorr                 = EnerPres
+
+tcoupl                   = v-rescale
+tc-grps                  = System
+tau-t                    = 0.1
+ref-t                    = 310
+
+Pcoupl                   = Parrinello-Rahman
+tau-p                    = 5
+compressibility          = 4.5e-5
+ref-p                    = 1.0
+refcoord_scaling         = COM
+
+constraints              = h-bonds
+constraint-algorithm     = Lincs
+lincs-order              = 4
+lincs-iter		 = 1
+
+nstcomm		= 10
+nstcalcenergy	= 1
+nstenergy	= 1
+comm-mode	= Linear
+comm-grps	= System
+
+pull			= yes
+pull-ncoords 		= 1
+pull-ngroups		= 4
+
+pull-group1-name	= C_&_r_1
+pull-group2-name	= N_&_r_2
+pull-group3-name	= CA
+pull-group4-name	= C_&_r_2
+
+pull-coord1-type	= umbrella
+pull-coord1-geometry	= dihedral
+pull-coord1-groups	= 1 2 2 3 3 4
+pull-coord1-k		= 1000
+pull-coord1-rate	= 0
+pull-coord1-start	= yes
