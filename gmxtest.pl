@@ -72,6 +72,8 @@ my %progs = ( 'grompp'   => '',
 	      'editconf' => '',
               'nmeig' => '' );
 
+my $grompp_supports_short_ranged_tables = 0;
+
 # Names for filenames used by individual test cases to limit the
 # amount of parallelism that mdrun can attempt
 my $max_openmp_threads_filename = 'max-openmp-threads';
@@ -149,6 +151,17 @@ sub setup_vars()
     foreach my $var ( $etol_rel, $etol_abs, $ttol_rel, $ttol_abs, $virtol_rel, $virtol_abs, $ftol_rel, $ftol_abs, $ftol_sprod ) {
 	$var *= $tolerance_factor;
     }
+
+    # Test whether grompp supports handling short-ranged tables, else
+    # we assume mdrun does. This is a temporary measure while we move
+    # the support for reading user tables to grompp.
+    my $filename = "help";
+    if (system("$progs{'grompp'} -h > $filename 2>&1") != 0) {
+      print("ERROR: Can not find executable $progs{'grompp'} in your path.\nPlease source GMXRC and try again.\n");
+      exit 1;
+    }
+    $grompp_supports_short_ranged_tables = find_in_file("-table ", $filename);
+    unlink($filename);
 }
 
 # Wrapper function to call system(), and then perhaps a callback based on the
@@ -562,15 +575,24 @@ sub test_case {
         print "Testing $test_name . . . ";
     }
 
+    # All group-kernel test cases with cubic splines need short-ranged
+    # tables for their interactions.
+    my $test_needs_short_ranged_tables = ($dir =~ /nb_kernel.*CSTab/);
+    my $short_ranged_table_arguments = "-table $input_dir/../table -tablep $input_dir/../tablep";
+
     my $nerror = 0;
-    my $ndx = "";
-    if ( -f "$input_dir/index.ndx" ) {
-        $ndx = "-n $input_dir/index";
-    }
     my $grompp_mdp = "$input_dir/grompp.mdp";
     my $grompp_out = "grompp.out";
     my $grompp_err = "grompp.err";
-    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >$grompp_out 2>$grompp_err");
+    my $grompp_arguments = "-f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10";
+    if ( -f "$input_dir/index.ndx" ) {
+        $grompp_arguments .= " -n $input_dir/index";
+    }
+    if ($test_needs_short_ranged_tables && $grompp_supports_short_ranged_tables)
+    {
+        $grompp_arguments .= " $short_ranged_table_arguments";
+    }
+    $nerror = do_system("$progs{'grompp'} ${grompp_arguments} >$grompp_out 2>$grompp_err");
 
     my @error_detail;
     if (! -f "topol.tpr") {
@@ -666,10 +688,9 @@ sub test_case {
 
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
-        if ($dir =~ /nb_kernel.*CSTab/) {
-            # All group-kernel test cases with cubic splines need
-            # tables for their interactions.
-            $local_mdparams .= " -table $input_dir/../table -tablep $input_dir/../tablep";
+        if ($test_needs_short_ranged_tables && !$grompp_supports_short_ranged_tables)
+        {
+            $local_mdparams .= " $short_ranged_table_arguments";
         }
         my $part = "";
         if ( -f "continue.cpt" ) {
