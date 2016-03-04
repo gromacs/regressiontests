@@ -1,6 +1,6 @@
-Log file opened on Sun Jan  3 18:24:23 2016
-Host: gromacs  pid: 24451  rank ID: 0  number of ranks:  1
-   :-) GROMACS - gmx mdrun, 2016-dev-20151229-9806ff5 (double precision) (-:
+Log file opened on Fri Mar  4 13:49:49 2016
+Host: tcbs14  pid: 5987  rank ID: 0  number of ranks:  1
+ :-) GROMACS - gmx mdrun, 2016-dev-20160304-bb93e02-dirty (double precision) (-:
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,52 +25,52 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2016-dev-20151229-9806ff5 (double precision)
-Executable:   /nethome/mark/git/master-make-reference/build-cmake-reference-double-gromacs/install/bin/gmx_d
-Data prefix:  /nethome/mark/git/master-make-reference/build-cmake-reference-double-gromacs/install
+GROMACS:      gmx mdrun, version 2016-dev-20160304-bb93e02-dirty (double precision)
+Executable:   /nethome/lindahl/Code/gmx/git/development/builds/reference-double/bin/gmx_d
+Data prefix:  /nethome/lindahl/Code/gmx/git/development/gromacs (source tree)
 Command line:
   gmx_d mdrun -notunepme
 
-GROMACS version:    2016-dev-20151229-9806ff5
-GIT SHA1 hash:      9806ff59eebc9b3fdcc10d71fc6b525c29a472d7
-Branched from:      85495797c9c868bcb097f9b033c65aba2550142f (108 newer local commits)
+GROMACS version:    2016-dev-20160304-bb93e02-dirty
+GIT SHA1 hash:      bb93e02b48d8d1d4016459da838fa09b34ca8a35 (dirty)
+Branched from:      3a97f29ae3f4ed6deb18e37fcbdf577285df982f (1 newer local commits)
 Precision:          double
 Memory model:       64 bit
-MPI library:        thread_mpi
-OpenMP support:     enabled (GMX_OPENMP_MAX_THREADS = 32)
+MPI library:        none
+OpenMP support:     disabled
 GPU support:        disabled
-SIMD instructions:  SSE4.1
-FFT library:        fftw-3.3.4-sse2
+SIMD instructions:  NONE
+FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 TNG support:        enabled
 Tracing support:    disabled
-Built on:           Sun Jan  3 18:12:03 CET 2016
-Built by:           mark@gromacs [CMAKE]
-Build OS/arch:      Linux 3.13.0-74-generic x86_64
+Built on:           Fri Mar  4 12:11:41 CET 2016
+Built by:           lindahl@tcbs14 [CMAKE]
+Build OS/arch:      Linux 3.13.0-77-generic x86_64
 Build CPU vendor:   Intel
-Build CPU brand:    Intel(R) Core(TM) i7 CPU         920  @ 2.67GHz
-Build CPU family:   6   Model: 26   Stepping: 4
-Build CPU features: apic clfsh cmov cx8 cx16 htt lahf mmx msr nonstop_tsc pdcm popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3
+Build CPU brand:    Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+Build CPU family:   6   Model: 63   Stepping: 2
+Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
-C compiler flags:    -msse4.1    -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter  -g -fno-inline 
+C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:  -msse4.1    -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function  -g -fno-inline 
+C++ compiler flags:     -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
 
 
-Running on 1 node with total 8 cores, 8 logical cores
+Running on 1 node with total 16 cores, 16 logical cores
 Hardware detected:
   CPU info:
     Vendor: Intel
-    Brand:  Intel(R) Core(TM) i7 CPU         920  @ 2.67GHz
-    Family: 6   Model: 26   Stepping: 4
-    Features: apic clfsh cmov cx8 cx16 htt lahf mmx msr nonstop_tsc pdcm popcnt pse rdtscp sse2 sse3 sse4.1 sse4.2 ssse3
-    SIMD instructions most likely to fit this hardware: SSE4.1
-    SIMD instructions selected at GROMACS compile time: SSE4.1
+    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+    Family: 6   Model: 63   Stepping: 2
+    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    SIMD instructions most likely to fit this hardware: AVX2_256
+    SIMD instructions selected at GROMACS compile time: None
 
 
 Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: SSE4.1
-SIMD instructions selected at GROMACS compile time: SSE4.1
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: None
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -128,10 +128,7 @@ GROMACS: A message-passing parallel molecular dynamics implementation
 Comp. Phys. Comm. 91 (1995) pp. 43-56
 -------- -------- --- Thank You --- -------- --------
 
-
-Changing rlist from 0.903 to 0.906 for non-bonded 4x2 atom kernels
-
-Changing nstlist from 10 to 20, rlist from 0.906 to 0.938
+Changing nstlist from 10 to 20, rlist from 0.903 to 0.93
 
 Input Parameters:
    integrator                     = md-vv
@@ -165,7 +162,7 @@ Input Parameters:
    pbc                            = xyz
    periodic-molecules             = false
    verlet-buffer-tolerance        = 0.005
-   rlist                          = 0.938
+   rlist                          = 0.93
    coulombtype                    = PME-Switch
    coulomb-modifier               = Potential-shift
    rcoulomb-switch                = 0.89
@@ -329,8 +326,8 @@ annealing-npoints:           0
    nfreeze:           N           N           N
    energygrp-flags[  0]: 0
 
-Using 1 MPI thread
-Using 8 OpenMP threads 
+
+NOTE: GROMACS was compiled without OpenMP and (thread-)MPI support, can only use a single CPU core
 
 Will do PME sum in reciprocal space for electrostatic interactions.
 
@@ -342,30 +339,34 @@ J. Chem. Phys. 103 (1995) pp. 8577-8592
 
 Will do ordinary reciprocal space Ewald sum.
 Using a Gaussian width (1/beta) of 0.260198 nm for Ewald
-Cut-off's:   NS: 0.938   Coulomb: 0.9   LJ: 0.9
+Cut-off's:   NS: 0.93   Coulomb: 0.9   LJ: 0.9
 Long Range LJ corr.: <C6> 2.7981e-04, <C12> 2.7541e-07
 System total charge, top. A: 0.000 top. B: 0.000
-Generated table with 3876 data points for Ewald-Switch.
+Generated table with 3860 data points for Ewald-Switch.
 Tabscale = 2000 points/nm
-Generated table with 3876 data points for LJ6Switch.
+Generated table with 3860 data points for LJ6Switch.
 Tabscale = 2000 points/nm
-Generated table with 3876 data points for LJ12Switch.
+Generated table with 3860 data points for LJ12Switch.
 Tabscale = 2000 points/nm
-Generated table with 3876 data points for 1-4 COUL.
+Generated table with 3860 data points for 1-4 COUL.
 Tabscale = 2000 points/nm
-Generated table with 3876 data points for 1-4 LJ6.
+Generated table with 3860 data points for 1-4 LJ6.
 Tabscale = 2000 points/nm
-Generated table with 3876 data points for 1-4 LJ12.
+Generated table with 3860 data points for 1-4 LJ12.
 Tabscale = 2000 points/nm
 Potential shift: LJ r^-12: 0.000e+00 r^-6: 0.000e+00, Ewald -1.000e-06
 Initialized non-bonded Ewald correction tables, spacing: 8.41e-04 size: 1071
 
 
-Using SIMD 4x2 non-bonded kernels
+Using plain C 4x4 non-bonded kernels
+
+
+WARNING: Using the slow plain C kernels. This should
+not happen during routine usage on supported platforms.
+
 
 There are 19 atoms and 19 charges for free energy perturbation
 Removing pbc first time
-Pinning threads with an auto-selected logical core stride of 1
 
 Initializing LINear Constraint Solver
 
@@ -396,9 +397,9 @@ There are: 2692 Atoms
 
 Constraining the starting coordinates (step 0)
 RMS relative constraint deviation after constraining: 1.02e-12
-Initial temperature: 298.2 K
+Initial temperature: 302.801 K
 
-Started mdrun on rank 0 Sun Jan  3 18:24:23 2016
+Started mdrun on rank 0 Fri Mar  4 13:49:49 2016
            Step           Time
               0        0.00000
 
@@ -408,90 +409,90 @@ Started mdrun on rank 0 Sun Jan  3 18:24:23 2016
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
     2.23901e+01    5.96810e+03   -2.22840e+02   -4.38723e+04    4.35576e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.74144e+04    6.68688e+03   -3.07275e+04   -3.07275e+04    2.98200e+02
+   -3.74144e+04    6.79004e+03   -3.06243e+04   -3.06243e+04    3.02801e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02   -6.30144e+02    8.88991e+02    6.99750e-07
+   -1.36054e+02   -5.75006e+02    8.88991e+02    1.09551e-06
 
            Step           Time
              10        0.02000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    3.03606e+01    4.69332e+01    7.77076e-01   -8.65874e-01    1.95214e+02
+    4.48483e+01    3.83336e+01    1.00366e+00    1.84263e+00    1.85549e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.32433e+01    5.52553e+03   -2.22840e+02   -4.24886e+04    4.67405e+02
+    2.23122e+01    6.23548e+03   -2.22840e+02   -4.33011e+04    4.56939e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.64229e+04    5.71353e+03   -3.07094e+04   -3.07192e+04    2.54794e+02
+   -3.65377e+04    5.88367e+03   -3.06540e+04   -3.06183e+04    2.62382e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02   -6.78200e+02    9.27312e+02    1.95371e-07
+   -1.36054e+02    6.12425e+02    8.42729e+02    4.74348e-07
 
            Step           Time
              20        0.04000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    3.49249e+01    6.29902e+01    5.20144e-01   -8.99930e-01    1.80530e+02
+    7.03896e+01    5.47136e+01    1.29761e+00   -2.72005e+00    1.51706e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.32555e+01    6.17051e+03   -2.22840e+02   -4.28259e+04    5.47239e+02
+    2.21014e+01    6.35001e+03   -2.22840e+02   -4.34980e+04    4.75022e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.60296e+04    5.36278e+03   -3.06668e+04   -3.07177e+04    2.39152e+02
+   -3.65983e+04    5.93561e+03   -3.06627e+04   -3.06173e+04    2.64698e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02    6.73405e+02    8.69542e+02    2.77610e-07
+   -1.36054e+02    3.63528e+02    7.12531e+02    2.18895e-07
 
            Step           Time
              30        0.06000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    5.16469e+01    4.31205e+01    8.41335e-01   -2.46460e-01    1.83390e+02
+    3.96267e+01    3.45260e+01    1.01483e+00   -1.16940e+00    1.85496e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.19654e+01    6.46064e+03   -2.22840e+02   -4.22573e+04    5.33915e+02
+    2.27352e+01    5.96757e+03   -2.22840e+02   -4.31063e+04    4.76028e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.51848e+04    4.53376e+03   -3.06511e+04   -3.07126e+04    2.02183e+02
+   -3.66033e+04    5.92823e+03   -3.06751e+04   -3.06168e+04    2.64369e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02    1.60187e+03    9.71948e+02    1.74844e-06
+   -1.36054e+02   -5.78342e+00    8.66027e+02    8.60630e-07
 
            Step           Time
              40        0.08000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    6.64375e+01    4.67269e+01    7.84990e-01   -4.34562e+00    1.56395e+02
+    3.34746e+01    6.35445e+01    4.49000e-01   -3.03141e+00    1.77025e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.24136e+01    6.02972e+03   -2.22840e+02   -4.25869e+04    5.21067e+02
+    2.27383e+01    5.74204e+03   -2.22840e+02   -4.28867e+04    4.84700e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.59706e+04    5.38203e+03   -3.05885e+04   -3.07188e+04    2.40011e+02
+   -3.65886e+04    5.89938e+03   -3.06893e+04   -3.06155e+04    2.63082e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02    4.03166e+02    8.74386e+02    1.26765e-06
+   -1.36054e+02   -3.87332e+02    8.39554e+02    4.86801e-07
 
            Step           Time
              50        0.10000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    5.53792e+01    4.78219e+01    5.89194e-01    3.31480e+00    1.66014e+02
+    5.98570e+01    4.45857e+01    8.14383e-01   -1.10711e+00    1.70175e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.28041e+01    5.78315e+03   -2.22840e+02   -4.24074e+04    5.09565e+02
+    2.22058e+01    5.71119e+03   -2.22840e+02   -4.27607e+04    4.98268e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.60416e+04    5.43759e+03   -3.06040e+04   -3.07182e+04    2.42489e+02
+   -3.64775e+04    5.77560e+03   -3.07019e+04   -3.06153e+04    2.57562e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02   -1.40381e+02    9.24336e+02    6.02854e-07
+   -1.36054e+02   -7.34084e+02    8.21413e+02    1.23663e-06
 
            Step           Time
              60        0.12000
 
-Writing checkpoint, step 60 at Sun Jan  3 18:24:27 2016
+Writing checkpoint, step 60 at Fri Mar  4 13:49:55 2016
 
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    3.46459e+01    2.84634e+01    1.21697e+00   -1.65328e-01    1.90998e+02
+    4.97234e+01    3.75926e+01    6.85594e-01    1.07764e+00    1.74441e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.23679e+01    5.78934e+03   -2.22840e+02   -4.26123e+04    4.69636e+02
+    2.20003e+01    5.60126e+03   -2.22840e+02   -4.27873e+04    4.64385e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.62987e+04    5.69293e+03   -3.06058e+04   -3.07193e+04    2.53876e+02
+   -3.66590e+04    5.94766e+03   -3.07113e+04   -3.06166e+04    2.65235e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02   -9.16420e+01    1.04999e+03    1.71336e-06
+   -1.36054e+02   -8.33325e+02    8.35169e+02    1.65280e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -501,23 +502,23 @@ Writing checkpoint, step 60 at Sun Jan  3 18:24:27 2016
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih. Ryckaert-Bell.          LJ-14
-    4.79725e+01    4.92541e+01    7.38653e-01   -8.14761e-01    1.72825e+02
+    4.75609e+01    4.50227e+01    7.19078e-01   -1.97466e+00    1.74700e+02
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.25201e+01    5.95668e+03   -2.22840e+02   -4.26718e+04    4.96212e+02
+    2.25159e+01    5.96604e+03   -2.22840e+02   -4.31234e+04    4.78193e+02
       Potential    Kinetic En.   Total Energy  Conserved En.    Temperature
-   -3.61493e+04    5.50833e+03   -3.06410e+04   -3.07197e+04    2.45643e+02
+   -3.66135e+04    5.93205e+03   -3.06814e+04   -3.06168e+04    2.64539e+02
  Pres. DC (bar) Pressure (bar)    dVremain/dl   Constr. rmsd
-   -1.36054e+02    1.67967e+02    3.77808e+02    0.00000e+00
+   -1.36054e+02   -1.11408e+02    3.00581e+02    0.00000e+00
 
    Total Virial (kJ/mol)
-    1.56052e+03   -1.96937e+01    1.10522e+02
-   -1.96937e+01    1.88374e+03    2.66592e+02
-    1.10522e+02    2.66592e+02    1.65141e+03
+    2.53553e+03    1.25137e+02    3.26436e+02
+    1.25137e+02    1.59596e+03    3.45136e+02
+    3.26436e+02    3.45136e+02    2.07426e+03
 
    Pressure (bar)
-    3.24431e+02    5.70159e+01   -1.46202e+02
-    5.70159e+01   -5.59863e+01   -3.41038e+02
-   -1.46202e+02   -3.41038e+02    2.35455e+02
+   -6.43856e+02   -1.28558e+02   -4.85959e+02
+   -1.28558e+02    4.46602e+02   -3.86047e+02
+   -4.85959e+02   -3.86047e+02   -1.36969e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -529,15 +530,15 @@ Writing checkpoint, step 60 at Sun Jan  3 18:24:27 2016
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NB Free energy kernel                  103.884840         103.885     2.2
- Pair Search distance check               2.807914          25.271     0.5
- NxN QSTab Elec. + LJ [V&F]              25.238504        1993.842    42.2
- NxN QSTab Elec. [V&F]                   24.453720        1002.603    21.2
+ NB Free energy kernel                  114.161946         114.162     2.3
+ Pair Search distance check               2.828686          25.458     0.5
+ NxN QSTab Elec. + LJ [V&F]              27.007640        2133.604    43.2
+ NxN QSTab Elec. [V&F]                   26.055752        1068.286    21.6
  1,4 nonbonded interactions               0.003914           0.352     0.0
  Calc Weights                             0.492636          17.735     0.4
- Spread Q Bspline                        70.939584         141.879     3.0
- Gather F Bspline                        70.939584         425.638     9.0
- 3D-FFT                                 119.930880         959.447    20.3
+ Spread Q Bspline                        70.939584         141.879     2.9
+ Gather F Bspline                        70.939584         425.638     8.6
+ 3D-FFT                                 119.930880         959.447    19.4
  Solve PME                                0.124928           7.995     0.2
  Shift-X                                  0.010768           0.065     0.0
  Bonds                                    0.000671           0.040     0.0
@@ -550,39 +551,39 @@ Writing checkpoint, step 60 at Sun Jan  3 18:24:27 2016
  Lincs-Mat                                0.007440           0.030     0.0
  Constraint-V                             0.164151           1.313     0.0
  Constraint-Vir                           0.164151           3.940     0.1
- Settle                                   0.110484          35.686     0.8
+ Settle                                   0.110484          35.686     0.7
 -----------------------------------------------------------------------------
- Total                                                    4728.365   100.0
+ Total                                                    4944.275   100.0
 -----------------------------------------------------------------------------
 
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
 
-On 1 MPI rank, each using 8 OpenMP threads
+On 1 MPI rank
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    8          4       0.053          1.124   1.2
- Force                  1    8         61       3.630         77.667  84.4
- PME mesh               1    8         61       0.517         11.054  12.0
- NB X/F buffer ops.     1    8        118       0.009          0.184   0.2
- Write traj.            1    8          4       0.045          0.954   1.0
- Update                 1    8        244       0.008          0.166   0.2
- Constraints            1    8        122       0.015          0.321   0.3
- Rest                                           0.024          0.514   0.6
+ Neighbor search        1    1          4       0.078          0.236   1.3
+ Force                  1    1         61       4.578         13.752  73.4
+ PME mesh               1    1         61       1.417          4.256  22.7
+ NB X/F buffer ops.     1    1        118       0.003          0.009   0.0
+ Write traj.            1    1          4       0.091          0.272   1.5
+ Update                 1    1        244       0.013          0.039   0.2
+ Constraints            1    1        122       0.035          0.104   0.6
+ Rest                                           0.022          0.067   0.4
 -----------------------------------------------------------------------------
- Total                                          4.299         91.983 100.0
+ Total                                          6.237         18.734 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    8        244       0.361          7.735   8.4
- PME 3D-FFT             1    8        244       0.033          0.709   0.8
- PME solve Elec         1    8        122       0.121          2.596   2.8
+ PME spread/gather      1    1        244       0.793          2.381  12.7
+ PME 3D-FFT             1    1        244       0.487          1.464   7.8
+ PME solve Elec         1    1        122       0.137          0.410   2.2
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:       33.449        4.299      778.1
+       Time:        6.170        6.237       98.9
                  (ns/day)    (hour/ns)
-Performance:        2.452        9.788
-Finished mdrun on rank 0 Sun Jan  3 18:24:27 2016
+Performance:        1.690       14.200
+Finished mdrun on rank 0 Fri Mar  4 13:49:55 2016
