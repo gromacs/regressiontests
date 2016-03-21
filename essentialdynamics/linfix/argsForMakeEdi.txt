@@ -1,0 +1,1 @@
+-outfrq 1 -linfix 1 -linstep 0.0013

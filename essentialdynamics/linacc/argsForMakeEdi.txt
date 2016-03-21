@@ -1,0 +1,1 @@
+-outfrq 2 -linacc 1 -accdir +1
