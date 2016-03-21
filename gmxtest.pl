@@ -4,6 +4,7 @@ use strict;
 
 use Cwd qw(getcwd);
 use File::Basename;
+use File::Compare;
 use File::Copy qw(copy);
 
 #change directory to script location
@@ -68,16 +69,17 @@ my $mdrun_cmd = "";
 my %progs = ( 'grompp'   => '',
 	      'mdrun'    => '',
 	      'pdb2gmx'  => '',
-	      'check' => '',
+	      'check'    => '',
 	      'editconf' => '',
-              'nmeig' => '' );
+	      'make_edi' => '',
+              'nmeig'    => '' );
 
 # Names for filenames used by individual test cases to limit the
 # amount of parallelism that mdrun can attempt
 my $max_openmp_threads_filename = 'max-openmp-threads';
 my $max_mpi_ranks_filename = "max-mpi-ranks";
 
-# List of all the generic subdirectories of tests; pdb2gmx is treated
+# List of all the generic subdirectories of tests; pdb2gmx and essentialdynamics are treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
 
@@ -312,6 +314,18 @@ sub check_virial($)
     return $nerr_vir;
 }
 
+# Compares two .xvg files and makes sure they do exist!
+sub check_xvg_files {
+    my $fileA  = shift;
+    my $fileB  = shift;
+    my $column = shift;
+    
+    die "$fileA not found!" unless (-f $fileA);
+    die "$fileB not found!" unless (-f $fileB);
+
+    return check_xvg($fileA, $fileB, $column);
+}
+
 sub check_xvg {
     my $refx = shift;
     my $kkk  = shift;
@@ -324,15 +338,23 @@ sub check_xvg {
 	open(KKK,"$kkk") || die "Could not open file '$kkk'\n";
 	my $n = 0;
 	my $header = 0;
+	my $line2;
 	while (my $line = <REF>) {
-	    my $line2=<KKK>;
-            if (not defined($line2)){#REF has more lines
-                $nerr++;
-                next;
-            }
-	    next if $line =~ /^[@#]/;
+        next if $line =~ /^[@#]/;  # Skip non-data entries in REF
+
+        while ($line2 = <KKK> ) {
+            next if $line2 =~ /^[@#]/;  # Skip non-data entries in KKK
+            last;
+        }
+
+        if (not defined($line2)){#REF has more lines with data
+          $nerr++;
+          next;
+        }
+
 	    chomp($line);
 	    chomp($line2);
+
 	    my @tmp = split(' ',$line);
 	    my @tmp2 = split(' ',$line2);
 	    my $x1 = $tmp[$ndx];
@@ -363,7 +385,7 @@ sub check_xvg {
             print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
             $n++;
 	}
-        while (my $line2=<KKK>) {#KKK has more lines
+        while (my $line2=<KKK>) {#KKK has more lines with data
           $nerr++
         }
 	close REF;
@@ -879,7 +901,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/* edsam.xvg sam.edi" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -1051,7 +1073,59 @@ sub test_normal_modes {
   close LOG;
   chdir "..";
 }
+
+sub test_essentialdynamics {
+  my $edifn  = "sam.edi";
+  my $edofn  = "edsam.xvg";
+  my $nerror = 0;
+  my $ntest  = 0;
+
+
+  chdir("essentialdynamics");
+  foreach my $dir ( glob("*") ) {
+    if ( -d $dir) {
+      if ($verbose > 1) {
+        print "Testing $dir . . . ";
+      }
+      $ntest++;
+      chdir $dir;
+      # Make the .tpr file
+      my $grompp_out = "grompp.out";
+      my $grompp_err = "grompp.err";
+      $nerror += do_system("$progs{'grompp'} -maxwarn 1 >$grompp_out 2>$grompp_err");
+
+      # Make the essential dynamics .edi input file
+      my $makeEdi_out = "make_edi.out";
+      my $makeEdi_err = "make_edi.err";
+      $nerror += do_system("echo 0 | $progs{'make_edi'} -f eigenvec.trr -outfrq 1 -linfix 1 -linstep 0.0013 -o $edifn 1>$makeEdi_out 2>$makeEdi_err");
+      # Check whether we get the expected .edi file
+      unless (0 == compare($edifn, "sam_reference.edi")) {
+        $nerror++;
+        die("FAILED: Produced .edi file does not match the reference!");
+      }
+      # Make a short simulation with essential dynamics constraints:
+      my $mdrun_out = "mdrun.out";
+      my $mdrun_err = "mdrun.err";
+      $nerror += do_system("$progs{'mdrun'} -ei $edifn -eo $edofn 1>$mdrun_out 2>$mdrun_err");
+
+      # Compare the essential dynamics output to the reference:
+      printf("Checking essential dynamics output.\n");
+      $nerror += check_xvg_files("edsam_reference.xvg", $edofn, 0);  # Time column
+      $nerror += check_xvg_files("edsam_reference.xvg", $edofn, 2);  # EV1 projection (linfix)
+      chdir "..";
+    }
+  }
   
+  if (0 == $nerror) {
+    print "All $ntest essential dynamics tests PASSED\n";
+  }
+  else {
+    print "Essential dynamics tests FAILED\n";
+  }
+
+  chdir "..";
+}
+
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
@@ -1172,6 +1246,7 @@ sub clean_all {
     unlink("pdb2gmx.log");
     remove_tree(glob "pdb-*");
     chdir("..");
+    cleandirs('essentialdynamics')
 }
 
 sub usage {
@@ -1217,6 +1292,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
         push @work, "test_normal_modes()";
     }
+    elsif ($arg eq 'ed' || $arg eq 'essentialdynamics') {
+        push @work, "test_essentialdynamics()";
+    }
 #    elsif ($arg eq 'tools' ) {
 #	push @work, "test_tools()";
 #    }
@@ -1224,6 +1302,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         map { push @work, "test_dirs('$_')" } @all_dirs;
 	push @work, "test_pdb2gmx()";
 	push @work, "test_normal_modes()";
+	push @work, "test_essentialdynamics()";
 	#push @work, "test_tools()";
     }
     elsif ($arg eq 'clean' ) {
