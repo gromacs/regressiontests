@@ -6,6 +6,7 @@ use Cwd qw(getcwd);
 use File::Basename;
 use File::Copy qw(copy);
 
+
 #change directory to script location
 chdir(dirname(__FILE__));
 use lib dirname(__FILE__);
@@ -68,16 +69,17 @@ my $mdrun_cmd = "";
 my %progs = ( 'grompp'   => '',
 	      'mdrun'    => '',
 	      'pdb2gmx'  => '',
-	      'check' => '',
+	      'check'    => '',
 	      'editconf' => '',
-              'nmeig' => '' );
+	      'make_edi' => '',
+              'nmeig'    => '' );
 
 # Names for filenames used by individual test cases to limit the
 # amount of parallelism that mdrun can attempt
 my $max_openmp_threads_filename = 'max-openmp-threads';
 my $max_mpi_ranks_filename = "max-mpi-ranks";
 
-# List of all the generic subdirectories of tests; pdb2gmx is treated
+# List of all the generic subdirectories of tests; pdb2gmx and essentialdynamics are treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
 
@@ -879,7 +881,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/* edsam.xvg sam.edi" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -1051,7 +1053,222 @@ sub test_normal_modes {
   close LOG;
   chdir "..";
 }
-  
+
+# Compares the data entries of two .xvg files at column 'index'
+sub compare_xvg_column {
+    my ( $refFile, $cmpFile, $index, $absTol ) = @_;
+
+    print("Comparing column #$index of .xvg files $refFile and $cmpFile");
+    open(REF,"$refFile") || die "Could not open file '$refFile'\n";
+    open(CMP,"$cmpFile") || die "Could not open file '$cmpFile'\n";
+
+    my $nLineRef = 0;
+    my $nLineCmp = 0;
+
+    my $nerr   = 0;
+    my $bFirst = 1;
+
+    while (my $refLine = <REF>) {
+        $nLineRef++;
+        next if $refLine =~ /^[@#]/;  # Skip non-data entries in REF
+
+        my $cmpLine;
+        while ($cmpLine = <CMP> ) {
+            $nLineCmp++;
+            next if $cmpLine =~ /^[@#]/;  # Skip non-data entries in CMP
+            last;
+        }
+
+        if (defined($refLine) && defined($cmpLine)) {
+            chomp($refLine);
+            chomp($cmpLine);
+
+            my @refArray = split(' ', $refLine);
+            my @cmpArray = split(' ',$cmpLine);
+            my $xR       = $refArray[$index];
+            my $xC       = $cmpArray[$index];
+            my $absError = abs($xR - $xC);
+ 
+            if ($absError > $absTol) {
+                $nerr++;
+                if ($bFirst) {
+                    print("\nHere follows a list of the lines in $refFile and $cmpFile which did not\n");
+                    print("pass the comparison test within a tolerance of $absTol\n");
+                    print("Lines ref cmp  Reference   This test  Error\n");
+                    $bFirst = 0;
+                }
+                printf("%5d  %5d  %10g  %10g  %10e\n", $nLineRef, $nLineCmp, $xC, $xR, $absError);
+            }
+        } else {
+            $nerr++;
+        }
+    }
+
+    if (!$nerr) {
+        print(" ... all within tolerance of $absTol\n");
+    }
+
+    close REF;
+    close CMP;
+
+    return $nerr;
+}
+
+sub compare_textfiles {
+  my $txtref = shift;
+  my $txtcmp = shift;
+
+  my $nerror = 0;
+
+  open(REF, "$txtref") || die("FAILED: Can not read $txtref");
+  my @ref = <REF>;
+  close REF;
+  open(CMP, "$txtcmp") || die("FAILED: Can not read $txtcmp");
+  my @cmp = <CMP>;
+  close CMP;
+  die("FAILED: test @cmp has different size than reference @ref") if ($#ref != $#cmp);
+  for(my $i = 0; ($i<=$#ref); $i++) {
+    my $r = $ref[$i];
+    my $c = $cmp[$i];
+    
+    if ($r ne $c) {
+      $nerror++;
+      print("Diff line $i of ref ($txtref) and cmp ($txtcmp):\n");
+      print("ref: $r"); 
+      print("cmp: $c");
+    }
+  }
+  return $nerror;
+}
+
+sub run_single_ed_system {
+  my $dir = shift;
+  my $ediArgs = shift;
+
+  my $nerror = 0;
+  my $edifn  = "sam.edi";
+  my $edofn  = "edsam.xvg";
+  my $grompp_out = "grompp.out";
+  my $grompp_err = "grompp.err";
+  my $makeEdi_out = "make_edi.out";
+  my $makeEdi_err = "make_edi.err";
+  my $mdrun_out = "mdrun.out";
+
+  if ($verbose > 1) {
+      print "Testing $dir . . . "
+  }
+  # Make the .tpr file
+  $nerror += do_system("$progs{'grompp'} -maxwarn 1 >$grompp_out 2>$grompp_err");
+
+  # Make the essential dynamics .edi input file
+  unlink $edifn;  # delete old .edi file (if any)
+  $nerror += do_system("echo 0 | $progs{'make_edi'} -f eigenvec.trr $ediArgs -o $edifn 1>$makeEdi_out 2>$makeEdi_err");
+  # Check whether we get the expected .edi file
+  my $nerr = compare_textfiles($edifn, "sam_reference.edi");
+  if ( $nerr > 0 ) {
+        $nerror += $nerr;
+        printf("Essential dynamics '$dir' FAILED: Produced .edi file does not match the reference!\n");
+  } 
+  else {
+    # Make a short simulation with essential dynamics constraints:
+    unlink $edofn;  # delete old essential dynamic .xvg output file (if any)
+    $nerror += do_system("$progs{'mdrun'} -quiet -ei $edifn -eo $edofn 1>$mdrun_out");
+  }
+
+  return $nerror;
+}
+
+
+sub test_essentialdynamics {
+  my $nerror = 0;
+  my $retval = 0;
+  my $ntest  = 0;
+  my $edofn  = "edsam.xvg";
+  my $edref  = "edsam_reference.xvg";
+  my $dir = "";
+
+  chdir("essentialdynamics");
+
+  # ----------------------------------------------------------------------------
+  $ntest++;
+  $dir = "linfix";
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 1 -linfix 1 -linstep 0.0013");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference. This
+      # makes sense only if the system was successfully run, otherwise we will
+      # get a huge bunch of errors.
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.05  );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 2, 1.0e-6);  # 2 = EV1 projection (nm) LINFIX, last value is the tolerance
+  } else {
+  	  $nerror++;
+  }
+  chdir "..";
+  # ----------------------------------------------------------------------------
+  $ntest++;
+  $dir = "linacc";
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 2 -linacc 1 -accdir +1");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.005 );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 2, 5.0e-4);  # 2 = EV projection (nm) LINACC, last value is the tolerance
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+  # ----------------------------------------------------------------------------
+  $ntest++;
+  $dir = "radfix";
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 1 -radfix 1-2 -radstep 0.001");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.01  );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 2, 1.0e-2);  # 2 = EV1 projection RADFIX (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 3, 1.0e-2);  # 3 = EV2 projection RADFIX (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 4, 0.0   );  # 4 = RADFIX radius (nm), must match exactly
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+  # ----------------------------------------------------------------------------
+  $ntest++;
+  $dir = "radacc";
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 3 -radacc 1-2");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 1.0e-5 );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 2, 1.0e-5 );  # 2 = EV1 projection RADACC (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 3, 1.0e-5 );  # 3 = EV2 projection RADACC (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 4, 1.0e-5 );  # 4 = RADACC radius (nm)
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+  # ----------------------------------------------------------------------------
+  $dir = "radcon";
+  # ----------------------------------------------------------------------------
+  $dir = "flood";
+  # ----------------------------------------------------------------------------
+  $dir = "combination"; # linfix 1 linacc 2 mon 1
+  # ----------------------------------------------------------------------------
+
+  if (0 == $nerror) {
+    print "All $ntest essential dynamics tests PASSED\n";
+  }
+  else {
+    print "Essential dynamics tests FAILED with $nerror errors!\n";
+  }
+
+  chdir "..";
+}
+
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
@@ -1172,6 +1389,7 @@ sub clean_all {
     unlink("pdb2gmx.log");
     remove_tree(glob "pdb-*");
     chdir("..");
+    cleandirs('essentialdynamics')
 }
 
 sub usage {
@@ -1217,6 +1435,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
         push @work, "test_normal_modes()";
     }
+    elsif ($arg eq 'ed' || $arg eq 'essentialdynamics') {
+        push @work, "test_essentialdynamics()";
+    }
 #    elsif ($arg eq 'tools' ) {
 #	push @work, "test_tools()";
 #    }
@@ -1224,6 +1445,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         map { push @work, "test_dirs('$_')" } @all_dirs;
 	push @work, "test_pdb2gmx()";
 	push @work, "test_normal_modes()";
+	push @work, "test_essentialdynamics()";
 	#push @work, "test_tools()";
     }
     elsif ($arg eq 'clean' ) {
