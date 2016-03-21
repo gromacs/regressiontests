@@ -1,0 +1,88 @@
+# This file was created Mon Mar 21 17:27:04 2016
+# Created by:
+# GROMACS:      gmx mdrun, VERSION 5.0.8-dev-20160314-feda4b7 (double precision)
+# Executable:   /home/ckutzne/Documents/2016/gmx-reference-double/bin/gmx_d
+# Library dir:  /home/ckutzne/Documents/2016/gmx-reference-double/share/gromacs/top
+# Command line:
+#   gmx_d mdrun -ei sam.edi -eo edsam.xvg
+# gmx_d is part of G R O M A C S:
+#
+# Groningen Machine for Chemical Simulation
+#
+@    title "Essential dynamics / flooding output"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "RMSDs (nm), projections on EVs (nm), ..."
+@TYPE xy
+# Output will be written every 1 step
+#
+# Summary of applied con/restraints for the ED group  
+# Atoms in average structure: 4
+#    monitor  : 0 vecs
+#    LINFIX   : 1 vec
+#    LINACC   : 0 vecs
+#    RADFIX   : 0 vecs
+#    RADACC   : 0 vecs
+#    RADCON   : 0 vecs
+#    FLOODING : 0 vecs  
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "  RMSD to ref (nm)"
+@ s1 legend "  EV1prjLINFIX (nm)"
+#
+# Legend for 0 columns of flooding plus 2 columns of essential dynamics data:
+#       time      RMSD to ref     EV1prjLINFIX
+    0.000000         0.001226     -1.17289e-02
+    0.002000         0.002429     -1.04289e-02
+    0.004000         0.003497     -9.12895e-03
+    0.006000         0.004498     -7.82897e-03
+    0.008000         0.005597     -6.52898e-03
+    0.010000         0.006938     -5.22899e-03
+    0.012000         0.008544     -3.92900e-03
+    0.014000         0.010319     -2.62901e-03
+    0.016000         0.012130     -1.32902e-03
+    0.018000         0.013881     -2.90373e-05
+    0.020000         0.015549      1.27095e-03
+    0.022000         0.017190      2.57093e-03
+    0.024000         0.018873      3.87092e-03
+    0.026000         0.020660      5.17090e-03
+    0.028000         0.022567      6.47089e-03
+    0.030000         0.024571      7.77088e-03
+    0.032000         0.026638      9.07086e-03
+    0.034000         0.028751      1.03709e-02
+    0.036000         0.030912      1.16708e-02
+    0.038000         0.033123      1.29708e-02
+    0.040000         0.035366      1.42708e-02
+    0.042000         0.037561      1.55708e-02
+    0.044000         0.039706      1.68708e-02
+    0.046000         0.041780      1.81708e-02
+    0.048000         0.043793      1.94708e-02
+    0.050000         0.045774      2.07708e-02
+    0.052000         0.047754      2.20707e-02
+    0.054000         0.049747      2.33707e-02
+    0.056000         0.051742      2.46707e-02
+    0.058000         0.053715      2.59707e-02
+    0.060000         0.055635      2.72707e-02
+    0.062000         0.057416      2.85707e-02
+    0.064000         0.059058      2.98707e-02
+    0.066000         0.060507      3.11707e-02
+    0.068000         0.061735      3.24706e-02
+    0.070000         0.062774      3.37706e-02
+    0.072000         0.063744      3.50706e-02
+    0.074000         0.064838      3.63706e-02
+    0.076000         0.066285      3.76706e-02
+    0.078000         0.068310      3.89706e-02
+    0.080000         0.071111      4.02706e-02
+    0.082000         0.074697      4.15706e-02
+    0.084000         0.079242      4.28705e-02
+    0.086000         0.084702      4.41705e-02
+    0.088000         0.090867      4.54706e-02
+    0.090000         0.097337      4.67706e-02
+    0.092000         0.104788      4.80706e-02
+    0.094000         0.109939      4.93706e-02
+    0.096000         0.106753      5.06705e-02
+    0.098000         0.105319      5.19705e-02
+    0.100000         0.103987      5.32705e-02

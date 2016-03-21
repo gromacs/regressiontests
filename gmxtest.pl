@@ -4,6 +4,7 @@ use strict;
 
 use Cwd qw(getcwd);
 use File::Basename;
+use File::Compare;
 use File::Copy qw(copy);
 
 #change directory to script location
@@ -68,16 +69,17 @@ my $mdrun_cmd = "";
 my %progs = ( 'grompp'   => '',
 	      'mdrun'    => '',
 	      'pdb2gmx'  => '',
-	      'check' => '',
+	      'check'    => '',
 	      'editconf' => '',
-              'nmeig' => '' );
+	      'make_edi' => '',
+              'nmeig'    => '' );
 
 # Names for filenames used by individual test cases to limit the
 # amount of parallelism that mdrun can attempt
 my $max_openmp_threads_filename = 'max-openmp-threads';
 my $max_mpi_ranks_filename = "max-mpi-ranks";
 
-# List of all the generic subdirectories of tests; pdb2gmx is treated
+# List of all the generic subdirectories of tests; pdb2gmx and essentialdynamics are treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
 
@@ -879,7 +881,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/* edsam.xvg sam.edi" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -1051,7 +1053,44 @@ sub test_normal_modes {
   close LOG;
   chdir "..";
 }
-  
+
+sub test_essentialdynamics {
+  my $logfn = "essentialdynamics.log";
+  my $edifn = "sam.edi";
+  my $edofn = "edsam.xvg";
+
+  chdir("essentialdynamics");
+  open(LOG,">$logfn")  || die("FAILED: Opening $logfn for writing");
+  foreach my $dir ( glob("*") ) {
+    if ( -d $dir) {
+      chdir $dir;
+      # Make the .tpr file
+      open(PIPE,"$progs{'grompp'} 2>&1 |");
+      print LOG while <PIPE>;
+      close PIPE;
+      # Make the essential dynamics .edi input file
+      open(PIPE,"echo 0 | $progs{'make_edi'} -f eigenvec.trr -outfrq 1 -linfix 1 -linstep 0.0013 -o $edifn 2>&1 |");
+      print LOG while <PIPE>;
+      close PIPE;
+      # Check whether we get the expected .edi file
+      unless (0 == compare($edifn, "sam_reference.edi")) {
+        die("FAILED: Produced .edi file does not match the reference!");
+      }
+      # Make a short simulation with essential dynamics constraints:
+      open(PIPE,"$progs{'mdrun'} -ei $edifn -eo $edofn 2>&1 |");
+      print LOG while <PIPE>;
+      close PIPE;
+      # Compare the essential dynamics output to the reference:
+      check_xvg("edsam_reference.xvg", $edofn, 0);  # Time column
+      check_xvg("edsam_reference.xvg", $edofn, 1);  # RMSD column
+      check_xvg("edsam_reference.xvg", $edofn, 2);  # EV1 projection (linfix)
+      chdir "..";
+    }
+  }
+  close LOG;
+  chdir "..";
+}
+
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
@@ -1172,6 +1211,7 @@ sub clean_all {
     unlink("pdb2gmx.log");
     remove_tree(glob "pdb-*");
     chdir("..");
+    cleandirs('essentialdynamics')
 }
 
 sub usage {
@@ -1217,6 +1257,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
         push @work, "test_normal_modes()";
     }
+    elsif ($arg eq 'ed' || $arg eq 'essentialdynamics') {
+        push @work, "test_essentialdynamics()";
+    }
 #    elsif ($arg eq 'tools' ) {
 #	push @work, "test_tools()";
 #    }
@@ -1224,6 +1267,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         map { push @work, "test_dirs('$_')" } @all_dirs;
 	push @work, "test_pdb2gmx()";
 	push @work, "test_normal_modes()";
+	push @work, "test_essentialdynamics()";
 	#push @work, "test_tools()";
     }
     elsif ($arg eq 'clean' ) {
