@@ -1,0 +1,68 @@
+# This file was created Wed Apr 27 17:23:46 2016
+# Created by:
+# GROMACS:      gmx mdrun, VERSION 5.0.8-dev-20160314-feda4b7 (double precision)
+# Executable:   /home/ckutzne/Documents/2016/gmx-reference-double/bin/gmx_d
+# Library dir:  /home/ckutzne/Documents/2016/gmx-reference-double/share/gromacs/top
+# Command line:
+#   gmx_d mdrun -quiet -ei sam.edi -eo edsam.xvg
+# gmx_d is part of G R O M A C S:
+#
+# Groningen Machine for Chemical Simulation
+#
+@    title "Essential dynamics / flooding output"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "RMSDs (nm), projections on EVs (nm), ..."
+@TYPE xy
+# Output will be written every 2 steps
+#
+# Summary of applied con/restraints for the ED group  
+# Atoms in average structure: 13
+#    monitor  : 0 vecs
+#    LINFIX   : 0 vecs
+#    LINACC   : 0 vecs
+#    RADFIX   : 0 vecs
+#    RADACC   : 0 vecs
+#    RADCON   : 0 vecs
+#    FLOODING : 2 vecs  Efl_null = -50000, harmonic
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "  RMSD to ref (nm)"
+@ s1 legend "  EV1prjFLOOD (nm)"
+@ s2 legend "  EV1-Vfl (kJ/mol)"
+@ s3 legend "  EV1-FLforces (kJ/mol/nm)"
+@ s4 legend "  EV2prjFLOOD (nm)"
+@ s5 legend "  EV2-Vfl (kJ/mol)"
+@ s6 legend "  EV2-FLforces (kJ/mol/nm)"
+#
+# Legend for 7 columns of flooding plus 0 columns of essential dynamics data:
+#       time      RMSD to ref      EV1prjFLOOD          EV1-Vfl     EV1-FLforces      EV2prjFLOOD          EV2-Vfl     EV2-FLforces
+    0.000000         0.254122      8.57459e-03      1.04687e+04      2.45713e+04      3.21008e-01      1.04687e+04     -2.10504e+04
+    0.004000         0.253239      1.88115e-02      1.00376e+04      2.40594e+04      3.12265e-01      1.00376e+04     -2.06133e+04
+    0.008000         0.252585      4.18001e-02      9.12966e+03      2.29100e+04      2.94004e-01      9.12966e+03     -1.97002e+04
+    0.012000         0.251729      7.21243e-02      7.96072e+03      2.13938e+04      2.67901e-01      7.96072e+03     -1.83951e+04
+    0.016000         0.251095      1.04805e-01      6.74700e+03      1.97598e+04      2.37195e-01      6.74700e+03     -1.68598e+04
+    0.020000         0.250589      1.36643e-01      5.62094e+03      1.81678e+04      2.04647e-01      5.62094e+03     -1.52323e+04
+    0.024000         0.250128      1.66581e-01      4.63588e+03      1.66710e+04      1.72519e-01      4.63588e+03     -1.36260e+04
+    0.028000         0.249882      1.94512e-01      3.81191e+03      1.52744e+04      1.43215e-01      3.81191e+03     -1.21608e+04
+    0.032000         0.250022      2.20051e-01      3.15261e+03      1.39974e+04      1.18479e-01      3.15261e+03     -1.09239e+04
+    0.036000         0.250250      2.43376e-01      2.63117e+03      1.28312e+04      9.84723e-02      2.63117e+03     -9.92361e+03
+    0.040000         0.250158      2.65804e-01      2.19248e+03      1.17098e+04      8.12500e-02      2.19248e+03     -9.06250e+03
+    0.044000         0.249998      2.88249e-01      1.79358e+03      1.05876e+04      6.40258e-02      1.79358e+03     -8.20129e+03
+    0.048000         0.250136      3.10342e-01      1.41673e+03      9.48288e+03      4.38729e-02      1.41673e+03     -7.19365e+03
+    0.052000         0.250617      3.31445e-01      1.07048e+03      8.42775e+03      2.00354e-02      1.07048e+03     -6.00177e+03
+    0.056000         0.251724      3.47606e-01      8.35976e+02      7.61971e+03      1.06942e-03      8.35976e+02     -5.05347e+03
+    0.060000         0.253520      3.63284e-01      6.43892e+02      6.83580e+03     -1.59501e-02      6.43892e+02     -4.20249e+03
+    0.064000         0.255145      3.78376e-01      4.94518e+02      6.08119e+03     -2.93716e-02      4.94518e+02     -3.53142e+03
+    0.068000         0.256164      3.92143e-01      3.79623e+02      5.39287e+03     -4.04039e-02      3.79623e+02     -2.97981e+03
+    0.072000         0.257101      4.03758e-01      2.96142e+02      4.81211e+03     -4.91755e-02      2.96142e+02     -2.54122e+03
+    0.076000         0.258381      4.13123e-01      2.36667e+02      4.34384e+03     -5.61925e-02      2.36667e+02     -2.19038e+03
+    0.080000         0.259815      4.22251e-01      1.85162e+02      3.88745e+03     -6.31007e-02      1.85162e+02     -1.84497e+03
+    0.084000         0.261324      4.33536e-01      1.30995e+02      3.32320e+03     -7.13240e-02      1.30995e+02     -1.43380e+03
+    0.088000         0.263189      4.47357e-01      7.84485e+01      2.63216e+03     -8.08522e-02      7.84485e+01     -9.57390e+02
+    0.092000         0.265330      4.61821e-01      3.85320e+01      1.90896e+03     -9.08552e-02      3.85320e+01     -4.57238e+02
+    0.096000         0.267371      4.73470e-01      1.76253e+01      1.32650e+03     -1.01085e-01      1.76253e+01      5.42670e+01
+    0.100000         0.268792      4.81491e-01      1.30129e+01      9.25472e+02     -1.13339e-01      1.30129e+01      6.66926e+02
