@@ -5,6 +5,7 @@ use strict;
 use Cwd qw(getcwd);
 use File::Basename;
 use File::Copy qw(copy);
+use List::Util qw[min max];
 
 #change directory to script location
 chdir(dirname(__FILE__));
@@ -66,18 +67,19 @@ my $parse_cmd = '';
 my $gmx_cmd   = "gmx";
 my $mdrun_cmd = "";
 my %progs = ( 'grompp'   => '',
-	      'mdrun'    => '',
-	      'pdb2gmx'  => '',
-	      'check' => '',
-	      'editconf' => '',
-              'nmeig' => '' );
+              'mdrun'    => '',
+              'pdb2gmx'  => '',
+              'check'    => '',
+              'editconf' => '',
+              'make_edi' => '',
+              'nmeig'    => '' );
 
 # Names for filenames used by individual test cases to limit the
 # amount of parallelism that mdrun can attempt
 my $max_openmp_threads_filename = 'max-openmp-threads';
 my $max_mpi_ranks_filename = "max-mpi-ranks";
 
-# List of all the generic subdirectories of tests; pdb2gmx is treated
+# List of all the generic subdirectories of tests; pdb2gmx and essentialdynamics are treated
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
 
@@ -530,6 +532,8 @@ sub run_mdrun {
         my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
+printf ("COMMAND IS: $command\n"); # hackhack
+
         #do_system using the special callback will return:
         #1 for known error: rerun
         #0 exit value was 0 (and thus this callback wasn't called)
@@ -879,7 +883,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/* edsam.xvg sam.edi" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -1051,7 +1055,422 @@ sub test_normal_modes {
   close LOG;
   chdir "..";
 }
-  
+
+# Compares the data entries of two .xvg files at column 'index'
+sub compare_xvg_column {
+    my ( $refFile, $cmpFile, $index, $absTol ) = @_;
+
+    if ($verbose > 1) {
+        print("Comparing column #$index of .xvg files $refFile and $cmpFile");
+    }
+    open(REF,"$refFile") || die "Could not open file '$refFile'\n";
+    open(CMP,"$cmpFile") || die "Could not open file '$cmpFile'\n";
+
+    my $nLineRef = 0;
+    my $nLineCmp = 0;
+
+    my $nerr   = 0;
+    my $bFirst = 1;
+
+    while (my $refLine = <REF>) {
+        $nLineRef++;
+        next if $refLine =~ /^[@#]/;  # Skip non-data entries in REF
+
+        my $cmpLine;
+        while ($cmpLine = <CMP> ) {
+            $nLineCmp++;
+            next if $cmpLine =~ /^[@#]/;  # Skip non-data entries in CMP
+            last;
+        }
+
+        if (defined($refLine) && defined($cmpLine)) {
+            chomp($refLine);
+            chomp($cmpLine);
+
+            my @refArray = split(' ', $refLine);
+            my @cmpArray = split(' ',$cmpLine);
+            my $xR       = $refArray[$index];
+            my $xC       = $cmpArray[$index];
+            my $absError = abs($xR - $xC);
+ 
+            if ($absError > $absTol) {
+                $nerr++;
+                if ($bFirst) {
+                    print("\nHere follows a list of the lines in $refFile and $cmpFile which did not\n");
+                    print("pass the comparison test within a tolerance of $absTol\n");
+                    print("Lines ref cmp  Reference   This test  Error\n");
+                    $bFirst = 0;
+                }
+                printf("%5d  %5d  %10g  %10g  %10e\n", $nLineRef, $nLineCmp, $xR, $xC, $absError);
+            }
+        } else {
+            $nerr++;
+        }
+    }
+
+    if (!$nerr && $verbose > 1) {
+        print(" ... all within tolerance of $absTol\n");
+    }
+
+    close REF;
+    close CMP;
+
+    return $nerr;
+}
+
+
+# Special routine for the essential dynamics tests. It calculates the radius 
+# from two eigenvectors and compares it to the expected radius.
+sub check_radius {
+    my ( $File, $ind1, $ind2, $indR, $absTol, $bRadcon ) = @_;
+
+    if ($verbose > 1) {
+        print("Checking radius for file $File ... ");
+    }
+
+    open(FILE,"$File") || die "Could not open file '$File'\n";
+
+    my $nLine = 0;
+
+    my $nerr   = 0;
+    my $bFirst = 1;
+    my $bFirst1 = 1;
+    my $ev1start = 0;
+    my $ev2start = 0;
+    my $radstart = 0;
+    my $rad;
+    my $absError;
+
+    while (my $Line = <FILE>) {
+        $nLine++;
+        next if $Line =~ /^[@#]/;  # Skip non-data entries
+
+        if (defined($Line)) {
+            chomp($Line);
+
+            my @Array   = split(' ', $Line);
+            my $ev1     = $Array[$ind1];
+            my $ev2     = $Array[$ind2];
+            my $rad_ref = $Array[$indR];
+            if ($bFirst1) {
+                $ev1start = $ev1;
+                $ev2start = $ev2;
+                $radstart = $rad_ref;
+                $bFirst1  = 0;
+            }
+
+            if ($bRadcon) {
+                # The explicit values given are the projections of the target
+                # structure onto the eigenvectors one and two for the RADCON test case.
+                $rad      = sqrt((-1.30289e-02 - $ev1)**2 + (1.81182e-02 - $ev2)**2);
+            } else {
+                $rad      = sqrt(($ev1 - $ev1start)**2 + ($ev2 - $ev2start)**2) + $radstart;
+            }
+           $absError = abs($rad - $rad_ref);
+
+            if ($absError > $absTol) {
+                $nerr++;
+                if ($bFirst) {
+                    print("\nHere follows a list of the lines in $File which did not\n");
+                    print("pass the comparison test within a tolerance of $absTol\n");
+                    print("Line     Expected      Actual  Error in radius (nm)\n");
+                    $bFirst = 0;
+                }
+                printf("%5d  %10g  %10g  %6.2e\n", $nLine, $rad_ref, $rad, $absError);
+            }
+        } else {
+            $nerr++;
+        }
+    }
+
+    if (!$nerr && $verbose > 1) {
+        print("all values within tolerance of $absTol\n");
+    }
+
+    close FILE;
+
+    return $nerr;
+}
+
+
+# Checks whether the data entries in a .xvg column consistently increase or decrease with time
+# Use $absTol > 0 to allow for slight deviations from monotonicity
+sub check_monotonicity {
+    my ( $File, $iCol, $dir, $absTol ) = @_;
+    $absTol = abs($absTol);  # Ignore sign
+
+    if ($verbose > 1) {
+        print("Checking monotonicity for column $iCol of file $File ... ");
+    }
+
+    open(FILE,"$File") || die "Could not open file '$File'\n";
+
+    my $nLine = 0;
+
+    my $nerr   = 0;
+    my $bFirst = 1;
+    my $extremumSoFar = 0;
+
+    while (my $Line = <FILE>) {
+        $nLine++;
+        next if $Line =~ /^[@#]/;  # Skip non-data entries
+
+        if (defined($Line)) {
+            chomp($Line);
+
+            my @Array   = split(' ', $Line);
+            my $value   = $Array[$iCol];
+            if ($bFirst) {
+                $extremumSoFar = $value;
+                $bFirst = 0;
+            } else {
+                if ($dir >= 0) { # expect monotonically increasing values
+                    $extremumSoFar = max($extremumSoFar, $value);
+                    if ($extremumSoFar - $absTol > $value) {
+                        $nerr++;
+                        printf("ERROR: value in line %d is not increasing monotonically! ", $nLine);
+                        printf("value=%10g  (but already reached %10g before)\n", $value, $extremumSoFar);
+                    }
+                } else { # expect monotonically decreasing values
+                    $extremumSoFar = min($extremumSoFar, $value);
+                    if ($extremumSoFar + $absTol < $value) {
+                        $nerr++;
+                        printf("ERROR: value in line %d is not decreasing monotonically! ", $nLine);
+                        printf("value=%10g  (but already reached %10g)\n", $value, $extremumSoFar);
+                    }
+                }
+            }
+        }
+    }
+
+    close FILE;
+
+    if (!$nerr && $verbose > 1) {
+        my $buf = "increasing";
+        if ($dir < 0) {
+            $buf = "decreasing";
+        }
+        print("values of column $iCol are $buf monotonically.\n");
+    }
+
+    return $nerr;
+}
+
+
+sub compare_textfiles {
+  my $txtref = shift;
+  my $txtcmp = shift;
+
+  my $nerror = 0;
+
+  open(REF, "$txtref") || die("FAILED: Can not read $txtref");
+  my @ref = <REF>;
+  close REF;
+  open(CMP, "$txtcmp") || die("FAILED: Can not read $txtcmp");
+  my @cmp = <CMP>;
+  close CMP;
+  die("FAILED: test @cmp has different size than reference @ref") if ($#ref != $#cmp);
+  for(my $i = 0; ($i<=$#ref); $i++) {
+    my $r = $ref[$i];
+    my $c = $cmp[$i];
+    
+    if ($r ne $c) {
+      $nerror++;
+      print("Diff line $i of ref ($txtref) and cmp ($txtcmp):\n");
+      print("ref: $r"); 
+      print("cmp: $c");
+    }
+  }
+  return $nerror;
+}
+
+# Runs a short MD simulation with essential dynamics (ED) constraints.
+# If $ediArgs is empty, an ED input file must already be present, otherwise
+# gmx make_edi is used to produce one with the provided arguments.
+sub run_single_ed_system {
+  my $dir = shift;
+  my $ediArgs = shift;
+  my $inArgs = shift;
+
+
+  my $nerror = 0;
+  my $edifn  = "sam.edi";
+  my $edofn  = "edsam.xvg";
+  my $grompp_out = "grompp.out";
+  my $grompp_err = "grompp.err";
+  my $makeEdi_out = "make_edi.out";
+  my $makeEdi_err = "make_edi.err";
+  my $mdrun_out = "mdrun.out";
+  my $mdrun_err = "mdrun.err";
+
+#  if ($verbose > 1) {
+      print "Testing $dir . . .\n";
+#  }
+
+  # Make the .tpr file
+  $nerror += do_system("$progs{'grompp'} -maxwarn 1 >$grompp_out 2>$grompp_err");
+
+  if ($ediArgs) {
+      # Make the essential dynamics .edi input file
+      unlink $edifn;  # delete old .edi file (if any)
+#      $nerror += do_system("echo $inArgs | $progs{'make_edi'} -f eigenvec.trr $ediArgs -o $edifn 1>$makeEdi_out 2>$makeEdi_err");
+      $nerror += do_system("echo $inArgs | $progs{'make_edi'} -f eigenvec.trr $ediArgs -o $edifn 1>$makeEdi_out");
+      # Check whether we get the expected .edi file
+      my $nerr = compare_textfiles($edifn, "sam_reference.edi");
+      if ( $nerr > 0 ) {
+          $nerror += $nerr;
+          printf("Essential dynamics '$dir' FAILED: Produced .edi file does not match the reference!\n");
+      }
+  } 
+
+  # Make a short simulation with essential dynamics constraints:
+  if ( $nerror == 0 ) { # If we already had errors, there is no use in going on ...
+    unlink $edofn;  # delete old essential dynamics .xvg output file (if any)
+    printf("params: $tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix\n");
+    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, "-quiet -ei $edifn -eo $edofn 1>$mdrun_out", "grompp.mdp");
+  }
+
+  return $nerror;
+}
+
+
+sub test_essentialdynamics {
+  my $nerror = 0;
+  my $retval = 0;
+  my $ntest  = 0;
+  my $edofn  = "edsam.xvg";
+  my $edref  = "edsam_reference.xvg";
+  my $dir = "";
+
+  chdir("essentialdynamics");
+
+  # ----------------------------------------------------------------------------
+  # Test fixed-step linear expansion along the first eigenvector. In this test,
+  # the projection on EV 1 should increase by 0.0013 nm at every step.
+  $dir = "linfix";
+  $ntest++;
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 1 -linfix 1 -linstep 0.0013", "0");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference. This
+      # makes sense only if the system was successfully run, otherwise we will
+      # get a huge bunch of errors.
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.05  );  # 1 = RMSD (nm), just making sure it does not diverge completely
+      $nerror += compare_xvg_column($edref, $edofn, 2, 1.0e-6);  # 2 = EV1 projection (nm) LINFIX, last value is the tolerance
+  } else {
+  	  $nerror++;
+  }
+  chdir "..";
+
+  # ----------------------------------------------------------------------------
+  # Test acceptance linear expansion along the first eigenvector. In this test,
+  # steps towards a larger value of the projection of EV 1 should be accepted,
+  # others rejected.
+  $dir = "linacc";
+  $ntest++;
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 2 -linacc 1 -accdir +1", "0");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.005 );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 2, 0.001 );  # 2 = EV projection (nm) LINACC, last value is the tolerance
+      $nerror += check_monotonicity($edofn,     2, +1, 5e-7  );  # EV 1 projection must increase monotonically
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+
+  # ----------------------------------------------------------------------------
+  # Test fixed-step radius expansion along eigenvectors 1-2. The reported radius
+  # should increase by 0.002 nm per step in this test.
+  $dir = "radfix";
+  $ntest++;
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 1 -radfix 1-2 -radstep 0.002", "0");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.05  );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 4, 0.0   );  # 4 = RADFIX radius (nm), must match exactly
+      $nerror += check_radius($edofn, 2, 3, 4, 1e-5, 0);         # RADFIX radius is calculated from columns 2-3, must match column 4
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+
+  # ----------------------------------------------------------------------------
+  # Test acceptance radius expansion along eigenvectors 1-2. Steps in the desired 
+  # direction should be accepted, others should be rejected. In effect, the reported
+  # radius should increase monotonically.
+  $dir = "radacc";
+  $ntest++;
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 3 -radacc 1-2", "0");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.05   );  # 1 = RMSD (nm)
+      $nerror += check_radius($edofn, 2, 3, 4, 1e-5, 0);          # RADACC radius is calculated from columns 2-3, must match column 4
+      $nerror += check_monotonicity($edofn, 4, +1, 0.0);          # RADACC radius must increase monotonically
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+
+  # ----------------------------------------------------------------------------
+  # Test acceptance radius contraction along eigenvectors 1-2 towards target structure.
+  $dir = "radcon";
+  $ntest++;
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "-outfrq 1 -radcon 1-2 -tar target.pdb", "0 0");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.05   );  # 1 = RMSD (nm)
+      $nerror += check_radius($edofn, 2, 3, 4, 1e-5, 1);          # RADCON radius is calculated from columns 2-3, must match column 4
+      $nerror += check_monotonicity($edofn, 4, -1, 0.0);          # RADCON radius must decrease monotonically towards zero.
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+
+  # ----------------------------------------------------------------------------
+  # Test flooding in a complex setting, using harmonic restraints on two eigenvectors.
+  $dir = "flooding";
+  $ntest++;
+  chdir $dir || die;
+  $retval = run_single_ed_system($dir, "", "");
+  if ( 0 == $retval ) {
+      # Compare the essential dynamics output to the reference:
+      $nerror += compare_xvg_column($edref, $edofn, 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column($edref, $edofn, 1, 0.05   );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 2, 0.01   );  # 2 = EV 1 projection (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 3, 250    );  # 3 = EV 1 V_fl (kJ/mol) 
+      $nerror += compare_xvg_column($edref, $edofn, 4, 500    );  # 4 = EV 1 fl_forces (kJ/mol/nm) 
+      $nerror += compare_xvg_column($edref, $edofn, 5, 0.01   );  # 5 = EV 2 projection (nm)
+      $nerror += compare_xvg_column($edref, $edofn, 6, 250    );  # 6 = EV 2 V_fl (kJ/mol) 
+      $nerror += compare_xvg_column($edref, $edofn, 7, 500    );  # 7 = EV 2 fl_forces (kJ/mol/nm) 
+  } else {
+      $nerror++;
+  }
+  chdir "..";
+
+  # ----------------------------------------------------------------------------
+
+  if (0 == $nerror) {
+    print "All $ntest essential dynamics tests PASSED\n";
+  }
+  else {
+    print "Essential dynamics tests FAILED with $nerror errors!\n";
+  }
+  print XML "<testsuite name=\"essemtialdynamics\">\n" if ($xml);
+  print XML "</testsuite>\n" if ($xml);
+
+  chdir "..";
+}
+
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
 
@@ -1172,6 +1591,7 @@ sub clean_all {
     unlink("pdb2gmx.log");
     remove_tree(glob "pdb-*");
     chdir("..");
+    cleandirs('essentialdynamics')
 }
 
 sub usage {
@@ -1217,6 +1637,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
         push @work, "test_normal_modes()";
     }
+    elsif ($arg eq 'ed' || $arg eq 'essentialdynamics') {
+        push @work, "test_essentialdynamics()";
+    }
 #    elsif ($arg eq 'tools' ) {
 #	push @work, "test_tools()";
 #    }
@@ -1224,6 +1647,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         map { push @work, "test_dirs('$_')" } @all_dirs;
 	push @work, "test_pdb2gmx()";
 	push @work, "test_normal_modes()";
+	push @work, "test_essentialdynamics()";
 	#push @work, "test_tools()";
     }
     elsif ($arg eq 'clean' ) {
