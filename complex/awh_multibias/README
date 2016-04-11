@@ -1,0 +1,5 @@
+AWH multiple biases.
+
+Tests biasing of two one-dimensional dihedral angle coordinates (phi and psi)
+for alanine dipeptide in vacuum. This also test the periodic AWH grid.
+
