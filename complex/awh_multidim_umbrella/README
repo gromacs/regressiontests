@@ -1,0 +1,6 @@
+AWH multidimensional coordinate bias using an umbrella potential.
+
+Tests biasing of the two-dimensional dihedral angle coordinate (phi, psi)
+for alanine dipeptide in vacuum for awh-potential = umbrella.
+This also test the periodic AWH grid.
+

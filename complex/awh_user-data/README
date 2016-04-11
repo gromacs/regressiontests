@@ -1,0 +1,7 @@
+Initialize AWH bias with user data.
+
+Tests the reading of user data (awh[12]-init.xvg) used for initializing the bias.
+The test case is alanine dipeptide in vaccum with one bias of a one-dimensional
+dihedral angle coordinate and one bias on a two-dimensional dihedral-dihedral
+coordinate. This also test reading into the periodic AWH grid.
+
