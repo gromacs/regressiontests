@@ -1,6 +1,6 @@
-Log file opened on Fri Mar  4 13:49:37 2016
-Host: tcbs14  pid: 5914  rank ID: 0  number of ranks:  1
- :-) GROMACS - gmx mdrun, 2016-dev-20160304-bb93e02-dirty (double precision) (-:
+Log file opened on Mon May  9 11:58:46 2016
+Host: amd2  pid: 19208  rank ID: 0  number of ranks:  1
+   :-) GROMACS - gmx mdrun, 2016-dev-20160508-1c635c6 (double precision) (-:
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,15 +25,15 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2016-dev-20160304-bb93e02-dirty (double precision)
+GROMACS:      gmx mdrun, version 2016-dev-20160508-1c635c6 (double precision)
 Executable:   /nethome/lindahl/Code/gmx/git/development/builds/reference-double/bin/gmx_d
 Data prefix:  /nethome/lindahl/Code/gmx/git/development/gromacs (source tree)
 Command line:
   gmx_d mdrun -notunepme
 
-GROMACS version:    2016-dev-20160304-bb93e02-dirty
-GIT SHA1 hash:      bb93e02b48d8d1d4016459da838fa09b34ca8a35 (dirty)
-Branched from:      3a97f29ae3f4ed6deb18e37fcbdf577285df982f (1 newer local commits)
+GROMACS version:    2016-dev-20160508-1c635c6
+GIT SHA1 hash:      1c635c663e4c77f752a052e1ad03c9fb17c1610e
+Branched from:      de8850ecb7f904e4ffb9b8d64e906f75bf8e189c (1 newer local commits)
 Precision:          double
 Memory model:       64 bit
 MPI library:        none
@@ -43,33 +43,41 @@ SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 TNG support:        enabled
+Hwloc support:      disabled
 Tracing support:    disabled
-Built on:           Fri Mar  4 12:11:41 CET 2016
-Built by:           lindahl@tcbs14 [CMAKE]
-Build OS/arch:      Linux 3.13.0-77-generic x86_64
-Build CPU vendor:   Intel
-Build CPU brand:    Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
-Build CPU family:   6   Model: 63   Stepping: 2
-Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
+Built on:           Mon May  9 10:45:24 CEST 2016
+Built by:           lindahl@amd2 [CMAKE]
+Build OS/arch:      Linux 3.13.0-79-generic x86_64
+Build CPU vendor:   AMD
+Build CPU brand:    AMD Opteron(tm) Processor 6376
+Build CPU family:   21   Model: 2   Stepping: 0
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+C compiler:         /usr/bin/gcc GNU 4.6.4
 C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
-C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
+C++ compiler:       /usr/bin/c++ GNU 4.6.4
 C++ compiler flags:     -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
 
 
-Running on 1 node with total 16 cores, 16 logical cores
+Running on 1 node with total 64 cores, 64 logical cores
 Hardware detected:
   CPU info:
-    Vendor: Intel
-    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
-    Family: 6   Model: 63   Stepping: 2
-    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-    SIMD instructions most likely to fit this hardware: AVX2_256
+    Vendor: AMD
+    Brand:  AMD Opteron(tm) Processor 6376                 
+    Family: 21   Model: 2   Stepping: 0
+    Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+    SIMD instructions most likely to fit this hardware: AVX_128_FMA
     SIMD instructions selected at GROMACS compile time: None
+
+  Hardware topology: Basic
+    Sockets, cores, and logical processors:
+      Socket  0: [   0] [   1] [   2] [   3] [   4] [   5] [   6] [   7] [   8] [   9] [  10] [  11] [  12] [  13] [  14] [  15]
+      Socket  1: [  16] [  17] [  18] [  19] [  20] [  21] [  22] [  23] [  24] [  25] [  26] [  27] [  28] [  29] [  30] [  31]
+      Socket  2: [  32] [  33] [  34] [  35] [  36] [  37] [  38] [  39] [  40] [  41] [  42] [  43] [  44] [  45] [  46] [  47]
+      Socket  3: [  48] [  49] [  50] [  51] [  52] [  53] [  54] [  55] [  56] [  57] [  58] [  59] [  60] [  61] [  62] [  63]
 
 
 Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions most likely to fit this hardware: AVX_128_FMA
 SIMD instructions selected at GROMACS compile time: None
 
 
@@ -353,6 +361,12 @@ Generated table with 3800 data points for LJ6Switch.
 Tabscale = 2000 points/nm
 Generated table with 3800 data points for LJ12Switch.
 Tabscale = 2000 points/nm
+Generated table with 3800 data points for Ewald-Switch.
+Tabscale = 2000 points/nm
+Generated table with 3800 data points for LJ6Switch.
+Tabscale = 2000 points/nm
+Generated table with 3800 data points for LJ12Switch.
+Tabscale = 2000 points/nm
 Generated table with 3800 data points for 1-4 COUL.
 Tabscale = 2000 points/nm
 Generated table with 3800 data points for 1-4 LJ6.
@@ -375,7 +389,7 @@ Max number of graph edges per atom is 4
 Total number of graph edges is 3660
 Initial temperature: 297.99 K
 
-Started mdrun on rank 0 Fri Mar  4 13:49:37 2016
+Started mdrun on rank 0 Mon May  9 11:58:46 2016
            Step           Time
               0        0.00000
 
@@ -394,18 +408,18 @@ Grid: 5 x 5 x 4 cells
            Step           Time
              12        0.00600
 
-Writing checkpoint, step 12 at Fri Mar  4 13:49:38 2016
+Writing checkpoint, step 12 at Mon May  9 11:58:49 2016
 
 
    Energies (kJ/mol)
            Bond          Angle Ryckaert-Bell.          LJ-14     Coulomb-14
-    3.95677e+03    2.39643e+03    1.04451e+02    7.65939e+01    5.51003e+02
+    3.95680e+03    2.39643e+03    1.04451e+02    7.65939e+01    5.51003e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
-    5.73324e+03   -4.16541e+02   -3.91935e+04   -7.07965e+03   -3.38712e+04
+    5.73322e+03   -4.16541e+02   -3.91934e+04   -7.07965e+03   -3.38711e+04
     Kinetic En.   Total Energy  Conserved En.    Temperature Pres. DC (bar)
-    8.70702e+03   -2.51642e+04   -2.51550e+04    2.58093e+02   -2.52677e+02
+    8.70694e+03   -2.51642e+04   -2.51550e+04    2.58091e+02   -2.52677e+02
  Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl    dVbonded/dl
-   -1.25089e+04    0.00000e+00   -5.58237e+00    5.18496e+01   -3.16543e+01
+   -1.25091e+04    0.00000e+00   -5.58243e+00    5.18495e+01   -3.16544e+01
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -415,26 +429,26 @@ Writing checkpoint, step 12 at Fri Mar  4 13:49:38 2016
 
    Energies (kJ/mol)
            Bond          Angle Ryckaert-Bell.          LJ-14     Coulomb-14
-    3.00705e+03    1.25882e+03    9.95388e+01    8.09586e+01    5.52527e+02
+    3.00708e+03    1.25881e+03    9.95392e+01    8.09586e+01    5.52527e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
-    5.74858e+03   -4.16731e+02   -3.78785e+04   -6.73949e+03   -3.42872e+04
+    5.74857e+03   -4.16731e+02   -3.78784e+04   -6.73949e+03   -3.42872e+04
     Kinetic En.   Total Energy  Conserved En.    Temperature Pres. DC (bar)
-    9.10681e+03   -2.51804e+04   -2.51669e+04    2.69944e+02   -2.52908e+02
+    9.10679e+03   -2.51804e+04   -2.51669e+04    2.69943e+02   -2.52908e+02
  Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl    dVbonded/dl
-   -5.98375e+03    0.00000e+00   -2.38008e+00    5.93902e+01   -7.25916e+00
+   -5.98379e+03    0.00000e+00   -2.38011e+00    5.93902e+01   -7.25916e+00
 
           Box-X          Box-Y          Box-Z
     3.28792e+00    3.09988e+00    2.68458e+00
 
    Total Virial (kJ/mol)
-    8.21475e+03   -3.34893e+02   -5.82745e+01
-   -3.34893e+02    8.32495e+03   -1.41933e+00
-   -5.82745e+01   -1.41933e+00    7.39057e+03
+    8.21489e+03   -3.35013e+02   -5.82326e+01
+   -3.35013e+02    8.32481e+03   -1.56963e+00
+   -5.82326e+01   -1.56963e+00    7.39066e+03
 
    Pressure (bar)
-   -6.30911e+03    4.15711e+02    5.05050e+01
-    4.15711e+02   -6.38348e+03   -3.32814e+01
-    5.05050e+01   -3.32814e+01   -5.25866e+03
+   -6.30915e+03    4.15876e+02    5.04478e+01
+    4.15876e+02   -6.38360e+03   -3.31204e+01
+    5.04478e+01   -3.31204e+01   -5.25861e+03
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -477,24 +491,24 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          5       0.051          0.154   4.1
- Force                  1    1         13       0.792          2.391  63.5
- PME mesh               1    1         13       0.329          0.992  26.3
- Write traj.            1    1          2       0.062          0.187   5.0
- Update                 1    1         52       0.004          0.011   0.3
- Rest                                           0.011          0.032   0.9
+ Neighbor search        1    1          5       0.096          0.222   3.7
+ Force                  1    1         13       1.705          3.927  64.8
+ PME mesh               1    1         13       0.768          1.768  29.2
+ Write traj.            1    1          2       0.041          0.095   1.6
+ Update                 1    1         52       0.008          0.019   0.3
+ Rest                                           0.011          0.026   0.4
 -----------------------------------------------------------------------------
- Total                                          1.249          3.768 100.0
+ Total                                          2.630          6.056 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    1         52       0.135          0.407  10.8
- PME 3D-FFT             1    1         52       0.153          0.461  12.2
- PME solve Elec         1    1         26       0.041          0.124   3.3
+ PME spread/gather      1    1         52       0.314          0.723  11.9
+ PME 3D-FFT             1    1         52       0.366          0.843  13.9
+ PME solve Elec         1    1         26       0.087          0.201   3.3
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        1.202        1.249       96.2
+       Time:        2.614        2.630       99.4
                  (ns/day)    (hour/ns)
-Performance:        0.450       53.371
-Finished mdrun on rank 0 Fri Mar  4 13:49:38 2016
+Performance:        0.214      112.402
+Finished mdrun on rank 0 Mon May  9 11:58:49 2016
