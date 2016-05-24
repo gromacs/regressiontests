@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 Log file opened on Tue May 10 15:05:06 2016
 Host: gromacs  pid: 31264  rank ID: 0  number of ranks:  1
              :-) GROMACS - gmx mdrun, 2016-dev-20160510-9bfe40c (-:
+=======
+Log file opened on Tue May 24 10:44:20 2016
+Host: tcbs14  pid: 32493  rank ID: 0  number of ranks:  1
+          :-) GROMACS - gmx mdrun, 2016-beta1-dev-20160524-3a9e67d (-:
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,6 +31,7 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
+<<<<<<< HEAD
 GROMACS:      gmx mdrun, version 2016-dev-20160510-9bfe40c
 Executable:   /nethome/mark/git/master-make-reference/build-cmake-reference-gromacs/install/bin/gmx
 Data prefix:  /nethome/mark/git/master-make-reference/build-cmake-reference-gromacs/install
@@ -34,6 +41,17 @@ Command line:
 GROMACS version:    2016-dev-20160510-9bfe40c
 GIT SHA1 hash:      9bfe40c6db0ad4da91aedb4445a5d9da06c61ffb
 Branched from:      de8850ecb7f904e4ffb9b8d64e906f75bf8e189c (1 newer local commits)
+=======
+GROMACS:      gmx mdrun, version 2016-beta1-dev-20160524-3a9e67d
+Executable:   /nethome/lindahl/Code/gmx/git/development/builds/reference/bin/gmx
+Data prefix:  /nethome/lindahl/Code/gmx/git/development/gromacs (source tree)
+Command line:
+  gmx mdrun -notunepme
+
+GROMACS version:    2016-beta1-dev-20160524-3a9e67d
+GIT SHA1 hash:      3a9e67dd55949e7daaa666e5bc4de95bcfece2c4
+Branched from:      f8a709034c4726936df1817d071899065f5d31f7 (21 newer local commits)
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 Precision:          single
 Memory model:       64 bit
 MPI library:        thread_mpi
@@ -43,11 +61,19 @@ SIMD instructions:  SSE4.1
 FFT library:        fftw-3.3.4-sse2
 RDTSCP usage:       enabled
 TNG support:        enabled
+<<<<<<< HEAD
 Hwloc support:      disabled
 Tracing support:    disabled
 Built on:           Tue May 10 14:38:37 CEST 2016
 Built by:           mark@gromacs [CMAKE]
 Build OS/arch:      Linux 3.13.0-85-generic x86_64
+=======
+Hwloc support:      hwloc-1.9.0
+Tracing support:    disabled
+Built on:           Tue May 24 10:20:55 CEST 2016
+Built by:           lindahl@tcbs14 [CMAKE]
+Build OS/arch:      Linux 3.13.0-86-generic x86_64
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 Build CPU vendor:   Intel
 Build CPU brand:    Intel(R) Core(TM) i7 CPU         920  @ 2.67GHz
 Build CPU family:   6   Model: 26   Stepping: 4
@@ -55,6 +81,7 @@ Build CPU features: apic clfsh cmov cx8 cx16 htt lahf mmx msr nonstop_tsc pdcm p
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:    -msse4.1    -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter  -g -fno-inline 
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
+<<<<<<< HEAD
 C++ compiler flags:  -msse4.1    -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function  -g -fno-inline 
 
 
@@ -78,6 +105,43 @@ Hardware detected:
       Socket  5: [   6]
       Socket  6: [   3]
       Socket  7: [   7]
+=======
+C++ compiler flags:     -std=c++0x  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
+
+
+Running on 1 node with total 8 cores, 16 logical cores
+Hardware detected:
+  CPU info:
+    Vendor: Intel
+    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+    Family: 6   Model: 63   Stepping: 2
+    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    SIMD instructions most likely to fit this hardware: AVX2_256
+    SIMD instructions selected at GROMACS compile time: None
+
+  Hardware topology: Full, with devices
+    Sockets, cores, and logical processors:
+      Socket  0: [   0   8] [   1   9] [   2  10] [   3  11] [   4  12] [   5  13] [   6  14] [   7  15]
+    Numa nodes:
+      Node  0 (16717836288 bytes mem):   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+      Latency:
+               0
+         0  1.00
+    Caches:
+      L1: 32768 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L2: 262144 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L3: 20971520 bytes, linesize 64 bytes, assoc. 20, shared 16 ways
+    PCI devices:
+      0000:02:00.0  Id: 10de:17c2  Class: 0x0300  Numa: 0
+      0000:03:00.0  Id: 10de:17f0  Class: 0x0300  Numa: 0
+      0000:00:19.0  Id: 8086:15a1  Class: 0x0200  Numa: 0
+      0000:00:1f.2  Id: 8086:8d02  Class: 0x0106  Numa: 0
+
+
+Binary not matching hardware - you might be losing performance.
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: None
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -414,11 +478,17 @@ Initialized non-bonded Ewald correction tables, spacing: 8.41e-04 size: 2260
 
 There are 74 atoms and 74 charges for free energy perturbation
 Removing pbc first time
+<<<<<<< HEAD
 Pinning threads with an auto-selected logical core stride of 1
 
 Linking all bonded interactions to atoms
 There are 432 inter charge-group exclusions,
 will use an extra communication step for exclusion forces for PME-Switch
+=======
+
+NOTE: Thread affinity setting failed. This can cause performance degradation.
+      If you think your settings are correct, ask on the gmx-users list.
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 Initial vector of lambda components:[     0.0000     0.0000     1.0000     0.6000     0.6000     0.0000     0.0000 ]
 There are: 2705 Atoms
@@ -426,7 +496,11 @@ Atom distribution over 8 domains: av 338 stddev 15 min 312 max 357
 Grid: 5 x 6 x 4 cells
 Initial temperature: 297.99 K
 
+<<<<<<< HEAD
 Started mdrun on rank 0 Tue May 10 15:05:06 2016
+=======
+Started mdrun on rank 0 Tue May 24 10:44:20 2016
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
            Step           Time
               0        0.00000
 
@@ -452,11 +526,16 @@ DD  step 11  vol min/aver 0.637  load imb.: force 80.5%
            Step           Time
              12        0.00600
 
+<<<<<<< HEAD
 Writing checkpoint, step 12 at Tue May 10 15:05:07 2016
+=======
+Writing checkpoint, step 12 at Tue May 24 10:44:21 2016
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 
    Energies (kJ/mol)
            Bond          Angle Ryckaert-Bell.          LJ-14     Coulomb-14
+<<<<<<< HEAD
     3.95656e+03    2.39635e+03    1.04448e+02    7.65941e+01    5.51003e+02
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
     5.73336e+03   -4.16541e+02   -3.91936e+04   -7.07965e+03   -3.38715e+04
@@ -464,6 +543,15 @@ Writing checkpoint, step 12 at Tue May 10 15:05:07 2016
     8.70738e+03   -2.51641e+04   -2.51549e+04    2.58104e+02   -2.52677e+02
  Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl    dVbonded/dl
    -1.25085e+04    0.00000e+00   -5.56360e+00    5.18498e+01   -3.16542e+01
+=======
+    3.95657e+03    2.39635e+03    1.04448e+02    7.65941e+01    5.51003e+02
+        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
+    5.73337e+03   -4.16541e+02   -3.91937e+04   -7.07965e+03   -3.38716e+04
+    Kinetic En.   Total Energy  Conserved En.    Temperature Pres. DC (bar)
+    8.70738e+03   -2.51642e+04   -2.51550e+04    2.58104e+02   -2.52677e+02
+ Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl    dVbonded/dl
+   -1.25086e+04    0.00000e+00   -5.56228e+00    5.18498e+01   -3.16542e+01
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -477,14 +565,21 @@ Writing checkpoint, step 12 at Tue May 10 15:05:07 2016
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
     5.74865e+03   -4.16731e+02   -3.78785e+04   -6.73948e+03   -3.42874e+04
     Kinetic En.   Total Energy  Conserved En.    Temperature Pres. DC (bar)
+<<<<<<< HEAD
     9.10702e+03   -2.51804e+04   -2.51669e+04    2.69950e+02   -2.52908e+02
  Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl    dVbonded/dl
    -5.98321e+03    0.00000e+00   -2.36062e+00    5.93903e+01   -7.25915e+00
+=======
+    9.10703e+03   -2.51804e+04   -2.51669e+04    2.69950e+02   -2.52908e+02
+ Pressure (bar)    dVremain/dl      dVcoul/dl       dVvdw/dl    dVbonded/dl
+   -5.98321e+03    0.00000e+00   -2.36018e+00    5.93903e+01   -7.25915e+00
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
           Box-X          Box-Y          Box-Z
     3.28792e+00    3.09988e+00    2.68458e+00
 
    Total Virial (kJ/mol)
+<<<<<<< HEAD
     8.21427e+03   -3.35030e+02   -5.83100e+01
    -3.35034e+02    8.32452e+03   -1.13344e+00
    -5.83144e+01   -1.13576e+00    7.39037e+03
@@ -493,6 +588,16 @@ Writing checkpoint, step 12 at Tue May 10 15:05:07 2016
    -6.30891e+03    4.15738e+02    5.05756e+01
     4.15742e+02   -6.38200e+03   -3.36919e+01
     5.05810e+01   -3.36891e+01   -5.25872e+03
+=======
+    8.21428e+03   -3.35030e+02   -5.83105e+01
+   -3.35027e+02    8.32452e+03   -1.13471e+00
+   -5.83094e+01   -1.13563e+00    7.39037e+03
+
+   Pressure (bar)
+   -6.30891e+03    4.15737e+02    5.05748e+01
+    4.15734e+02   -6.38200e+03   -3.36878e+01
+    5.05734e+01   -3.36867e+01   -5.25872e+03
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -546,6 +651,7 @@ On 8 MPI ranks
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
+<<<<<<< HEAD
  Domain decomp.         8    1          5       0.005          0.100   0.5
  DD comm. load          8    1          4       0.000          0.001   0.0
  DD comm. bounds        8    1          4       0.000          0.001   0.0
@@ -575,3 +681,26 @@ On 8 MPI ranks
                  (ns/day)    (hour/ns)
 Performance:        0.611       39.287
 Finished mdrun on rank 0 Tue May 10 15:05:07 2016
+=======
+ Neighbor search        1    1          5       0.051          0.153   3.8
+ Force                  1    1         13       0.850          2.561  63.4
+ PME mesh               1    1         13       0.352          1.061  26.3
+ Write traj.            1    1          2       0.075          0.225   5.6
+ Update                 1    1         52       0.004          0.013   0.3
+ Rest                                           0.009          0.027   0.7
+-----------------------------------------------------------------------------
+ Total                                          1.341          4.040 100.0
+-----------------------------------------------------------------------------
+ Breakdown of PME mesh computation
+-----------------------------------------------------------------------------
+ PME spread/gather      1    1         52       0.130          0.393   9.7
+ PME 3D-FFT             1    1         52       0.148          0.446  11.0
+ PME solve Elec         1    1         26       0.074          0.222   5.5
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:        1.280        1.341       95.4
+                 (ns/day)    (hour/ns)
+Performance:        0.419       57.319
+Finished mdrun on rank 0 Tue May 24 10:44:21 2016
+>>>>>>> a8858ca... Updated reference values for RNG usage fix

@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 Log file opened on Tue May 10 14:23:36 2016
 Host: gromacs  pid: 31611  rank ID: 0  number of ranks:  1
    :-) GROMACS - gmx mdrun, 2016-dev-20160510-c272c35 (double precision) (-:
+=======
+Log file opened on Tue May 24 10:55:38 2016
+Host: tcbs14  pid: 11918  rank ID: 0  number of ranks:  1
+ :-) GROMACS - gmx mdrun, 2016-beta1-dev-20160524-3a9e67d (double precision) (-:
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,6 +31,7 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
+<<<<<<< HEAD
 GROMACS:      gmx mdrun, version 2016-dev-20160510-c272c35 (double precision)
 Executable:   /nethome/mark/git/master-make-reference/build-cmake-reference-double-gromacs/install/bin/gmx_d
 Data prefix:  /nethome/mark/git/master-make-reference/build-cmake-reference-double-gromacs/install
@@ -34,6 +41,17 @@ Command line:
 GROMACS version:    2016-dev-20160510-c272c35
 GIT SHA1 hash:      c272c35605d494bb349f2c5dc17b60d2e68c0ec0
 Branched from:      de8850ecb7f904e4ffb9b8d64e906f75bf8e189c (1 newer local commits)
+=======
+GROMACS:      gmx mdrun, version 2016-beta1-dev-20160524-3a9e67d (double precision)
+Executable:   /nethome/lindahl/Code/gmx/git/development/builds/reference-double/bin/gmx_d
+Data prefix:  /nethome/lindahl/Code/gmx/git/development/gromacs (source tree)
+Command line:
+  gmx_d mdrun -notunepme
+
+GROMACS version:    2016-beta1-dev-20160524-3a9e67d
+GIT SHA1 hash:      3a9e67dd55949e7daaa666e5bc4de95bcfece2c4
+Branched from:      f8a709034c4726936df1817d071899065f5d31f7 (21 newer local commits)
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 Precision:          double
 Memory model:       64 bit
 MPI library:        thread_mpi
@@ -43,11 +61,19 @@ SIMD instructions:  SSE4.1
 FFT library:        fftw-3.3.4-sse2
 RDTSCP usage:       enabled
 TNG support:        enabled
+<<<<<<< HEAD
 Hwloc support:      disabled
 Tracing support:    disabled
 Built on:           Tue May 10 14:12:33 CEST 2016
 Built by:           mark@gromacs [CMAKE]
 Build OS/arch:      Linux 3.13.0-85-generic x86_64
+=======
+Hwloc support:      hwloc-1.9.0
+Tracing support:    disabled
+Built on:           Tue May 24 10:50:03 CEST 2016
+Built by:           lindahl@tcbs14 [CMAKE]
+Build OS/arch:      Linux 3.13.0-86-generic x86_64
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 Build CPU vendor:   Intel
 Build CPU brand:    Intel(R) Core(TM) i7 CPU         920  @ 2.67GHz
 Build CPU family:   6   Model: 26   Stepping: 4
@@ -55,6 +81,7 @@ Build CPU features: apic clfsh cmov cx8 cx16 htt lahf mmx msr nonstop_tsc pdcm p
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:    -msse4.1    -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter  -g -fno-inline 
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
+<<<<<<< HEAD
 C++ compiler flags:  -msse4.1    -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function  -g -fno-inline 
 
 
@@ -78,6 +105,43 @@ Hardware detected:
       Socket  5: [   6]
       Socket  6: [   3]
       Socket  7: [   7]
+=======
+C++ compiler flags:     -std=c++0x  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
+
+
+Running on 1 node with total 8 cores, 16 logical cores
+Hardware detected:
+  CPU info:
+    Vendor: Intel
+    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+    Family: 6   Model: 63   Stepping: 2
+    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    SIMD instructions most likely to fit this hardware: AVX2_256
+    SIMD instructions selected at GROMACS compile time: None
+
+  Hardware topology: Full, with devices
+    Sockets, cores, and logical processors:
+      Socket  0: [   0   8] [   1   9] [   2  10] [   3  11] [   4  12] [   5  13] [   6  14] [   7  15]
+    Numa nodes:
+      Node  0 (16717836288 bytes mem):   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+      Latency:
+               0
+         0  1.00
+    Caches:
+      L1: 32768 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L2: 262144 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L3: 20971520 bytes, linesize 64 bytes, assoc. 20, shared 16 ways
+    PCI devices:
+      0000:02:00.0  Id: 10de:17c2  Class: 0x0300  Numa: 0
+      0000:03:00.0  Id: 10de:17f0  Class: 0x0300  Numa: 0
+      0000:00:19.0  Id: 8086:15a1  Class: 0x0200  Numa: 0
+      0000:00:1f.2  Id: 8086:8d02  Class: 0x0106  Numa: 0
+
+
+Binary not matching hardware - you might be losing performance.
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: None
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -341,6 +405,7 @@ System total charge: 0.000
 Potential shift: LJ r^-12: 0.000e+00 r^-6: 0.000e+00, Coulomb -0e+00
 Removing pbc first time
 
+<<<<<<< HEAD
 NOTE: The number of threads is not equal to the number of (logical) cores
       and the -pin option is set to auto: will not pin thread to cores.
       This can lead to significant performance degradation.
@@ -348,6 +413,10 @@ NOTE: The number of threads is not equal to the number of (logical) cores
 
 
 Linking all bonded interactions to atoms
+=======
+NOTE: Thread affinity setting failed. This can cause performance degradation.
+      If you think your settings are correct, ask on the gmx-users list.
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 Center of mass motion removal mode is Linear
 We have the following groups for center of mass motion removal:
@@ -357,7 +426,11 @@ Atom distribution over 4 domains: av 125 stddev 5 min 118 max 133
 Grid: 5 x 4 x 4 cells
 Initial temperature: 263.399 K
 
+<<<<<<< HEAD
 Started mdrun on rank 0 Tue May 10 14:23:36 2016
+=======
+Started mdrun on rank 0 Tue May 24 10:55:38 2016
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
            Step           Time
               0        0.00000
 
@@ -375,7 +448,11 @@ DD  step 19 load imb.: force  3.8%
            Step           Time
              20        0.00400
 
+<<<<<<< HEAD
 Writing checkpoint, step 20 at Tue May 10 14:23:36 2016
+=======
+Writing checkpoint, step 20 at Tue May 24 10:55:38 2016
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 
 
    Energies (kJ/mol)
@@ -443,6 +520,7 @@ On 4 MPI ranks
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
+<<<<<<< HEAD
  Domain decomp.         4    1          3       0.001          0.006   3.5
  DD comm. load          4    1          2       0.000          0.000   0.1
  Neighbor search        4    1          3       0.003          0.033  19.4
@@ -455,6 +533,15 @@ On 4 MPI ranks
  Rest                                           0.001          0.013   7.4
 -----------------------------------------------------------------------------
  Total                                          0.015          0.169 100.0
+=======
+ Neighbor search        1    1          3       0.013          0.041  23.7
+ Force                  1    1         21       0.003          0.010   5.5
+ Write traj.            1    1          2       0.032          0.103  58.9
+ Update                 1    1         21       0.001          0.002   1.2
+ Rest                                           0.006          0.019  10.7
+-----------------------------------------------------------------------------
+ Total                                          0.055          0.175 100.0
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
 -----------------------------------------------------------------------------
 
 NOTE: 42 % of the run time was spent communicating energies,
@@ -462,7 +549,14 @@ NOTE: 42 % of the run time was spent communicating energies,
 
 
                Core t (s)   Wall t (s)        (%)
+<<<<<<< HEAD
        Time:        0.057        0.015      370.1
                  (ns/day)    (hour/ns)
 Performance:       23.416        1.025
 Finished mdrun on rank 0 Tue May 10 14:23:36 2016
+=======
+       Time:        0.027        0.055       49.1
+                 (ns/day)    (hour/ns)
+Performance:        6.630        3.620
+Finished mdrun on rank 0 Tue May 24 10:55:38 2016
+>>>>>>> a8858ca... Updated reference values for RNG usage fix
