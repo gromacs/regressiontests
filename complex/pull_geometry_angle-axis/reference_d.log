@@ -1,6 +1,6 @@
-Log file opened on Fri Mar 18 12:08:28 2016
-Host: tcbl07  pid: 15657  rank ID: 0  number of ranks:  1
-   :-) GROMACS - gmx mdrun, 2016-dev-20160318-0d704ab (double precision) (-:
+Log file opened on Tue May 24 13:27:05 2016
+Host: tcbs14  pid: 18393  rank ID: 0  number of ranks:  1
+ :-) GROMACS - gmx mdrun, 2016-beta1-dev-20160524-3a9e67d (double precision) (-:
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,58 +25,71 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2016-dev-20160318-0d704ab (double precision)
-Executable:   /data/viveca/programs/awh/bin/gmx_d
-Data prefix:  /data/viveca/programs/awh/bin
+GROMACS:      gmx mdrun, version 2016-beta1-dev-20160524-3a9e67d (double precision)
+Executable:   /nethome/lindahl/Code/gmx/git/development/builds/reference-double/bin/gmx_d
+Data prefix:  /nethome/lindahl/Code/gmx/git/development/gromacs (source tree)
 Command line:
   gmx_d mdrun -notunepme
 
-GROMACS version:    2016-dev-20160318-0d704ab
-GIT SHA1 hash:      0d704ab68677385fb2962b350ce3bb881f0cc109
-Branched from:      1fca08ee6fd181b99a0eaadd5e3625ac5af28f09 (3 newer local commits)
+GROMACS version:    2016-beta1-dev-20160524-3a9e67d
+GIT SHA1 hash:      3a9e67dd55949e7daaa666e5bc4de95bcfece2c4
+Branched from:      f8a709034c4726936df1817d071899065f5d31f7 (21 newer local commits)
 Precision:          double
 Memory model:       64 bit
-MPI library:        thread_mpi
-OpenMP support:     enabled (GMX_OPENMP_MAX_THREADS = 32)
+MPI library:        none
+OpenMP support:     disabled
 GPU support:        disabled
-SIMD instructions:  AVX2_256
-FFT library:        fftw-3.3.4-sse2-avx
-RDTSCP usage:       disabled
+SIMD instructions:  NONE
+FFT library:        fftpack (built-in)
+RDTSCP usage:       enabled
 TNG support:        enabled
-Hwloc support:      disabled
+Hwloc support:      hwloc-1.9.0
 Tracing support:    disabled
-Built on:           Wed Feb 24 23:02:24 CET 2016
-Built by:           viveca@tcbl07 [CMAKE]
-Build OS/arch:      Linux 3.13.0-77-generic x86_64
+Built on:           Tue May 24 10:50:03 CEST 2016
+Built by:           lindahl@tcbs14 [CMAKE]
+Build OS/arch:      Linux 3.13.0-86-generic x86_64
 Build CPU vendor:   Intel
-Build CPU brand:    Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz
-Build CPU family:   6   Model: 60   Stepping: 3
-Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma hle htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp rtm sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-C compiler:         /usr/bin/gcc-4.8 GNU 4.8.4
-C compiler flags:    -march=core-avx2    -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter  -O0 -g
-C++ compiler:       /usr/bin/g++-4.8 GNU 4.8.4
-C++ compiler flags:  -march=core-avx2    -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function  -O0 -g
+Build CPU brand:    Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+Build CPU family:   6   Model: 63   Stepping: 2
+Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
+C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
+C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
+C++ compiler flags:     -std=c++0x  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
 
 
-Running on 1 node with total 8 cores, 8 logical cores
+Running on 1 node with total 8 cores, 16 logical cores
 Hardware detected:
   CPU info:
     Vendor: Intel
-    Brand:  Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz
-    Family: 6   Model: 60   Stepping: 3
-    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma hle htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp rtm sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
+    Family: 6   Model: 63   Stepping: 2
+    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
     SIMD instructions most likely to fit this hardware: AVX2_256
-    SIMD instructions selected at GROMACS compile time: AVX2_256
+    SIMD instructions selected at GROMACS compile time: None
 
-  Hardware topology: Basic
+  Hardware topology: Full, with devices
     Sockets, cores, and logical processors:
-      Socket  0: [   0   4] [   1   5] [   2   6] [   3   7]
+      Socket  0: [   0   8] [   1   9] [   2  10] [   3  11] [   4  12] [   5  13] [   6  14] [   7  15]
+    Numa nodes:
+      Node  0 (16717836288 bytes mem):   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+      Latency:
+               0
+         0  1.00
+    Caches:
+      L1: 32768 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L2: 262144 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L3: 20971520 bytes, linesize 64 bytes, assoc. 20, shared 16 ways
+    PCI devices:
+      0000:02:00.0  Id: 10de:17c2  Class: 0x0300  Numa: 0
+      0000:03:00.0  Id: 10de:17f0  Class: 0x0300  Numa: 0
+      0000:00:19.0  Id: 8086:15a1  Class: 0x0200  Numa: 0
+      0000:00:1f.2  Id: 8086:8d02  Class: 0x0106  Numa: 0
 
 
-The current CPU can measure timings more accurately than the code in
-gmx mdrun was configured to use. This might affect your simulation
-speed as accurate timings are needed for load-balancing.
-Please consider rebuilding gmx mdrun with the GMX_USE_RDTSCP=ON CMake option.
+Binary not matching hardware - you might be losing performance.
+SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions selected at GROMACS compile time: None
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -349,8 +362,8 @@ annealing-npoints:           0
    nfreeze:           N           N           N
    energygrp-flags[  0]: 0
 
-Using 1 MPI thread
-Using 8 OpenMP threads 
+
+NOTE: GROMACS was compiled without OpenMP and (thread-)MPI support, can only use a single CPU core
 
 Will do PME sum in reciprocal space for electrostatic interactions.
 
@@ -381,12 +394,26 @@ Potential shift: LJ r^-12: -1.000e+00 r^-6: -1.000e+00, Ewald -1.000e-06
 Initialized non-bonded Ewald correction tables, spacing: 8.87e-04 size: 1129
 
 
-Using SIMD 4x4 non-bonded kernels
+Using plain C 4x4 non-bonded kernels
+
+
+WARNING: Using the slow plain C kernels. This should
+not happen during routine usage on supported platforms.
+
 
 Using Lorentz-Berthelot Lennard-Jones combination rule
 
 Removing pbc first time
-Pinning threads with an auto-selected logical core stride of 1
+
+NOTE: Thread affinity setting failed. This can cause performance degradation.
+      If you think your settings are correct, ask on the gmx-users list.
+
+
+Will apply potential COM pulling
+with 1 pull coordinate and 4 groups
+Pull group 1:     1 atoms, mass    12.010
+Pull group 2:     1 atoms, mass    12.010
+Pull group 3:     1 atoms, mass    12.010
 
 Initializing LINear Constraint Solver
 
@@ -397,12 +424,6 @@ J. Comp. Chem. 18 (1997) pp. 1463-1472
 -------- -------- --- Thank You --- -------- --------
 
 The number of constraints is 12
-
-Will apply potential COM pulling
-with 1 pull coordinate and 4 groups
-Pull group 1:     1 atoms, mass    12.010
-Pull group 2:     1 atoms, mass    12.010
-Pull group 3:     1 atoms, mass    12.010
 Center of mass motion removal mode is Linear
 We have the following groups for center of mass motion removal:
   0:  System
@@ -421,7 +442,7 @@ Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 1.74e-06
 Initial temperature: 374.23 K
 
-Started mdrun on rank 0 Fri Mar 18 12:08:29 2016
+Started mdrun on rank 0 Tue May 24 13:27:05 2016
            Step           Time
               0        0.00000
 
@@ -438,18 +459,18 @@ Started mdrun on rank 0 Fri Mar 18 12:08:29 2016
            Step           Time
              20        0.04000
 
-Writing checkpoint, step 20 at Fri Mar 18 12:08:29 2016
+Writing checkpoint, step 20 at Tue May 24 13:27:05 2016
 
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    1.14844e+01    3.05035e+01    4.37063e+01    1.48821e+00    1.32598e+01
+    1.19881e+01    3.47905e+01    4.50007e+01    1.73941e+00    1.33504e+01
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.02334e+02   -6.88685e+00   -6.02274e-02   -3.50330e+02    1.44408e+01
+    2.02910e+02   -6.85763e+00   -6.02274e-02   -3.50737e+02    1.44344e+01
    COM Pull En.      Potential    Kinetic En.   Total Energy  Conserved En.
-    2.06825e+00   -3.79912e+01    5.27841e+01    1.47929e+01    3.11934e+01
+    2.48188e+00   -3.09593e+01    5.99064e+01    2.89470e+01    3.15193e+01
     Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-    2.48960e+02   -6.62240e-02    2.55197e+02    2.45266e-06
+    2.82552e+02   -6.62240e-02    2.62809e+02    2.87402e-06
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -459,23 +480,23 @@ Writing checkpoint, step 20 at Fri Mar 18 12:08:29 2016
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    8.25121e+00    3.05468e+01    4.31580e+01    2.33813e+00    1.56653e+01
+    8.72126e+00    3.26903e+01    4.38571e+01    2.56103e+00    1.58375e+01
      Coulomb-14        LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.
-    2.02426e+02   -7.06508e+00   -6.02274e-02   -3.49098e+02    1.49188e+01
+    2.02528e+02   -7.06698e+00   -6.02274e-02   -3.49143e+02    1.49353e+01
    COM Pull En.      Potential    Kinetic En.   Total Energy  Conserved En.
-    1.57215e+00   -3.73466e+01    5.80998e+01    2.07532e+01    3.21233e+01
+    1.81307e+00   -3.33272e+01    6.32553e+01    2.99281e+01    3.19492e+01
     Temperature Pres. DC (bar) Pressure (bar)   Constr. rmsd
-    2.74031e+02   -6.62240e-02    1.10876e+02    0.00000e+00
+    2.98348e+02   -6.62240e-02    1.13384e+02    0.00000e+00
 
    Total Virial (kJ/mol)
-   -2.70580e+01    7.71501e+00   -5.52689e+00
-    7.71501e+00   -1.06729e+02   -3.84806e+00
-    8.70886e+00    3.65805e+01    2.56646e+01
+   -2.74433e+01    8.03563e+00   -4.63700e+00
+    8.03563e+00   -1.08641e+02   -4.67851e+00
+    1.06804e+01    3.87394e+01    2.93575e+01
 
    Pressure (bar)
-    1.03539e+02   -1.15701e+01    1.21445e+01
-   -1.15701e+01    2.47438e+02    3.61228e+00
-   -1.63428e+01   -7.72897e+01   -1.83479e+01
+    1.09209e+02   -1.14100e+01    1.06813e+01
+   -1.14100e+01    2.53873e+02    4.91629e+00
+   -1.99704e+01   -8.19677e+01   -2.29294e+01
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -515,42 +536,32 @@ Writing checkpoint, step 20 at Fri Mar 18 12:08:29 2016
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
 
-On 1 MPI rank, each using 8 OpenMP threads
+On 1 MPI rank
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    8          1       0.000          0.007   0.1
- Force                  1    8         21       0.002          0.042   0.5
- PME mesh               1    8         21       0.007          0.197   2.4
- NB X/F buffer ops.     1    8         41       0.000          0.003   0.0
- COM pull force         1    8         21       0.000          0.003   0.0
- Write traj.            1    8         21       0.293          7.971  96.6
- Update                 1    8         21       0.000          0.003   0.0
- Constraints            1    8         21       0.000          0.009   0.1
- Rest                                           0.001          0.018   0.2
+ Neighbor search        1    1          1       0.000          0.001   0.2
+ Force                  1    1         21       0.002          0.007   1.8
+ PME mesh               1    1         21       0.064          0.200  49.4
+ NB X/F buffer ops.     1    1         41       0.000          0.000   0.0
+ COM pull force         1    1         21       0.000          0.000   0.1
+ Write traj.            1    1         21       0.056          0.176  43.4
+ Update                 1    1         21       0.000          0.000   0.1
+ Constraints            1    1         21       0.000          0.001   0.2
+ Rest                                           0.006          0.019   4.8
 -----------------------------------------------------------------------------
- Total                                          0.304          8.253 100.0
+ Total                                          0.129          0.405 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread/gather      1    8         42       0.002          0.046   0.6
- PME 3D-FFT             1    8         42       0.002          0.043   0.5
- PME solve Elec         1    8         21       0.004          0.106   1.3
------------------------------------------------------------------------------
- Breakdown of PP computation
------------------------------------------------------------------------------
- NS grid local          1    8          1       0.000          0.003   0.0
- NS search local        1    8          1       0.000          0.003   0.0
- Bonded F               1    8         21       0.000          0.010   0.1
- Listed buffer ops.     1    8         21       0.000          0.007   0.1
- Nonbonded F            1    8         21       0.001          0.018   0.2
- NB X buffer ops.       1    8         20       0.000          0.001   0.0
- NB F buffer ops.       1    8         21       0.000          0.002   0.0
+ PME spread/gather      1    1         42       0.006          0.018   4.4
+ PME 3D-FFT             1    1         42       0.045          0.142  35.1
+ PME solve Elec         1    1         21       0.013          0.040   9.9
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.098        0.304       32.3
+       Time:        0.075        0.129       58.1
                  (ns/day)    (hour/ns)
-Performance:       11.956        2.007
-Finished mdrun on rank 0 Fri Mar 18 12:08:29 2016
+Performance:       28.085        0.855
+Finished mdrun on rank 0 Tue May 24 13:27:06 2016
