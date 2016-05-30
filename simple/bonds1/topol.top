@@ -54,10 +54,10 @@
 
 [ dihedrals ]
 ;  ai    aj    ak    al funct   c0      c1           c2
-#ifdef DIH
+#ifdef DIHS
     1     2     3     4     1  	0.0 	5.857600e+00 3.000000e+00 
 #endif
-#ifdef RYCKAERT
+#ifdef RYCKAERTS
     1     2     3     4     3 9.2789   12.156  -13.120 -3.0597 26.240 -31.495
 #endif
 

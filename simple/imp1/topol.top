@@ -95,8 +95,4 @@ Urea
 
 [ molecules ]
 ; molecule 	number
-#ifdef MOL1
 Urea		1
-#else
-Urea		36
-#endif
