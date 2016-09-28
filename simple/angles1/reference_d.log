@@ -1,6 +1,6 @@
-Log file opened on Fri Mar  4 13:47:53 2016
-Host: tcbs14  pid: 4770  rank ID: 0  number of ranks:  1
- :-) GROMACS - gmx mdrun, 2016-dev-20160304-bb93e02-dirty (double precision) (-:
+Log file opened on Fri Sep 30 13:39:21 2016
+Host: bs-nix-amd  pid: 7979  rank ID: 0  number of ranks:  1
+  :-) GROMACS - gmx mdrun, 2016.1-dev-20160930-a782075 (double precision) (-:
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
@@ -25,15 +25,16 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2016-dev-20160304-bb93e02-dirty (double precision)
-Executable:   /nethome/lindahl/Code/gmx/git/development/builds/reference-double/bin/gmx_d
-Data prefix:  /nethome/lindahl/Code/gmx/git/development/gromacs (source tree)
+GROMACS:      gmx mdrun, version 2016.1-dev-20160930-a782075 (double precision)
+Executable:   /home/jenkins/workspace/Regressiontests_update_2016/gromacs/bin/gmx_d
+Data prefix:  /home/jenkins/workspace/Regressiontests_update_2016/gromacs (source tree)
+Working dir:  /mnt/workspace/Regressiontests_update_2016/regressiontests/simple/angles1
 Command line:
   gmx_d mdrun -notunepme
 
-GROMACS version:    2016-dev-20160304-bb93e02-dirty
-GIT SHA1 hash:      bb93e02b48d8d1d4016459da838fa09b34ca8a35 (dirty)
-Branched from:      3a97f29ae3f4ed6deb18e37fcbdf577285df982f (1 newer local commits)
+GROMACS version:    2016.1-dev-20160930-a782075
+GIT SHA1 hash:      a782075c9b229e54dd109bd0b07a5bb1b7a93786
+Branched from:      30ee01e890001287096b747672a6332d120ef570 (1 newer local commits)
 Precision:          double
 Memory model:       64 bit
 MPI library:        none
@@ -43,33 +44,52 @@ SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
 RDTSCP usage:       enabled
 TNG support:        enabled
+Hwloc support:      hwloc-1.11.0
 Tracing support:    disabled
-Built on:           Fri Mar  4 12:11:41 CET 2016
-Built by:           lindahl@tcbs14 [CMAKE]
-Build OS/arch:      Linux 3.13.0-77-generic x86_64
-Build CPU vendor:   Intel
-Build CPU brand:    Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
-Build CPU family:   6   Model: 63   Stepping: 2
-Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+Built on:           Fri Sep 30 13:37:11 CEST 2016
+Built by:           jenkins@bs-nix-amd [CMAKE]
+Build OS/arch:      Linux 3.19.0-65-generic x86_64
+Build CPU vendor:   AMD
+Build CPU brand:    AMD FX(tm)-8350 Eight-Core Processor
+Build CPU family:   21   Model: 2   Stepping: 0
+Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
 C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
 C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
 C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:     -std=c++0x -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
+C++ compiler flags:     -std=c++0x  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas  -O0 -g
 
 
-Running on 1 node with total 16 cores, 16 logical cores
+Running on 1 node with total 8 cores, 8 logical cores
 Hardware detected:
   CPU info:
-    Vendor: Intel
-    Brand:  Intel(R) Core(TM) i7-5960X CPU @ 3.00GHz
-    Family: 6   Model: 63   Stepping: 2
-    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
-    SIMD instructions most likely to fit this hardware: AVX2_256
+    Vendor: AMD
+    Brand:  AMD FX(tm)-8350 Eight-Core Processor           
+    Family: 21   Model: 2   Stepping: 0
+    Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
+    SIMD instructions most likely to fit this hardware: AVX_128_FMA
     SIMD instructions selected at GROMACS compile time: None
+
+  Hardware topology: Full, with devices
+    Sockets, cores, and logical processors:
+      Socket  0: [   0] [   1] [   2] [   3] [   4] [   5] [   6] [   7]
+    Numa nodes:
+      Node  0 (8090742784 bytes mem):   0   1   2   3   4   5   6   7
+      Latency:
+               0
+         0  1.00
+    Caches:
+      L1: 16384 bytes, linesize 64 bytes, assoc. 4, shared 1 ways
+      L2: 2097152 bytes, linesize 64 bytes, assoc. 16, shared 2 ways
+      L3: 8388608 bytes, linesize 64 bytes, assoc. 64, shared 8 ways
+    PCI devices:
+      0000:01:05.0  Id: 1002:9616  Class: 0x0300  Numa: 0
+      0000:02:00.0  Id: 1969:1083  Class: 0x0200  Numa: 0
+      0000:00:11.0  Id: 1002:4391  Class: 0x0106  Numa: 0
+      0000:00:14.1  Id: 1002:439c  Class: 0x0101  Numa: 0
 
 
 Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX2_256
+SIMD instructions most likely to fit this hardware: AVX_128_FMA
 SIMD instructions selected at GROMACS compile time: None
 
 
@@ -307,6 +327,11 @@ The electrostatics potential has its minimum at r = 0.8
 System total charge: 0.000
 Potential shift: LJ r^-12: -1.455e+01 r^-6: -3.815e+00
 Removing pbc first time
+
+NOTE: Thread affinity setting failed. This can cause performance degradation.
+      If you think your settings are correct, ask on the gmx-users list.
+
+Intra-simulation communication will occur every 1 steps.
 Center of mass motion removal mode is Linear
 We have the following groups for center of mass motion removal:
   0:  rest
@@ -317,7 +342,7 @@ Max number of graph edges per atom is 2
 Total number of graph edges is 6
 Initial temperature: 323.297 K
 
-Started mdrun on rank 0 Fri Mar  4 13:47:53 2016
+Started mdrun on rank 0 Fri Sep 30 13:39:21 2016
            Step           Time
               0        0.00000
 
@@ -332,7 +357,7 @@ Grid: 3 x 3 x 3 cells
            Step           Time
              20        0.00400
 
-Writing checkpoint, step 20 at Fri Mar  4 13:47:53 2016
+Writing checkpoint, step 20 at Fri Sep 30 13:39:21 2016
 
 
    Energies (kJ/mol)
@@ -394,16 +419,16 @@ On 1 MPI rank
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
  Neighbor search        1    1          3       0.000          0.000   0.5
- Force                  1    1         21       0.000          0.000   0.4
- Write traj.            1    1          2       0.024          0.080  87.6
- Update                 1    1         21       0.000          0.000   0.1
- Rest                                           0.003          0.010  11.4
+ Force                  1    1         21       0.000          0.000   0.7
+ Write traj.            1    1          2       0.013          0.053  94.4
+ Update                 1    1         21       0.000          0.000   0.2
+ Rest                                           0.001          0.002   4.3
 -----------------------------------------------------------------------------
- Total                                          0.028          0.092 100.0
+ Total                                          0.014          0.056 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.004        0.028       14.3
+       Time:        0.014        0.014      100.0
                  (ns/day)    (hour/ns)
-Performance:       13.010        1.845
-Finished mdrun on rank 0 Fri Mar  4 13:47:53 2016
+Performance:       25.950        0.925
+Finished mdrun on rank 0 Fri Sep 30 13:39:21 2016
