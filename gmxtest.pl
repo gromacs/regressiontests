@@ -572,7 +572,7 @@ sub test_case {
     my $grompp_mdp = "$input_dir/grompp.mdp";
     my $grompp_out = "grompp.out";
     my $grompp_err = "grompp.err";
-    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >$grompp_out 2>$grompp_err");
+    $nerror = do_system("$progs{'grompp'} -f $grompp_mdp -c $input_dir/conf -r $input_dir/conf -p $input_dir/topol -maxwarn 10 $ndx >$grompp_out 2>$grompp_err");
 
     my @error_detail;
     if (! -f "topol.tpr") {
