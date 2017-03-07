@@ -66,6 +66,7 @@ my $mpirun    = 'mpirun';
 my $parse_cmd = '';
 my $gmx_cmd   = "gmx";
 my $mdrun_cmd = "";
+my $mdrun_supports_pme_on_gpus = 0;
 my %progs = ( 'grompp'   => '',
               'mdrun'    => '',
               'pdb2gmx'  => '',
@@ -85,13 +86,25 @@ my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra'
 
 sub add_gpu_id
 {
-    my ($gpuid_string, $pp_ranks) = @_;
+    my ($gpuid_string, $pp_ranks, $pme_option) = @_;
 
-    # we may or may not be using GPUS and/or separate PME ranks
-    # depending on the gmxtest.pl command line and the test involved,
-    # so the number of PP ranks has to be used to choose a sensible
-    # subset of the gpuid string.
-    return ($gpuid_string && $pp_ranks) ? "-gpu_id " . substr($gpuid_string, 0, $pp_ranks) : "";
+    my $gpuid_option = "";
+    if ($gpuid_string && $pp_ranks) {
+        # This testing process requires GPU execution and has
+        # specified a task decomposition that must be implemented
+        # (which in turn implies that PME is active). The number of PP
+        # ranks is used to choose the first part of the mapping to
+        # GPUs.
+        $gpuid_option = "-gpu_id " . substr($gpuid_string, 0, $pp_ranks);
+
+        if ($pme_option =~ /gpu/) {
+            # If there are GPU IDs unassigned, use the next one, otherwise
+            # wrap around and use the first GPU again. (Note that
+            # currently only a single PME-on-GPU rank is supported.)
+            $gpuid_option .= substr($gpuid_string, ($pp_ranks > length $gpuid_string) ? 0 : $pp_ranks, 1);
+        }
+    }
+    return $gpuid_option;
 }
 
 sub specify_number_of_pme_ranks {
@@ -99,6 +112,8 @@ sub specify_number_of_pme_ranks {
     # Only try -npme if using some kind of PME, with enough ranks and
     # the user asked for it. Note that mdrun -npme > 0 is supported
     # only with 3+ total ranks.
+    # TODO The previous sentence is out of date. With two ranks, -npme
+    # 1 is now valid.
     if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", $grompp_mdp) > 0) &&
         (($npme_ranks == 0) ||
          (($npme_ranks > 0) && ($num_ranks >= 3))))
@@ -146,6 +161,12 @@ sub setup_vars()
         $progs{"mdrun"} = $mdrun_cmd;
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
+
+    # To figure out if PME GPU is supported, we search the mdrun help output for -pme
+    my $tmpFile = "pmeGpuCheck";
+    system(`$progs{"mdrun"} -h > ${tmpFile}`);
+    $mdrun_supports_pme_on_gpus = (find_in_file("-pme", $tmpFile) > 0);
+    unlink($tmpFile);
     
     # now do -tight or -relaxed stuff
     foreach my $var ( $etol_rel, $etol_abs, $ttol_rel, $ttol_abs, $virtol_rel, $virtol_abs, $ftol_rel, $ftol_abs, $ftol_sprod ) {
@@ -462,7 +483,7 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
+    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
     # Only one of tmpi_ranks or mpi_ranks may be greater than zero, but
     # this is checked for sanity after parsing user input.
 
@@ -528,9 +549,9 @@ sub run_mdrun {
         my $pp_ranks = undef;
         my $num_ranks = $tmpi_ranks < $mpi_ranks ? $mpi_ranks : $tmpi_ranks;
         my $npme_opt = specify_number_of_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
-        my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks);
+        my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks, $pme_option);
         my $command = $mdprefix->($mpi_ranks)
-            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
+            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
         #do_system using the special callback will return:
         #1 for known error: rerun
@@ -674,14 +695,18 @@ sub test_case {
             $local_mdparams .= " -table $input_dir/../table -tablep $input_dir/../tablep";
         }
         my $part = "";
-        if ( -f "continue.cpt" ) {
-            $local_mdparams .= " -cpi continue -noappend";
+        if ( -f "$input_dir/continue.cpt" ) {
+            $local_mdparams .= " -cpi $input_dir/continue -noappend";
             $part = ".part0002";
         }
-        if ($test_name =~ /-cpu-only/) {
+        if ($test_name =~ /-nb-cpu/) {
             $local_mdparams .= " -nb cpu";
         }
-        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
+        my $pme_option = "";
+        if ($test_name =~ /-pme-cpu/) {
+            $pme_option = "-pme cpu";
+        }
+        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
         if ($nerror != 0) {
             if ($parse_cmd eq '') {
                 push(@error_detail, ("mdrun.out", "md.log"));
@@ -830,6 +855,24 @@ sub test_case {
     return $success;
 }
 
+sub prepare_run_with_different_task_decomposition {
+    my ($test_name, $suffix, $new_dir_ref, $new_input_dir_ref, $new_test_name_ref) = @_;
+
+    # Set up new variables that control where the test
+    # case does its I/O
+    $$new_dir_ref = "${test_name}/$suffix";
+    $$new_input_dir_ref = "..";
+    $$new_test_name_ref = "${test_name}-${suffix}";
+    mkdir $$new_dir_ref;
+
+    # Copy the files that limit parallelism
+    foreach my $limiter_file ($max_openmp_threads_filename, $max_mpi_ranks_filename) {
+        if (-f "$test_name/$limiter_file") {
+            copy("$test_name/$limiter_file", $$new_dir_ref);
+        }
+    }
+}
+
 sub test_systems {
     my ($npassed, $nn, @subdirs) = @_;
     $$npassed = 0;
@@ -844,8 +887,10 @@ sub test_systems {
         # kernels. If GPU kernels were used to run this test case
         # (whether natively or in emulation), run it again in CPU-only
         # mode. This relies on test_case() not clearing up md.log.
-        if ($test_name =~ /nbnxn/ && 0 < find_in_file("^Using .* 8x8 non-bonded kernels", "$dir/md.log")) {
-            if ($mdparams =~ /-nb/) {
+        my $ran_nb_on_gpu = ($test_name =~ /nbnxn/ && 0 < find_in_file("^Using .* 8x8 non-bonded kernels", "$dir/md.log"));
+        my $specified_nb_option = ($mdparams =~ /-nb/);
+        if ($ran_nb_on_gpu) {
+            if ($specified_nb_option) {
                 print("Test case $test_name has been run using GPU non-bonded kernels,\n" .
                       "and would normally be run again using only CPU-based non-bonded\n" .
                       "kernels, but because you have set -nb in the -mdparam string,\n" .
@@ -853,24 +898,43 @@ sub test_systems {
             } else {
                 print("Re-running $test_name using only CPU-based non-bonded kernels\n");
 
-                # Set up new variables that control where the test
-                # case does its I/O
-                my $new_dir = "$dir/cpu-only";
-                my $new_input_dir = "..";
-                my $new_test_name = "${test_name}-cpu-only";
-                mkdir $new_dir;
-
-                # Copy the files that limit parallelism
-                foreach my $limiter_file ($max_openmp_threads_filename, $max_mpi_ranks_filename) {
-                    if (-f "$dir/$limiter_file") {
-                        copy("$dir/$limiter_file", $new_dir);
-                    }
-                }
-
+                my ($new_dir, $new_input_dir, $new_test_name);
+                prepare_run_with_different_task_decomposition($test_name, "nb-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
                 $$nn++;
                 $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
             }
         }
+
+        # If PME on GPU is supported (and is thus assumed to be used in the auto mode),
+        # arrange to run the test again with PME on CPU.
+        # Many inputs are not supported for GPU PME yet,
+        # so we also observe absence of the corresponding error in the output.
+        my $ran_pme_on_gpu = ($mdrun_supports_pme_on_gpus && 0 == find_in_file("PME GPU does not support", "$dir/md.log")); 
+        my $specified_pme_option = ($mdparams =~ /-pme/);
+        if ($ran_pme_on_gpu)
+        {
+            if ($specified_pme_option) {
+                print("Because you have set -pme in the -mdparam string, the test\n" .
+                      "harness will not attempt to run PME tests on both CPU and GPU.\n");
+            } else {
+                print("Re-running $test_name using CPU-based PME\n");
+
+                my ($new_dir, $new_input_dir, $new_test_name);
+                prepare_run_with_different_task_decomposition($test_name, "pme-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
+                $$nn++;
+                $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
+            }
+        }
+
+        # Run everything with both NB and PME on CPU if possible
+        if ($ran_nb_on_gpu && !($specified_nb_option) && $ran_pme_on_gpu && !($specified_pme_option)) {
+                print("Re-running $test_name using both CPU-based non-bonded kernels and CPU-based PME\n");
+
+                my ($new_dir, $new_input_dir, $new_test_name);
+                prepare_run_with_different_task_decomposition($test_name, "pme-cpu-nb-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
+                $$nn++;
+                $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
+	}
     }
 }
 
@@ -881,7 +945,7 @@ sub cleandirs {
 	if ( -d $dir ) {
 	    chdir($dir);
 	    print "Cleaning $dir\n"; 
-	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro cpu-only/*" );
+	    my @args = glob("#*# *~ *.out core.* field.xvg dgdl.xvg topol.tpr confout*.gro ener*.edr md.log traj*.trr *.tmp mdout.mdp step*.pdb *~ grompp[A-z]* state*.cpt *.xtc *.err confout*.gro nb-cpu/* pme-cpu/* pme-cpu-nb-cpu/*" );
 	    unlink (@args);
 	    chdir("..");
 	}
@@ -1303,6 +1367,7 @@ sub run_single_ed_system {
   my $grompp_err = "grompp.err";
   my $makeEdi_out = "make_edi.out";
   my $makeEdi_err = "make_edi.err";
+  my $pme_option = "";
 
   if ($verbose > 1) {
       print "Testing $dir . . .\n";
@@ -1326,7 +1391,7 @@ sub run_single_ed_system {
   # Make a short simulation with essential dynamics constraints:
   if ( $nerror == 0 ) { # If we already had errors, there is no use in going on ...
     unlink $edofn;  # delete old essential dynamics .xvg output file (if any)
-    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
+    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
   }
 
   return $nerror;
