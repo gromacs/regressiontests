@@ -66,6 +66,8 @@ my $mpirun    = 'mpirun';
 my $parse_cmd = '';
 my $gmx_cmd   = "gmx";
 my $mdrun_cmd = "";
+my $mdrun_supports_pme_on_gpus = 0;
+my $pme_default_option = "";
 my %progs = ( 'grompp'   => '',
               'mdrun'    => '',
               'pdb2gmx'  => '',
@@ -146,7 +148,18 @@ sub setup_vars()
         $progs{"mdrun"} = $mdrun_cmd;
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
-    
+
+    # To figure out if PME GPU is supported, we search the mdrun help output for -pme
+    my $tmpFile = "pmeGpuCheck";
+    system(`$progs{"mdrun"} -h > ${tmpFile}`);
+    $mdrun_supports_pme_on_gpus = (find_in_file("-pme", $tmpFile) > 0);
+    unlink($tmpFile);
+    if ($mdrun_supports_pme_on_gpus) {
+	$pme_default_option = "-pme cpu"; 
+        # Forcing all the tests to only run CPU PME! Extending this test harness for PME GPU 
+        # without feature version checking in libgromacs is not worth it
+    }
+   
     # now do -tight or -relaxed stuff
     foreach my $var ( $etol_rel, $etol_abs, $ttol_rel, $ttol_abs, $virtol_rel, $virtol_abs, $ftol_rel, $ftol_abs, $ftol_sprod ) {
 	$var *= $tolerance_factor;
@@ -462,7 +475,7 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
+    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
     # Only one of tmpi_ranks or mpi_ranks may be greater than zero, but
     # this is checked for sanity after parsing user input.
 
@@ -530,7 +543,7 @@ sub run_mdrun {
         my $npme_opt = specify_number_of_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
         my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks);
         my $command = $mdprefix->($mpi_ranks)
-            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
+            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
         #do_system using the special callback will return:
         #1 for known error: rerun
@@ -681,7 +694,7 @@ sub test_case {
         if ($test_name =~ /-cpu-only/) {
             $local_mdparams .= " -nb cpu";
         }
-        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
+	$nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_default_option, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
         if ($nerror != 0) {
             if ($parse_cmd eq '') {
                 push(@error_detail, ("mdrun.out", "md.log"));
@@ -1326,7 +1339,7 @@ sub run_single_ed_system {
   # Make a short simulation with essential dynamics constraints:
   if ( $nerror == 0 ) { # If we already had errors, there is no use in going on ...
     unlink $edofn;  # delete old essential dynamics .xvg output file (if any)
-    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
+    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_default_option, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
   }
 
   return $nerror;
