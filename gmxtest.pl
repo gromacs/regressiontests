@@ -111,12 +111,10 @@ sub specify_number_of_pme_ranks {
     my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
     # the user asked for it. Note that mdrun -npme > 0 is supported
-    # only with 3+ total ranks.
-    # TODO The previous sentence is out of date. With two ranks, -npme
-    # 1 is now valid.
+    # with at least 2 ranks.
     if ((find_in_file("(coulomb[-_]?type|vdw[-_]?type)\\s*=\\s*(pme|PME)", $grompp_mdp) > 0) &&
         (($npme_ranks == 0) ||
-         (($npme_ranks > 0) && ($num_ranks >= 3))))
+         (($npme_ranks > 0) && ($num_ranks >= 2))))
     {
         # Specify number of PME-only ranks
         $$pp_ranks_ref = $num_ranks - $npme_ranks;
