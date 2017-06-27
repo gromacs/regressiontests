@@ -109,12 +109,14 @@ sub add_gpu_id
     my ($gpuid_string, $pp_ranks, $pme_option) = @_;
 
     my $gpuid_option = "";
-    if ($gpuid_string && $pp_ranks) {
+
+    if ($gpuid_string && $pp_ranks && ! -f "no-gpu-support") {
         # This testing process requires GPU execution and has
         # specified a task decomposition that must be implemented
-        # (which in turn implies that PME is active). The number of PP
-        # ranks is used to choose the first part of the mapping to
-        # GPUs.
+        # (which in turn implies that PME is active), and the test
+        # case has not declared that GPUs are not supported. The
+        # number of PP ranks is used to choose the first part of the
+        # mapping to GPUs.
         $gpuid_option = "-gpu_id " . make_valid_gpu_id_string($gpuid_string, $pp_ranks);
 
         if ($pme_option =~ /gpu/) {
@@ -692,6 +694,7 @@ sub test_case {
     if ($nerror == 0) {
         # Do the mdrun at last!
 
+        my $local_gpu_id = $gpu_id;
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
         if ($dir =~ /nb_kernel.*CSTab/) {
@@ -706,12 +709,16 @@ sub test_case {
         }
         if ($test_name =~ /-nb-cpu/) {
             $local_mdparams .= " -nb cpu";
+            # Even if the user specified or permited a GPU run with
+            # -mdparam, the purpose of doing a CPU rerun is to run
+            # without GPUs. Clearing $local_gpu_id ensures it is so.
+            $local_gpu_id = "";
         }
         my $pme_option = "";
         if ($test_name =~ /-pme-cpu/) {
             $pme_option = "-pme cpu";
         }
-        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
+        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $local_gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
         if ($nerror != 0) {
             if ($parse_cmd eq '') {
                 push(@error_detail, ("mdrun.out", "md.log"));
