@@ -1,0 +1,8 @@
+Verified+1: Mark Abraham <mark.j.abraham@gmail.com>
+Verified+2: Jenkins Buildbot <jenkins@gromacs.org>
+Code-Review+2: Aleksei Iupinov <a.yupinov@gmail.com>
+Submitted-by: Mark Abraham <mark.j.abraham@gmail.com>
+Submitted-at: Fri, 30 Jun 2017 13:39:22 +0200
+Reviewed-on: https://gerrit.gromacs.org/6733
+Project: regressiontests
+Branch: refs/heads/master
