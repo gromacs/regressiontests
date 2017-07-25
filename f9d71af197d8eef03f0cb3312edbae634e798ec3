@@ -1,0 +1,9 @@
+Verified+2: Jenkins Buildbot <jenkins@gromacs.org>
+Code-Review+1: Aleksei Iupinov <a.yupinov@gmail.com>
+Code-Review+1: Carsten Kutzner <ckutzne@gwdg.de>
+Code-Review+2: Kasson <kasson@gmail.com>
+Submitted-by: Kasson <kasson@gmail.com>
+Submitted-at: Tue, 25 Jul 2017 15:07:49 +0200
+Reviewed-on: https://gerrit.gromacs.org/6735
+Project: regressiontests
+Branch: refs/heads/master
