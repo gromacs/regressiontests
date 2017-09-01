@@ -921,7 +921,7 @@ sub test_systems {
         # arrange to run the test again with PME on CPU.
         # Many inputs are not supported for GPU PME yet,
         # so we also observe absence of the corresponding error in the output.
-        my $ran_pme_on_gpu = ($mdrun_supports_pme_on_gpus && 0 == find_in_file("PME GPU does not support", "$dir/md.log")); 
+        my $ran_pme_on_gpu = ($mdrun_supports_pme_on_gpus && ! -f "$dir/no-gpu-support" && 0 == find_in_file("PME GPU does not support", "$dir/md.log")); 
         my $specified_pme_option = ($mdparams =~ /-pme/);
         if ($ran_pme_on_gpu)
         {
