@@ -919,9 +919,10 @@ sub test_systems {
 
         # If PME on GPU is supported (and is thus assumed to be used in the auto mode),
         # arrange to run the test again with PME on CPU.
-        # Many inputs are not supported for GPU PME yet,
-        # so we also observe absence of the corresponding error in the output.
-        my $ran_pme_on_gpu = ($mdrun_supports_pme_on_gpus && 0 == find_in_file("PME GPU does not support", "$dir/md.log")); 
+        # Many inputs are not supported for GPU PME yet (e.g. PME orders other than 4, LJ PME) but we try to run them anyway,
+        # so we also check absence of the corresponding error in the output.
+        # We also do not rerun group scheme tests (we avoid them by checking for "no-gpu-support" file).
+        my $ran_pme_on_gpu = ($mdrun_supports_pme_on_gpus && ! -f "$dir/no-gpu-support" && 0 == find_in_file("PME GPU does not support", "$dir/md.log")); 
         my $specified_pme_option = ($mdparams =~ /-pme/);
         if ($ran_pme_on_gpu)
         {
