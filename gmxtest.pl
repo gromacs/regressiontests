@@ -1579,75 +1579,87 @@ sub test_pdb2gmx {
     my $ntest    = 0;
     my $nerror   = 0;
     my @pdb2gmx_test_names;
-    foreach my $pdb ( glob("*.pdb") ) {
-	my $pdir = "pdb-$pdb";
-	my @kkk  = split('\.',$pdir);
-	my $dir  = $kkk[0];
-	$pdb_dirs[$npdb_dir++] = $dir;
-	mkdir($dir);
-	chdir($dir);
-	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6" ) {
-	    mkdir("ff$ff");
-	    chdir("ff$ff");
-	    my @water = ();
-	    my @vsite = ( "none", "h" );
-	    if ( $ff eq "oplsaa"  ) {
-		@water = ( "tip3p", "tip4p", "tip5p" );
-	    }
-	    elsif ( $ff eq "encads" ) {
-		@vsite = ( "none" );
-		@water = ( "spc" );
-	    }
-	    else {
-		@water = ( "spc", "spce" );
-	    }
-	    foreach my $dd ( @vsite ) {
-		mkdir("$dd");
-		chdir("$dd");
-		foreach my $ww ( @water ) {
-		    $ntest++;
-		    push @pdb2gmx_test_names, "$pdb with $ff using vsite=$dd and water=$ww";
-		    my $line = "";
-		    print(LOG "****************************************************\n");
-		    print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
-		    printf(LOG "** Working directory = %s\n", getcwd());
-		    print(LOG "****************************************************\n");
-		    mkdir("$ww");
-		    chdir("$ww");
-		    print(LOG "****************************************************\n");
-		    print(LOG "**  Running pdb2gmx\n");
-		    print(LOG "****************************************************\n");
-		    open(PIPE,"$progs{'pdb2gmx'} -f ../../../../$pdb -ff $ff -ignh -vsite $dd -water $ww -o conf.g96 2>&1 |");
-		    print LOG while <PIPE>;
-		    close PIPE;
-		    print(LOG "****************************************************\n");
-		    print(LOG "**  Running editconf\n");
-		    print(LOG "****************************************************\n");
-		    open(PIPE,"$progs{'editconf'} -o b4em.g96 -box 5 5 5 -c -f conf.g96 2>&1 |");
-		    print LOG while <PIPE>;
-		    close PIPE;
-		    print(LOG "****************************************************\n");
-		    print(LOG "**  Running grompp\n");
-		    print(LOG "****************************************************\n");
-		    open(PIPE,"$progs{'grompp'} -maxwarn 3 -f ../../../../em -c b4em.g96 2>&1 |");
-		    print LOG while <PIPE>;
-		    close PIPE;
-		    print(LOG "****************************************************\n");
-		    print(LOG "**  Running mdrun\n");
-		    print(LOG "****************************************************\n");
-		    open(PIPE,$mdprefix->($mpi_ranks)." $progs{'mdrun'} $mdparams 2>&1 |");
-		    print LOG while <PIPE>;
-		    close PIPE;
-		    chdir("..");
-		}
-		chdir("..");
-	    }
-	    chdir("..");
-	}
-	chdir("..");
+    my $amber  = "amber99sb-ildn";
+    my $charmm = "charmm27";
+    for(my $usenew = 0; $usenew < 2; $usenew++) {
+        my @ff_list = ( "gromos43a1", "oplsaa", "gromos53a6" );
+        if ( $usenew ) {
+          @ff_list = ( $amber, $charmm );
+        }
+        foreach my $pdb ( glob("*.pdb") ) {
+            my $pdir = "pdb-$pdb";
+            my @kkk  = split('\.',$pdir);
+            my $dir  = $kkk[0];
+            $pdb_dirs[$npdb_dir++] = $dir;
+            mkdir($dir);
+            chdir($dir);
+            foreach my $ff ( @ff_list ) {
+                mkdir("ff$ff");
+                chdir("ff$ff");
+                my @water = ();
+                my @vsite = ( "none", "h" );
+                if ( $ff eq "oplsaa" ) {
+                    @water = ( "tip3p", "tip4p", "tip5p" );
+                }
+                elsif ( $ff eq $amber ) {
+                    @vsite = ( "none" );
+                    @water = ( "tip3p" );
+                }
+                elsif ( $ff eq $charmm ) {
+                    @vsite = ( "none" );
+                    @water = ( "tips3p" );
+                }
+                else {
+                    @water = ( "spc", "spce" );
+                }
+                foreach my $dd ( @vsite ) {
+                    mkdir("$dd");
+                    chdir("$dd");
+                    foreach my $ww ( @water ) {
+                        $ntest++;
+                        push @pdb2gmx_test_names, "$pdb with $ff using vsite=$dd and water=$ww";
+                        my $line = "";
+                        print(LOG "****************************************************\n");
+                        print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
+                        printf(LOG "** Working directory = %s\n", getcwd());
+                        print(LOG "****************************************************\n");
+                        mkdir("$ww");
+                        chdir("$ww");
+                        print(LOG "****************************************************\n");
+                        print(LOG "**  Running pdb2gmx\n");
+                        print(LOG "****************************************************\n");
+                        open(PIPE,"$progs{'pdb2gmx'} -f ../../../../$pdb -ff $ff -ignh -vsite $dd -water $ww -o conf.g96 2>&1 |");
+                        print LOG while <PIPE>;
+                        close PIPE;
+                        print(LOG "****************************************************\n");
+                        print(LOG "**  Running editconf\n");
+                        print(LOG "****************************************************\n");
+                        open(PIPE,"$progs{'editconf'} -o b4em.g96 -box 5 5 5 -c -f conf.g96 2>&1 |");
+                        print LOG while <PIPE>;
+                        close PIPE;
+                        print(LOG "****************************************************\n");
+                        print(LOG "**  Running grompp\n");
+                        print(LOG "****************************************************\n");
+                        open(PIPE,"$progs{'grompp'} -maxwarn 3 -f ../../../../em -c b4em.g96 2>&1 |");
+                        print LOG while <PIPE>;
+                        close PIPE;
+                        print(LOG "****************************************************\n");
+                        print(LOG "**  Running mdrun\n");
+                        print(LOG "****************************************************\n");
+                        open(PIPE,$mdprefix->($mpi_ranks)." $progs{'mdrun'} $mdparams 2>&1 |");
+                        print LOG while <PIPE>;
+                        close PIPE;
+                        chdir("..");
+                    }
+                    chdir("..");
+                }
+                chdir("..");
+            }
+            chdir("..");
+        }
     }
     close LOG;
-    
+
     my $only_energies_filename = 'ener.log';
     my $nsuccess = find_in_file('Potential Energy',$logfn,$only_energies_filename);
 
