@@ -1571,7 +1571,7 @@ sub test_essentialdynamics {
 
 sub test_pdb2gmx {
     my $logfn = "pdb2gmx.log";
-
+    
     chdir("pdb2gmx");
     open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
     my $npdb_dir = 0;
@@ -1579,6 +1579,8 @@ sub test_pdb2gmx {
     my $ntest    = 0;
     my $nerror   = 0;
     my @pdb2gmx_test_names;
+    my @ff_list = ( "gromos43a1", "oplsaa", "gromos53a6", 
+                    "amber99sb-ildn", "amber03", "charmm27", "gromos54a7" );
     foreach my $pdb ( glob("*.pdb") ) {
 	my $pdir = "pdb-$pdb";
 	my @kkk  = split('\.',$pdir);
@@ -1586,7 +1588,7 @@ sub test_pdb2gmx {
 	$pdb_dirs[$npdb_dir++] = $dir;
 	mkdir($dir);
 	chdir($dir);
-	foreach my $ff ( "gromos43a1", "oplsaa", "gromos53a6" ) {
+        foreach my $ff ( @ff_list ) {
 	    mkdir("ff$ff");
 	    chdir("ff$ff");
 	    my @water = ();
@@ -1649,7 +1651,7 @@ sub test_pdb2gmx {
     close LOG;
     
     my $only_energies_filename = 'ener.log';
-    my $nsuccess = find_in_file('Potential Energy',$logfn,$only_energies_filename);
+my $nsuccess = find_in_file('Potential Energy',$logfn,$only_energies_filename);
 
     if ( $nsuccess != $ntest ) {
 	print "Error not all $ntest pdb2gmx tests have been done successfully\n";
