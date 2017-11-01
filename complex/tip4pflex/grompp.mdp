@@ -318,14 +318,7 @@ sim-temp-low             = 300
 sim-temp-high            = 300
 
 ; Electric fields      
-; Format is number of terms (int) and for all terms an amplitude (real)
-; and a phase angle (real)
-E-x                      = 1	2.0	0
-E-xt                     = 1	150 	0
-E-y                      = 
-E-yt                     = 
-E-z                      = 
-E-zt                     = 
+electric-field-x         = 2.0	150	0	0
 
 ; AdResS parameters    
 adress                   = no
