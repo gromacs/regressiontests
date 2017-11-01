@@ -332,7 +332,7 @@ E-x                      =
 E-xt                     = 
 E-y                      = 
 E-yt                     = 
-E-z                      = 0
+E-z                      =
 E-zt                     = 
 
 ; Ion/water position swapping for computational electrophysiology setups

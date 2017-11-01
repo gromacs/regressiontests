@@ -323,12 +323,7 @@ sim-temp-high            = 300
 ; Electric fields      
 ; Format is number of terms (int) and for all terms an amplitude (real)
 ; and a phase angle (real)
-E-x                      = 1 0.040 0
-E-xt                     = 
-E-y                      = 
-E-yt                     = 
-E-z                      = 
-E-zt                     = 
+electric-field-x         = 0.040 0 0 0
 
 ; Ion/water position swapping for computational electrophysiology setups
 ; Swap positions along direction: no, X, Y, Z
