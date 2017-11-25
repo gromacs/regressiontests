@@ -84,51 +84,6 @@ my $max_mpi_ranks_filename = "max-mpi-ranks";
 # separately.
 my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
 
-sub make_valid_gpu_id_string
-{
-    my ($input_gpu_id_string, $pp_ranks) = @_;
-
-    # Fill a GPU ID string valid for mdrun from what the user said.
-
-    # If the user asked for more PP ranks than the number of GPU IDs
-    # they supplied, then we will need replicate the GPU ID string so
-    # its length matches the number of PP ranks. Start by ensuring
-    # that the output GPU ID string is certainly long enough. This
-    # makes sure we can handle cases like 2 PP ranks with input GPU
-    # IDs of any of "0", "01", and "012".
-    my $output_gpu_id_string = $input_gpu_id_string x $pp_ranks;
-
-    # If there are more IDs than the number of PP ranks the user
-    # requested, then limit the number of IDs that will later be
-    # passed to mdrun to that number of PP ranks.
-    $output_gpu_id_string = substr($output_gpu_id_string, 0, $pp_ranks);
-}
-
-sub add_gpu_id
-{
-    my ($gpuid_string, $pp_ranks, $pme_option) = @_;
-
-    my $gpuid_option = "";
-
-    if ($gpuid_string && $pp_ranks && ! -f "no-gpu-support") {
-        # This testing process requires GPU execution and has
-        # specified a task decomposition that must be implemented
-        # (which in turn implies that PME is active), and the test
-        # case has not declared that GPUs are not supported. The
-        # number of PP ranks is used to choose the first part of the
-        # mapping to GPUs.
-        $gpuid_option = "-gpu_id " . make_valid_gpu_id_string($gpuid_string, $pp_ranks);
-
-        if ($pme_option =~ /gpu/) {
-            # If there are GPU IDs unassigned, use the next one, otherwise
-            # wrap around and use the first GPU again. (Note that
-            # currently only a single PME-on-GPU rank is supported.)
-            $gpuid_option .= substr($gpuid_string, ($pp_ranks > length $gpuid_string) ? 0 : $pp_ranks, 1);
-        }
-    }
-    return $gpuid_option;
-}
-
 sub specify_number_of_pme_ranks {
     my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
@@ -556,7 +511,7 @@ sub run_mdrun {
         my $pp_ranks = undef;
         my $num_ranks = $tmpi_ranks < $mpi_ranks ? $mpi_ranks : $tmpi_ranks;
         my $npme_opt = specify_number_of_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
-        my $gpuid_opt = add_gpu_id($gpu_id, $pp_ranks, $pme_option);
+        my $gpuid_opt = $gpu_id ? "-gpu_id $gpu_id" : "";
         my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
