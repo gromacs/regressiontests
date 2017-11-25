@@ -1,0 +1,8 @@
+Code-Review+1: Aleksei Iupinov <a.yupinov@gmail.com>
+Verified+2: Jenkins Buildbot <jenkins@gromacs.org>
+Code-Review+2: Erik Lindahl <erik.lindahl@gmail.com>
+Submitted-by: Erik Lindahl <erik.lindahl@gmail.com>
+Submitted-at: Sat, 25 Nov 2017 19:09:19 +0100
+Reviewed-on: https://gerrit.gromacs.org/7224
+Project: regressiontests
+Branch: refs/heads/master
