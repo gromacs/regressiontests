@@ -511,7 +511,25 @@ sub run_mdrun {
         my $pp_ranks = undef;
         my $num_ranks = $tmpi_ranks < $mpi_ranks ? $mpi_ranks : $tmpi_ranks;
         my $npme_opt = specify_number_of_pme_ranks($num_ranks, $npme_ranks, $grompp_mdp, \$pp_ranks);
-        my $gpuid_opt = $gpu_id ? "-gpu_id $gpu_id" : "";
+        # If there's no GPUs, or no ability to use them then passing
+        # -gpu_id to mdrun results in an error. The caller of
+        # gmxtest.pl is responsible for using -gpu_id only when that
+        # makes sense for the build and the hardware it is running
+        # upon, but here we should only pass it to mdrun when that can
+        # succeed.
+        #
+        # Note that PME can technically also run on the GPU, but
+        # anyway it requires that NB can run on the GPU, so testing
+        # for the latter is enough for deciding whether to pass
+        # -gpu_id through from the gmxtest.pl command line.
+        #
+        # TODO It is not elegant to name the annotation file
+        # "no-nb-gpu-support" and then only use it in the negative
+        # sense, but removing that annotation file and instead adding
+        # "supports-nb-on-gpu" to all the other test cases is
+        # something that we should fix later.
+        my $test_supports_nb_on_gpu = ! -f "no-nb-gpu-support";
+        my $gpuid_opt = ($test_supports_nb_on_gpu && $gpu_id) ? "-gpu_id $gpu_id" : "";
         my $command = $mdprefix->($mpi_ranks)
             . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
@@ -848,15 +866,16 @@ sub test_systems {
         my $test_name = $dir;
         my $input_dir = ".";
         $$nn++;
+        # Run the test case
         $$npassed += test_case $dir, $input_dir, $test_name;
 
-        # Only nbnxn test cases can execute GPU-based non-bonded
+        # The nbnxn test cases are most of the cases that can execute GPU-based non-bonded
         # kernels. If GPU kernels were used to run this test case
         # (whether natively or in emulation), run it again in CPU-only
         # mode. This relies on test_case() not clearing up md.log.
-        my $ran_nb_on_gpu = ($test_name =~ /nbnxn/ && 0 < find_in_file("^Using .* 8x8 non-bonded kernels", "$dir/md.log"));
+        my $mdrun_ran_nb_on_gpu = ($test_name =~ /nbnxn/ && 0 < find_in_file("^Using .* 8x8 non-bonded kernels", "$dir/md.log"));
         my $specified_nb_option = ($mdparams =~ /-nb/);
-        if ($ran_nb_on_gpu) {
+        if ($mdrun_ran_nb_on_gpu) {
             if ($specified_nb_option) {
                 print("Test case $test_name has been run using GPU non-bonded kernels,\n" .
                       "and would normally be run again using only CPU-based non-bonded\n" .
@@ -864,7 +883,7 @@ sub test_systems {
                       "the test harness will stay out of your way.\n");
             } else {
                 print("Re-running $test_name using only CPU-based non-bonded kernels\n");
-
+                # Note that this also forces PME to run on the CPU, where applicable.
                 my ($new_dir, $new_input_dir, $new_test_name);
                 prepare_run_with_different_task_decomposition($test_name, "nb-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
                 $$nn++;
@@ -872,14 +891,14 @@ sub test_systems {
             }
         }
 
-        # If PME on GPU is supported (and is thus assumed to be used in the auto mode),
+        # If PME can run on the GPU, and in fact was run on the GPU,
         # arrange to run the test again with PME on CPU.
-        # Many inputs are not supported for GPU PME yet (e.g. PME orders other than 4, LJ PME) but we try to run them anyway,
-        # so we also check absence of the corresponding error in the output.
-        # We also do not rerun group scheme tests (we avoid them by checking for "no-gpu-support" file).
-        my $ran_pme_on_gpu = ($mdrun_supports_pme_on_gpus && ! -f "$dir/no-gpu-support" && 0 == find_in_file("PME GPU does not support", "$dir/md.log")); 
+        my $test_supports_pme_on_gpu = -f "$dir/supports-pme-on-gpu";
+        # Hopefully the short-circuit logic for && means we grep only
+        # relevant md.log files.
+        my $mdrun_ran_pme_on_gpu = $test_supports_pme_on_gpu && (find_in_file("^ .*PME:", "$dir/md.log") > 0);
         my $specified_pme_option = ($mdparams =~ /-pme/);
-        if ($ran_pme_on_gpu)
+        if ($mdrun_ran_pme_on_gpu)
         {
             if ($specified_pme_option) {
                 print("Because you have set -pme in the -mdparam string, the test\n" .
@@ -893,16 +912,6 @@ sub test_systems {
                 $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
             }
         }
-
-        # Run everything with both NB and PME on CPU if possible
-        if ($ran_nb_on_gpu && !($specified_nb_option) && $ran_pme_on_gpu && !($specified_pme_option)) {
-                print("Re-running $test_name using both CPU-based non-bonded kernels and CPU-based PME\n");
-
-                my ($new_dir, $new_input_dir, $new_test_name);
-                prepare_run_with_different_task_decomposition($test_name, "pme-cpu-nb-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
-                $$nn++;
-                $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
-	}
     }
 }
 
