@@ -529,9 +529,17 @@ sub run_mdrun {
         # "supports-nb-on-gpu" to all the other test cases is
         # something that we should fix later.
         my $test_supports_nb_on_gpu = ! -f "no-nb-gpu-support";
-        my $gpuid_opt = ($test_supports_nb_on_gpu && $gpu_id) ? "-gpu_id $gpu_id" : "";
+        my $nb_task_assignment_opt;
+        if($test_supports_nb_on_gpu)
+        {
+            $nb_task_assignment_opt = $gpu_id ? "-gpu_id $gpu_id" : "";
+        }
+        else
+        {
+            $nb_task_assignment_opt = "-nb cpu";
+        }
         my $command = $mdprefix->($mpi_ranks)
-            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $gpuid_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
+            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $nb_task_assignment_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
         #do_system using the special callback will return:
         #1 for known error: rerun
