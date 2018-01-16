@@ -808,8 +808,8 @@ sub test_case {
                         my $diff=0;
                         while (my $line1=<FILE1>) {
                             my $line2=<FILE2>;
-                            next if $line1 =~ /(data|host|user|generated)/;
-                            next if $line2 =~ /(data|host|user|generated)/;
+                            next if defined($line1) && $line1 =~ /(data|host|user|generated)/;
+                            next if defined($line2) && $line2 =~ /(data|host|user|generated)/;
                             if (not defined($line2)){#FILE1 has more lines
                                 $diff++;
                                 next;
@@ -1901,9 +1901,9 @@ elsif (!$did_clean) {
 }
 
 # Now do the work, if there is any
-my $nerror = sum 0, map
-{
-    eval $_;
+my $nerror = 0;
+map {
+    $nerror += eval $_;
     if ('' ne $@) {
         die "$@"
     }
