@@ -1,16 +1,17 @@
-Log file opened on Sun Nov 12 22:17:50 2017
-Host: bs-nix-amd  pid: 26687  rank ID: 0  number of ranks:  1
-         :-) GROMACS - gmx mdrun, 2017-dev-20171112-b1f7da0-unknown (-:
+Log file opened on Fri May 11 18:14:06 2018
+Host: tcbl07  pid: 9402  rank ID: 0  number of ranks:  1
+            :-) GROMACS - gmx mdrun, 2018.2-dev-20180511-2bee69a (-:
 
                             GROMACS is written by:
-     Emile Apol      Rossen Apostolov  Herman J.C. Berendsen    Par Bjelkmar   
- Aldert van Buuren   Rudi van Drunen     Anton Feenstra    Gerrit Groenhof  
- Christoph Junghans   Anca Hamuraru    Vincent Hindriksen Dimitrios Karkoulis
-    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson    
-  Justin A. Lemkul   Magnus Lundborg   Pieter Meulenhoff    Erik Marklund   
-   Teemu Murtola       Szilard Pall       Sander Pronk      Roland Schulz   
-  Alexey Shvetsov     Michael Shirts     Alfons Sijbers     Peter Tieleman  
-  Teemu Virolainen  Christian Wennberg    Maarten Wolf   
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar    Aldert van Buuren   Rudi van Drunen     Anton Feenstra  
+  Gerrit Groenhof    Aleksei Iupinov   Christoph Junghans   Anca Hamuraru   
+ Vincent Hindriksen Dimitrios Karkoulis    Peter Kasson        Jiri Kraus    
+  Carsten Kutzner      Per Larsson      Justin A. Lemkul    Viveca Lindahl  
+  Magnus Lundborg   Pieter Meulenhoff    Erik Marklund      Teemu Murtola   
+    Szilard Pall       Sander Pronk      Roland Schulz     Alexey Shvetsov  
+   Michael Shirts     Alfons Sijbers     Peter Tieleman    Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf   
                            and the project leaders:
         Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
 
@@ -25,16 +26,16 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2017-dev-20171112-b1f7da0-unknown
-Executable:   /home/jenkins/workspace/Gromacs_OnDemand_workflow/gromacs/bin/gmx
-Data prefix:  /home/jenkins/workspace/Gromacs_OnDemand_workflow/gromacs (source tree)
-Working dir:  /mnt/workspace/Gromacs_OnDemand_workflow/regressiontests/complex/awh_multibias
+GROMACS:      gmx mdrun, version 2018.2-dev-20180511-2bee69a
+Executable:   /home/viveca/programs/gromacs/2018//bin/gmx
+Data prefix:  /home/viveca/programs/gromacs/2018/
+Working dir:  /data/viveca/regressiontests/complex/awh_multibias
 Command line:
   gmx mdrun -notunepme -cpi ./continue -noappend
 
-GROMACS version:    2017-dev-20171112-b1f7da0-unknown
-GIT SHA1 hash:      b1f7da0e2ed9cc1137f73633e53cec84cb8833cc
-Branched from:      unknown
+GROMACS version:    2018.2-dev-20180511-2bee69a
+GIT SHA1 hash:      2bee69abf6f97cca90c5984532954b58edab47d3
+Branched from:      db33bb790d03a97604764514f396bcde025530db (1 newer local commits)
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
@@ -44,54 +45,49 @@ SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
 RDTSCP usage:       disabled
 TNG support:        enabled
-Hwloc support:      hwloc-1.11.0
+Hwloc support:      hwloc-1.8.0
 Tracing support:    disabled
-Built on:           2017-11-12 21:06:20
-Built by:           jenkins@bs-nix-amd [CMAKE]
-Build OS/arch:      Linux 3.19.0-80-generic x86_64
-Build CPU vendor:   AMD
-Build CPU brand:    AMD FX(tm)-8350 Eight-Core Processor
-Build CPU family:   21   Model: 2   Stepping: 0
-Build CPU features: aes amd apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-C compiler:         /usr/bin/gcc-4.8 GNU 4.8.5
+Built on:           2018-05-09 14:57:53
+Built by:           viveca@tcbl07 [CMAKE]
+Build OS/arch:      Linux 3.13.0-147-generic x86_64
+Build CPU vendor:   Intel
+Build CPU brand:    Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz
+Build CPU family:   6   Model: 60   Stepping: 3
+Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma hle htt intel lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp rtm sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+C compiler:         /usr/bin/cc GNU 4.8.4
 C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
-C++ compiler:       /usr/bin/g++-4.8 GNU 4.8.5
+C++ compiler:       /usr/bin/c++ GNU 4.8.4
 C++ compiler flags:     -std=c++11  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wmissing-declarations -Wall -Wno-unknown-pragmas  -O0 -g
 
 
-Running on 1 node with total 8 cores, 8 logical cores
+Running on 1 node with total 4 cores, 8 logical cores
 Hardware detected:
   CPU info:
-    Vendor: AMD
-    Brand:  AMD FX(tm)-8350 Eight-Core Processor           
-    Family: 21   Model: 2   Stepping: 0
-    Features: aes amd apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-    SIMD instructions most likely to fit this hardware: AVX_128_FMA
-    SIMD instructions selected at GROMACS compile time: None
-
+    Vendor: Intel
+    Brand:  Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz
+    Family: 6   Model: 60   Stepping: 3
+    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma hle htt intel lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp rtm sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
   Hardware topology: Full, with devices
     Sockets, cores, and logical processors:
-      Socket  0: [   0] [   1] [   2] [   3] [   4] [   5] [   6] [   7]
+      Socket  0: [   0   4] [   1   5] [   2   6] [   3   7]
     Numa nodes:
-      Node  0 (8090738688 bytes mem):   0   1   2   3   4   5   6   7
+      Node  0 (16764895232 bytes mem):   0   1   2   3   4   5   6   7
       Latency:
                0
          0  1.00
     Caches:
-      L1: 16384 bytes, linesize 64 bytes, assoc. 4, shared 1 ways
-      L2: 2097152 bytes, linesize 64 bytes, assoc. 16, shared 2 ways
-      L3: 8388608 bytes, linesize 64 bytes, assoc. 64, shared 8 ways
+      L1: 32768 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L2: 262144 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L3: 8388608 bytes, linesize 64 bytes, assoc. 16, shared 8 ways
     PCI devices:
-      0000:01:05.0  Id: 1002:9616  Class: 0x0300  Numa: 0
-      0000:02:00.0  Id: 1969:1083  Class: 0x0200  Numa: 0
-      0000:00:11.0  Id: 1002:4391  Class: 0x0106  Numa: 0
-      0000:00:14.1  Id: 1002:439c  Class: 0x0101  Numa: 0
+      0000:01:00.0  Id: 10de:1187  Class: 0x0300  Numa: 0
+      0000:03:00.0  Id: 10ec:8168  Class: 0x0200  Numa: 0
+      0000:00:1f.2  Id: 8086:8c02  Class: 0x0106  Numa: 0
 
-
-Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
-SIMD instructions selected at GROMACS compile time: None
-
+Highest SIMD level requested by all nodes in run: AVX2_256
+SIMD instructions selected at compile time:       None
+This program was compiled for different hardware than you are running on,
+which could influence performance.
 The current CPU can measure timings more accurately than the code in
 gmx mdrun was configured to use. This might affect your simulation
 speed as accurate timings are needed for load-balancing.
@@ -474,19 +470,28 @@ Reading checkpoint file ./continue.cpt
   time:                  0.040000
 
   Version mismatch,
-    current program: 2017-dev-20171112-b1f7da0-unknown
+    current program: 2018.2-dev-20180511-2bee69a
     checkpoint file: 2017-dev-20171112-b1f7da0e2
+
+The current GROMACS major version is not identical to the one that
+generated the checkpoint file. In principle GROMACS does not support
+continuation from checkpoints between different versions, so we advise
+against this. If you still want to try your luck we recommend that you use
+the -noappend flag to keep your output files from the two versions separate.
+This might also work around errors where the output fields in the energy
+file have changed between the different versions.
 
 Changing nstlist from 10 to 100, rlist from 1 to 1.198
 
 
 NOTE: GROMACS was compiled without OpenMP and (thread-)MPI support, can only use a single CPU core
+
+Pinning threads with an auto-selected logical core stride of 2
 System total charge: -0.000
 Reaction-Field:
 epsRF = 0, rc = 1, krf = 0.5, crf = 1.5, epsfac = 138.935
 The electrostatics potential has its minimum at r = 1
 Potential shift: LJ r^-12: -1.000e+00 r^-6: -1.000e+00
-Cut-off's:   NS: 1.198   Coulomb: 1   LJ: 1
 Generated table with 1099 data points for 1-4 COUL.
 Tabscale = 500 points/nm
 Generated table with 1099 data points for 1-4 LJ6.
@@ -494,22 +499,23 @@ Tabscale = 500 points/nm
 Generated table with 1099 data points for 1-4 LJ12.
 Tabscale = 500 points/nm
 
-Using plain C 4x4 non-bonded kernels
-
+Using plain C 4x4 nonbonded short-range kernels
 
 WARNING: Using the slow plain C kernels. This should
 not happen during routine usage on supported platforms.
-Using a dual pair-list setup updated with dynamic pruning:
+
+Using a dual 4x4 pair-list setup updated with dynamic pruning:
   outer list: updated every 100 steps, buffer 0.198 nm, rlist 1.198 nm
   inner list: updated every  15 steps, buffer 0.001 nm, rlist 1.001 nm
+At tolerance 0.005 kJ/mol/ps per atom, equivalent classical 1x1 list would be:
+  outer list: updated every 100 steps, buffer 0.279 nm, rlist 1.279 nm
+  inner list: updated every  15 steps, buffer 0.025 nm, rlist 1.025 nm
+
 Using Lorentz-Berthelot Lennard-Jones combination rule
 
 
-NOTE: Thread affinity setting failed. This can cause performance degradation.
-      If you think your settings are correct, ask on the gmx-users list.
-
 Will apply potential COM pulling
-with 2 pull coordinates and 6 groups
+with 2 pull coordinates and 5 groups
 Pull group 1:     1 atoms, mass    12.010
 Pull group 2:     1 atoms, mass    14.010
 Pull group 3:     1 atoms, mass    12.010
@@ -550,24 +556,24 @@ awh1: initial force correlation block length = 0.02 ps
 awh1: force correlation number of blocks = 64
 awh2: initial force correlation block length = 0.02 ps
 awh2: force correlation number of blocks = 64
-Started mdrun on rank 0 Sun Nov 12 22:17:50 2017
+Started mdrun on rank 0 Fri May 11 18:14:06 2018
+
+awh2: covering at t = 0.08 ps. Decreased the update size.
            Step           Time
              50        0.10000
 
-
-awh2: covering at t = 0.1 ps. Decreased the update size.
-Writing checkpoint, step 50 at Sun Nov 12 22:17:50 2017
+Writing checkpoint, step 50 at Fri May 11 18:14:06 2018
 
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    3.44107e+00    3.00984e+01    4.61998e+01    3.04387e+00    1.81564e+01
+    3.44136e+00    3.01000e+01    4.61993e+01    3.04326e+00    1.81569e+01
      Coulomb-14        LJ (SR)   Coulomb (SR)   COM Pull En.      Potential
-    2.09731e+02   -3.69255e+00   -3.43071e+02   -2.79226e+01   -6.40161e+01
+    2.09729e+02   -3.69266e+00   -3.43070e+02   -2.79218e+01   -6.40147e+01
     Kinetic En.   Total Energy  Conserved En.    Temperature Pressure (bar)
-    5.35623e+01   -1.04538e+01   -1.70767e+01    2.52630e+02    3.60404e+01
+    5.35619e+01   -1.04528e+01   -1.70757e+01    2.52628e+02    3.60410e+01
    Constr. rmsd
-    8.84749e-07
+    6.90617e-07
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
@@ -577,23 +583,23 @@ Writing checkpoint, step 50 at Sun Nov 12 22:17:50 2017
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    8.84230e+00    2.58271e+01    4.62908e+01    5.21954e+00    1.49125e+01
+    8.84218e+00    2.58271e+01    4.62908e+01    5.21951e+00    1.49125e+01
      Coulomb-14        LJ (SR)   Coulomb (SR)   COM Pull En.      Potential
-    1.92330e+02   -4.27715e+00   -3.26706e+02   -1.54156e+01   -5.29767e+01
+    1.92330e+02   -4.27717e+00   -3.26706e+02   -1.54154e+01   -5.29765e+01
     Kinetic En.   Total Energy  Conserved En.    Temperature Pressure (bar)
-    4.30287e+01   -9.94794e+00   -1.51686e+01    2.02948e+02   -4.64988e+01
+    4.30290e+01   -9.94750e+00   -1.51681e+01    2.02949e+02   -4.64992e+01
    Constr. rmsd
     0.00000e+00
 
    Total Virial (kJ/mol)
-    3.08239e+01    2.63667e+01    2.62706e+01
-    2.63666e+01    9.67221e+01    3.02485e+01
-    2.62706e+01    3.02486e+01    2.88917e+01
+    3.08241e+01    2.63675e+01    2.62707e+01
+    2.63674e+01    9.67234e+01    3.02478e+01
+    2.62708e+01    3.02479e+01    2.88917e+01
 
    Pressure (bar)
-   -1.64833e+01   -3.60618e+01   -2.67950e+01
-   -3.60617e+01   -9.80622e+01   -4.03567e+01
-   -2.67950e+01   -4.03568e+01   -2.49509e+01
+   -1.64839e+01   -3.60631e+01   -2.67952e+01
+   -3.60630e+01   -9.80632e+01   -4.03560e+01
+   -2.67952e+01   -4.03562e+01   -2.49506e+01
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -633,21 +639,21 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          1       0.000          0.001   0.6
- Force                  1    1         31       0.003          0.012  13.5
- NB X/F buffer ops.     1    1         61       0.000          0.000   0.1
- COM pull force         1    1         31       0.000          0.000   0.2
- AWH                    1    1         31       0.001          0.003   3.7
- Write traj.            1    1          4       0.017          0.068  74.1
- Update                 1    1         31       0.000          0.000   0.5
- Constraints            1    1         31       0.000          0.001   1.3
- Rest                                           0.001          0.005   5.9
+ Neighbor search        1    1          1       0.000          0.000   0.0
+ Force                  1    1         31       0.003          0.010   0.9
+ NB X/F buffer ops.     1    1         61       0.000          0.000   0.0
+ COM pull force         1    1         31       0.000          0.000   0.0
+ AWH                    1    1         31       0.000          0.002   0.1
+ Write traj.            1    1          4       0.329          1.118  98.5
+ Update                 1    1         31       0.000          0.000   0.0
+ Constraints            1    1         31       0.000          0.001   0.1
+ Rest                                           0.001          0.004   0.4
 -----------------------------------------------------------------------------
- Total                                          0.022          0.091 100.0
+ Total                                          0.334          1.135 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.022        0.022      100.0
+       Time:        0.334        0.334      100.0
                  (ns/day)    (hour/ns)
-Performance:      239.422        0.100
-Finished mdrun on rank 0 Sun Nov 12 22:17:50 2017
+Performance:       16.039        1.496
+Finished mdrun on rank 0 Fri May 11 18:14:06 2018
