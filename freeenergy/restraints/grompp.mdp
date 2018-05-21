@@ -69,7 +69,7 @@ energygrps               =
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
-cutoff-scheme            = Group
+cutoff-scheme            = Verlet
 ; nblist update frequency
 nstlist                  = 5
 ; ns algorithm (simple or grid)
@@ -100,7 +100,7 @@ vdw-type                 = Switch
 vdw-modifier             = Potential-shift-Verlet
 ; cut-off lengths       
 rvdw-switch              = 0.80
-rvdw                     = 0.85
+rvdw                     = 0.90
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = AllEnerPres
 ; Extension of the potential lookup tables beyond the cut-off
