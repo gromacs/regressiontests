@@ -1,20 +1,22 @@
-Log file opened on Tue Mar  4 09:49:14 2014
-Host: tcbs22  pid: 8541  nodeid: 0  nnodes:  1
-GROMACS:    gmx mdrun, VERSION 5.0-beta2-dev-20140303-6acea3c
+Log file opened on Sun May 20 21:18:57 2018
+Host: heat10.jf.intel.com  pid: 89090  rank ID: 0  number of ranks:  1
+          :-) GROMACS - gmx mdrun, 2019-dev-20180518-7d5382b-local (-:
 
-GROMACS is written by:
-Emile Apol         Rossen Apostolov   Herman J.C. Berendsen Par Bjelkmar       
-Aldert van Buuren  Rudi van Drunen    Anton Feenstra     Sebastian Fritsch  
-Gerrit Groenhof    Christoph Junghans Peter Kasson       Carsten Kutzner    
-Per Larsson        Justin A. Lemkul   Magnus Lundborg    Pieter Meulenhoff  
-Erik Marklund      Teemu Murtola      Szilard Pall       Sander Pronk       
-Roland Schulz      Alexey Shvetsov    Michael Shirts     Alfons Sijbers     
-Peter Tieleman     Christian Wennberg Maarten Wolf       
-and the project leaders:
-Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar    Aldert van Buuren   Rudi van Drunen     Anton Feenstra  
+  Gerrit Groenhof    Aleksei Iupinov   Christoph Junghans   Anca Hamuraru   
+ Vincent Hindriksen Dimitrios Karkoulis    Peter Kasson        Jiri Kraus    
+  Carsten Kutzner      Per Larsson      Justin A. Lemkul    Viveca Lindahl  
+  Magnus Lundborg   Pieter Meulenhoff    Erik Marklund      Teemu Murtola   
+    Szilard Pall       Sander Pronk      Roland Schulz     Alexey Shvetsov  
+   Michael Shirts     Alfons Sijbers     Peter Tieleman    Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
 
 Copyright (c) 1991-2000, University of Groningen, The Netherlands.
-Copyright (c) 2001-2014, The GROMACS development team at
+Copyright (c) 2001-2017, The GROMACS development team at
 Uppsala University, Stockholm University and
 the Royal Institute of Technology, Sweden.
 check out http://www.gromacs.org for more information.
@@ -24,38 +26,102 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, VERSION 5.0-beta2-dev-20140303-6acea3c
-Executable:   /nethome/rossen/local/gmx-reference/bin/gmx
-Library dir:  /nethome/rossen/local/gmx-reference/share/gromacs/top
+GROMACS:      gmx mdrun, version 2019-dev-20180518-7d5382b-local
+Executable:   /home/schulzro/gromacs2/gcc48.ref/bin/gmx
+Data prefix:  /home/schulzro/gromacs2 (source tree)
+Working dir:  /home/schulzro/regressiontests/complex/field
 Command line:
-  mdrun -v -deffnm reference_s -s topol.tpr
+  gmx mdrun -nb cpu -notunepme
 
-Gromacs version:    VERSION 5.0-beta2-dev-20140303-6acea3c
-GIT SHA1 hash:      6acea3c7f04ec41659472a9cb03aec67e788d91d
+GROMACS version:    2019-dev-20180518-7d5382b-local
+GIT SHA1 hash:      7d5382b97d149caa408082e82f62b5918bba111a
+Branched from:      unknown
 Precision:          single
 Memory model:       64 bit
 MPI library:        none
 OpenMP support:     disabled
 GPU support:        disabled
-invsqrt routine:    (1.0/sqrt(x))
 SIMD instructions:  NONE
 FFT library:        fftpack (built-in)
-RDTSCP usage:       enabled
-C++11 compilation:  enabled
+RDTSCP usage:       disabled
 TNG support:        enabled
-Built on:           Tue Mar  4 09:39:16 CET 2014
-Built by:           rossen@tcbs22 [CMAKE]
-Build OS/arch:      Linux 3.5.0-46-generic x86_64
-Build CPU vendor:   AuthenticAMD
-Build CPU brand:    AMD Opteron(tm) Processor 6376
-Build CPU family:   21   Model: 2   Stepping: 0
-Build CPU features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-C compiler:         /usr/bin/gcc-4.7 GNU 4.7.3
-C compiler flags:      -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas   -O0 -g
-C++ compiler:       /usr/bin/g++-4.7 GNU 4.7.3
-C++ compiler flags:    -std=c++0x -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wall -Wno-unused-function -Wno-unknown-pragmas   -O0 -g
-Boost version:      1.55.0 (internal)
+Hwloc support:      hwloc-1.11.0
+Tracing support:    disabled
+Built on:           2018-05-21 03:05:40
+Built by:           schulzro@heat10.jf.intel.com [CMAKE]
+Build OS/arch:      Linux 3.10.0-514.26.2.el7.x86_64 x86_64
+Build CPU vendor:   Intel
+Build CPU brand:    Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+Build CPU family:   6   Model: 63   Stepping: 2
+Build CPU features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt intel lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+C compiler:         /usr/bin/cc GNU 4.8.5
+C compiler flags:       -Wundef -Wextra -Wno-missing-field-initializers -Wno-sign-compare -Wpointer-arith -Wall -Wno-unused -Wunused-value -Wunused-parameter -Wno-unknown-pragmas  -O0 -g
+C++ compiler:       /usr/bin/c++ GNU 4.8.5
+C++ compiler flags:     -std=c++11  -Wundef -Wextra -Wno-missing-field-initializers -Wpointer-arith -Wmissing-declarations -Wall -Wno-unknown-pragmas  -O0 -g
 
+
+Running on 1 node with total 36 cores, 72 logical cores
+Hardware detected:
+  CPU info:
+    Vendor: Intel
+    Brand:  Intel(R) Xeon(R) CPU E5-2699 v3 @ 2.30GHz
+    Family: 6   Model: 63   Stepping: 2
+    Features: aes apic avx avx2 clfsh cmov cx8 cx16 f16c fma htt intel lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+  Hardware topology: Full, with devices
+    Sockets, cores, and logical processors:
+      Socket  0: [   0  36] [   1  37] [   2  38] [   3  39] [   4  40] [   5  41] [   6  42] [   7  43] [   8  44] [   9  45] [  10  46] [  11  47] [  12  48] [  13  49] [  14  50] [  15  51] [  16  52] [  17  53]
+      Socket  1: [  18  54] [  19  55] [  20  56] [  21  57] [  22  58] [  23  59] [  24  60] [  25  61] [  26  62] [  27  63] [  28  64] [  29  65] [  30  66] [  31  67] [  32  68] [  33  69] [  34  70] [  35  71]
+    Numa nodes:
+      Node  0 (68618326016 bytes mem):   0  36   1  37   2  38   3  39   4  40   5  41   6  42   7  43   8  44   9  45  10  46  11  47  12  48  13  49  14  50  15  51  16  52  17  53
+      Node  1 (68719476736 bytes mem):  18  54  19  55  20  56  21  57  22  58  23  59  24  60  25  61  26  62  27  63  28  64  29  65  30  66  31  67  32  68  33  69  34  70  35  71
+      Latency:
+               0     1
+         0  1.00  2.10
+         1  2.10  1.00
+    Caches:
+      L1: 32768 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L2: 262144 bytes, linesize 64 bytes, assoc. 8, shared 2 ways
+      L3: 47185920 bytes, linesize 64 bytes, assoc. 20, shared 36 ways
+    PCI devices:
+      0000:01:00.0  Id: 8086:1521  Class: 0x0200  Numa: 0
+      0000:01:00.1  Id: 8086:1521  Class: 0x0200  Numa: 0
+      0000:00:11.4  Id: 8086:8d62  Class: 0x0106  Numa: 0
+      0000:06:00.0  Id: 102b:0522  Class: 0x0300  Numa: 0
+      0000:00:1f.2  Id: 8086:8d02  Class: 0x0106  Numa: 0
+
+Highest SIMD level requested by all nodes in run: AVX2_256
+SIMD instructions selected at compile time:       None
+This program was compiled for different hardware than you are running on,
+which could influence performance.
+The current CPU can measure timings more accurately than the code in
+gmx mdrun was configured to use. This might affect your simulation
+speed as accurate timings are needed for load-balancing.
+Please consider rebuilding gmx mdrun with the GMX_USE_RDTSCP=ON CMake option.
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+M. J. Abraham, T. Murtola, R. Schulz, S. Páll, J. C. Smith, B. Hess, E.
+Lindahl
+GROMACS: High performance molecular simulations through multi-level
+parallelism from laptops to supercomputers
+SoftwareX 1 (2015) pp. 19-25
+-------- -------- --- Thank You --- -------- --------
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+S. Páll, M. J. Abraham, C. Kutzner, B. Hess, E. Lindahl
+Tackling Exascale Software Challenges in Molecular Dynamics Simulations with
+GROMACS
+In S. Markidis & E. Laure (Eds.), Solving Software Challenges for Exascale 8759 (2015) pp. 3-27
+-------- -------- --- Thank You --- -------- --------
+
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+S. Pronk, S. Páll, R. Schulz, P. Larsson, P. Bjelkmar, R. Apostolov, M. R.
+Shirts, J. C. Smith, P. M. Kasson, D. van der Spoel, B. Hess, and E. Lindahl
+GROMACS 4.5: a high-throughput and highly parallel open source molecular
+simulation toolkit
+Bioinformatics 29 (2013) pp. 845-54
+-------- -------- --- Thank You --- -------- --------
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -89,54 +155,75 @@ Comp. Phys. Comm. 91 (1995) pp. 43-56
 
 Input Parameters:
    integrator                     = md
-   nsteps               = 20
-   init-step            = 0
-   cutoff-scheme                  = Group
-   ns-type                        = Grid
-   nstlist              = 5
-   ndelta               = 2
-   nstcomm              = 1
+   tinit                          = 0
+   dt                             = 0.001
+   nsteps                         = 10
+   init-step                      = 0
+   simulation-part                = 1
    comm-mode                      = Linear
-   nstlog               = 0
-   nstxout              = 20
-   nstvout              = 20
-   nstfout              = 20
-   nstcalcenergy        = 1
-   nstenergy            = 1
-   nstxout-compressed   = 0
-   init-t               = 0
-   delta-t              = 0.001
-   x-compression-precision = 200
-   fourierspacing       = 0.12
-   nkx                  = 0
-   nky                  = 0
-   nkz                  = 0
-   pme-order            = 4
-   ewald-rtol           = 1e-05
-   ewald-rtol-lj        = 0.001
-   ewald-geometry       = 0
-   epsilon-surface      = 0
-   optimize-fft                   = FALSE
+   nstcomm                        = 1
+   bd-fric                        = 0
+   ld-seed                        = 1993
+   emtol                          = 0.001
+   emstep                         = 0.1
+   niter                          = 20
+   fcstep                         = 0
+   nstcgsteep                     = 200
+   nbfgscorr                      = 10
+   rtpi                           = 0.05
+   nstxout                        = 20
+   nstvout                        = 20
+   nstfout                        = 20
+   nstlog                         = 0
+   nstcalcenergy                  = 1
+   nstenergy                      = 1
+   nstxout-compressed             = 0
+   compressed-x-precision         = 200
+   cutoff-scheme                  = Verlet
+   nstlist                        = 5
+   ns-type                        = Grid
+   pbc                            = xyz
+   periodic-molecules             = false
+   verlet-buffer-tolerance        = 0.005
+   rlist                          = 0.916
+   coulombtype                    = Cut-off
+   coulomb-modifier               = Potential-shift
+   rcoulomb-switch                = 0
+   rcoulomb                       = 0.9
+   epsilon-r                      = 1
+   epsilon-rf                     = 1
+   vdw-type                       = Cut-off
+   vdw-modifier                   = Potential-shift
+   rvdw-switch                    = 0
+   rvdw                           = 0.9
+   DispCorr                       = No
+   table-extension                = 1
+   fourierspacing                 = 0.12
+   fourier-nx                     = 0
+   fourier-ny                     = 0
+   fourier-nz                     = 0
+   pme-order                      = 4
+   ewald-rtol                     = 1e-05
+   ewald-rtol-lj                  = 0.001
    lj-pme-comb-rule               = Geometric
-   ePBC                           = xyz
-   bPeriodicMols                  = FALSE
-   bContinuation                  = FALSE
-   bShakeSOR                      = TRUE
-   etc                            = No
-   bPrintNHChains                 = FALSE
-   nsttcouple           = -1
-   epc                            = No
-   epctype                        = Isotropic
-   nstpcouple           = -1
-   tau-p                = 1
+   ewald-geometry                 = 0
+   epsilon-surface                = 0
+   tcoupl                         = No
+   nsttcouple                     = -1
+   nh-chain-length                = 0
+   print-nose-hoover-chain-variables = false
+   pcoupl                         = No
+   pcoupltype                     = Isotropic
+   nstpcouple                     = -1
+   tau-p                          = 1
+   compressibility (3x3):
+      compressibility[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
+      compressibility[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
+      compressibility[    2]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
    ref-p (3x3):
       ref-p[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
       ref-p[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
       ref-p[    2]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-   compress (3x3):
-      compress[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-      compress[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-      compress[    2]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
    refcoord-scaling               = No
    posres-com (3):
       posres-com[0]= 0.00000e+00
@@ -146,140 +233,101 @@ Input Parameters:
       posres-comB[0]= 0.00000e+00
       posres-comB[1]= 0.00000e+00
       posres-comB[2]= 0.00000e+00
-   verlet-buffer-tolerance = 0.005
-   rlist                = 0.9
-   rlistlong            = 0.9
-   nstcalclr            = 0
-   rtpi                 = 0.05
-   coulombtype                    = Cut-off
-   coulomb-modifier               = None
-   rcoulomb-switch      = 0
-   rcoulomb             = 0.9
-   vdwtype                        = Cut-off
-   vdw-modifier                   = None
-   rvdw-switch          = 0
-   rvdw                 = 0.9
-   epsilon-r            = 1
-   epsilon-rf           = 1
-   tabext               = 1
-   implicit-solvent               = No
-   gb-algorithm                   = Still
-   gb-epsilon-solvent   = 80
-   nstgbradii           = 0
-   rgbradii             = 0
-   gb-saltconc          = 0
-   gb-obc-alpha         = 1
-   gb-obc-beta          = 0.8
-   gb-obc-gamma         = 4.85
-   gb-dielectric-offset = 0.009
-   sa-algorithm                   = Ace-approximation
-   sa-surface-tension   = 2.05016
-   DispCorr                       = No
-   bSimTemp                       = FALSE
-   free-energy                    = no
-   nwall                = 0
+   QMMM                           = false
+   QMconstraints                  = 0
+   QMMMscheme                     = 0
+   MMChargeScaleFactor            = 1
+qm-opts:
+   ngQM                           = 0
+   constraint-algorithm           = Lincs
+   continuation                   = false
+   Shake-SOR                      = true
+   shake-tol                      = 0.0001
+   lincs-order                    = 4
+   lincs-iter                     = 1
+   lincs-warnangle                = 30
+   nwall                          = 0
    wall-type                      = 9-3
-   wall-atomtype[0]     = -1
-   wall-atomtype[1]     = -1
-   wall-density[0]      = 0
-   wall-density[1]      = 0
-   wall-ewald-zfac      = 3
-   pull                           = no
-   rotation                       = FALSE
+   wall-r-linpot                  = -1
+   wall-atomtype[0]               = -1
+   wall-atomtype[1]               = -1
+   wall-density[0]                = 0
+   wall-density[1]                = 0
+   wall-ewald-zfac                = 3
+   pull                           = false
+   awh                            = false
+   rotation                       = false
+   interactiveMD                  = false
    disre                          = No
    disre-weighting                = Equal
-   disre-mixed                    = FALSE
-   dr-fc                = 200
-   dr-tau               = 1.25
-   nstdisreout          = 20
-   orires-fc            = 0
-   orires-tau           = 0
-   nstorireout          = 0
-   dihre-fc             = 0
-   em-stepsize          = 0.1
-   em-tol               = 0.001
-   niter                = 20
-   fc-stepsize          = 0
-   nstcgsteep           = 200
-   nbfgscorr            = 10
-   ConstAlg                       = Lincs
-   shake-tol            = 0.0001
-   lincs-order          = 4
-   lincs-warnangle      = 30
-   lincs-iter           = 1
-   bd-fric              = 0
-   ld-seed              = 1993
-   cos-accel            = 0
+   disre-mixed                    = false
+   dr-fc                          = 200
+   dr-tau                         = 1.25
+   nstdisreout                    = 20
+   orire-fc                       = 0
+   orire-tau                      = 0
+   nstorireout                    = 0
+   free-energy                    = no
+   cos-acceleration               = 0
    deform (3x3):
       deform[    0]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
       deform[    1]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
       deform[    2]={ 0.00000e+00,  0.00000e+00,  0.00000e+00}
-   adress                         = FALSE
-   userint1             = 0
-   userint2             = 0
-   userint3             = 0
-   userint4             = 0
-   userreal1            = 0
-   userreal2            = 0
-   userreal3            = 0
-   userreal4            = 0
+   simulated-tempering            = false
+   swapcoords                     = no
+   userint1                       = 0
+   userint2                       = 0
+   userint3                       = 0
+   userint4                       = 0
+   userreal1                      = 0
+   userreal2                      = 0
+   userreal3                      = 0
+   userreal4                      = 0
+   applied-forces:
+     electric-field:
+       x:
+         E0                       = 0.04
+         omega                    = 0
+         t0                       = 0
+         sigma                    = 0
+       y:
+         E0                       = 0
+         omega                    = 0
+         t0                       = 0
+         sigma                    = 0
+       z:
+         E0                       = 0
+         omega                    = 0
+         t0                       = 0
+         sigma                    = 0
 grpopts:
    nrdf:        1293
    ref-t:           0
    tau-t:           0
-anneal:          No
-ann-npoints:           0
+annealing:          No
+annealing-npoints:           0
    acc:	           0           0           0
    nfreeze:           N           N           N
    energygrp-flags[  0]: 0
-   efield-x:
-      n = 1
-        a = 4.000000e-02
-        phi = 0.000000e+00
-   efield-xt:
-      n = 0
-   efield-y:
-      n = 0
-   efield-yt:
-      n = 0
-   efield-z:
-      n = 0
-   efield-zt:
-      n = 0
-   eSwapCoords                    = no
-   bQMMM                          = FALSE
-   QMconstraints        = 0
-   QMMMscheme           = 0
-   scalefactor          = 1
-qm-opts:
-   ngQM                 = 0
 
-Detecting CPU SIMD instructions.
-Present hardware specification:
-Vendor: AuthenticAMD
-Brand:  AMD Opteron(tm) Processor 6376                 
-Family: 21  Model:  2  Stepping:  0
-Features: aes apic avx clfsh cmov cx8 cx16 f16c fma fma4 htt lahf_lm misalignsse mmx msr nonstop_tsc pclmuldq pdpe1gb popcnt pse rdtscp sse2 sse3 sse4a sse4.1 sse4.2 ssse3 xop
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
-SIMD instructions selected at GROMACS compile time: None
+Can not increase nstlist because an NVE ensemble is used
 
+NOTE: GROMACS was compiled without OpenMP and (thread-)MPI support, can only use a single CPU core
 
-Binary not matching hardware - you might be losing performance.
-SIMD instructions most likely to fit this hardware: AVX_128_FMA
-SIMD instructions selected at GROMACS compile time: None
-
-
-NOTE: This file uses the deprecated 'group' cutoff_scheme. This will be
-removed in a future release when 'verlet' supports all interaction forms.
-
-Table routines are used for coulomb: FALSE
-Table routines are used for vdw:     FALSE
-Cut-off's:   NS: 0.9   Coulomb: 0.9   LJ: 0.9
+Pinning threads with an auto-selected logical core stride of 2
 System total charge: 0.000
+Potential shift: LJ r^-12: -3.541e+00 r^-6: -1.882e+00, Coulomb -1e+00
 
-Enabling SPC-like water optimization for 216 molecules.
+Using plain C 4x4 nonbonded short-range kernels
 
-Potential shift: LJ r^-12: 0.000e+00 r^-6: 0.000e+00, Coulomb -0e+00
+WARNING: Using the slow plain C kernels. This should
+not happen during routine usage on supported platforms.
+
+Using a 4x4 pair-list setup:
+  updated every 5 steps, buffer 0.016 nm, rlist 0.916 nm
+
+Using geometric Lennard-Jones combination rule
+
 Removing pbc first time
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -289,66 +337,69 @@ Water Models
 J. Comp. Chem. 13 (1992) pp. 952-962
 -------- -------- --- Thank You --- -------- --------
 
+
+Intra-simulation communication will occur every 1 steps.
 Center of mass motion removal mode is Linear
 We have the following groups for center of mass motion removal:
   0:  rest
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+C. Caleman and D. van der Spoel
+Picosecond Melting of Ice by an Infrared Laser Pulse: A Simulation Study
+Angew. Chem. Int. Ed 47 (2008) pp. 1417-1420
+-------- -------- --- Thank You --- -------- --------
+
 There are: 648 Atoms
-Max number of connections per atom is 2
-Total number of connections is 864
-Max number of graph edges per atom is 2
-Total number of graph edges is 864
 
 Constraining the starting coordinates (step 0)
 
 Constraining the coordinates at t0-dt (step 0)
 RMS relative constraint deviation after constraining: 0.00e+00
-Initial temperature: 212.774 K
+Initial temperature: 212.775 K
 
-Started mdrun on node 0 Tue Mar  4 09:49:14 2014
-           Step           Time         Lambda
-              0        0.00000        0.00000
-
-
-Grid: 3 x 3 x 3 cells
-   Energies (kJ/mol)
-        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    2.02486e+03   -1.22885e+04   -1.02636e+04    1.14369e+03   -9.11994e+03
-    Temperature Pressure (bar)
-    2.12766e+02   -5.49032e+02
-
-           Step           Time         Lambda
-             20        0.02000        0.00000
-
-Writing checkpoint, step 20 at Tue Mar  4 09:49:14 2014
-
+Started mdrun on rank 0 Sun May 20 21:18:58 2018
+           Step           Time
+              0        0.00000
 
    Energies (kJ/mol)
         LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    2.02774e+03   -1.22618e+04   -1.02341e+04    1.12076e+03   -9.11331e+03
+    2.07803e+03   -1.21918e+04   -1.01138e+04    1.14715e+03   -8.96666e+03
     Temperature Pressure (bar)
-    2.08501e+02   -3.92449e+02
+    2.13411e+02   -5.39070e+03
+
+           Step           Time
+             10        0.01000
+
+Writing checkpoint, step 10 at Sun May 20 21:18:58 2018
+
+
+   Energies (kJ/mol)
+        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
+    2.09747e+03   -1.24165e+04   -1.03191e+04    1.35375e+03   -8.96533e+03
+    Temperature Pressure (bar)
+    2.51847e+02   -4.29443e+03
 
 	<======  ###############  ==>
 	<====  A V E R A G E S  ====>
 	<==  ###############  ======>
 
-	Statistics over 21 steps using 21 frames
+	Statistics over 11 steps using 11 frames
 
    Energies (kJ/mol)
         LJ (SR)   Coulomb (SR)      Potential    Kinetic En.   Total Energy
-    2.03701e+03   -1.22857e+04   -1.02487e+04    1.13198e+03   -9.11674e+03
+    2.08918e+03   -1.22993e+04   -1.02101e+04    1.24412e+03   -8.96601e+03
     Temperature Pressure (bar)
-    2.10587e+02   -3.63716e+02
+    2.31452e+02   -4.61516e+03
 
    Total Virial (kJ/mol)
-    5.46786e+02    1.06634e+02    2.54587e+01
-    1.06656e+02    3.53793e+02    1.64397e+02
-    2.54810e+01    1.64445e+02    4.43518e+02
+    8.68840e+02   -5.93643e+01    5.29697e+02
+   -5.97138e+01    1.54179e+03   -2.56867e+02
+    5.29537e+02   -2.56615e+02    1.52509e+03
 
    Pressure (bar)
-   -8.26874e+02   -5.40004e+02   -1.56021e+02
-   -5.40117e+02    2.57737e+02   -8.07818e+02
-   -1.56135e+02   -8.08061e+02   -5.22010e+02
+   -2.31966e+03    3.20665e+02   -2.79087e+03
+    3.22463e+02   -5.61179e+03    1.32881e+03
+   -2.79005e+03    1.32752e+03   -5.91404e+03
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -360,19 +411,18 @@ Writing checkpoint, step 20 at Tue Mar  4 09:49:14 2014
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- NB VdW & Elec. [W3-W3,V&F]              59.345475          59.345    89.6
- NS-Pairs                                 0.183499           3.853     5.8
- Reset In Box                             0.001080           0.003     0.0
- Shift-X                                  0.027216           0.163     0.2
- CG-CoM                                   0.003240           0.010     0.0
- Virial                                   0.014553           0.262     0.4
- Stop-CM                                  0.014256           0.143     0.2
- Calc-Ekin                                0.014256           0.385     0.6
- Constraint-V                             0.014256           0.114     0.2
- Constraint-Vir                           0.013608           0.327     0.5
- Settle                                   0.004968           1.605     2.4
+ Pair Search distance check               0.478396           4.306     3.9
+ NxN RF Elec. + LJ [V&F]                  1.163376          62.822    56.8
+ NxN RF Electrostatics [V&F]              1.163376          41.882    37.9
+ Shift-X                                  0.001944           0.012     0.0
+ Virial                                   0.007623           0.137     0.1
+ Stop-CM                                  0.007776           0.078     0.1
+ Calc-Ekin                                0.007776           0.210     0.2
+ Constraint-V                             0.007776           0.062     0.1
+ Constraint-Vir                           0.007128           0.171     0.2
+ Settle                                   0.002808           0.907     0.8
 -----------------------------------------------------------------------------
- Total                                                      66.210   100.0
+ Total                                                     110.586   100.0
 -----------------------------------------------------------------------------
 
 
@@ -381,20 +431,21 @@ Writing checkpoint, step 20 at Tue Mar  4 09:49:14 2014
 On 1 MPI rank
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
-                     Nodes Threads  Count      (s)         total sum    %
+                     Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          5       0.016          0.036  14.0
- Force                  1    1         21       0.077          0.178  69.1
- Write traj.            1    1          2       0.011          0.024   9.5
- Update                 1    1         21       0.001          0.002   0.8
- Constraints            1    1         21       0.003          0.006   2.3
- Rest                                           0.005          0.011   4.3
+ Neighbor search        1    1          3       0.021          0.049   4.1
+ Force                  1    1         11       0.279          0.640  53.6
+ NB X/F buffer ops.     1    1         19       0.000          0.000   0.0
+ Write traj.            1    1          2       0.214          0.492  41.2
+ Update                 1    1         11       0.000          0.001   0.1
+ Constraints            1    1         11       0.003          0.006   0.5
+ Rest                                           0.002          0.006   0.5
 -----------------------------------------------------------------------------
- Total                                          0.111          0.258 100.0
+ Total                                          0.520          1.194 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.107        0.111       96.2
+       Time:        0.520        0.520      100.0
                  (ns/day)    (hour/ns)
-Performance:       16.346        1.468
-Finished mdrun on node 0 Tue Mar  4 09:49:14 2014
+Performance:        1.827       13.135
+Finished mdrun on rank 0 Sun May 20 21:18:58 2018
