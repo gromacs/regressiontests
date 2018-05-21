@@ -69,7 +69,7 @@ energygrps               = System
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
-cutoff-scheme            = Group
+cutoff-scheme            = Verlet
 ; nblist update frequency
 nstlist                  = 10
 ; ns algorithm (simple or grid)
@@ -81,7 +81,7 @@ periodic-molecules       = no
 ; a value of -1 means: use rlist
 verlet-buffer-drift      = 0.005
 ; nblist cut-off        
-rlist                    = 0.9
+rlist                    = 0.8
 ; long-range cut-off for switched potentials
 rlistlong                = -1
 nstcalclr                = -1
@@ -91,7 +91,7 @@ nstcalclr                = -1
 coulombtype              = cut-off
 coulomb-modifier         = Potential-shift-Verlet
 rcoulomb_switch          = 0.0
-rcoulomb                 = 0.9
+rcoulomb                 = 0.8
 ; Relative dielectric constant for the medium and the reaction field
 epsilon_r                = 1
 epsilon_rf               = 1
@@ -100,7 +100,7 @@ vdw_type                 = Cut-off
 vdw-modifier             = Potential-shift-Verlet
 ; cut-off lengths       
 rvdw_switch              = 0.0
-rvdw                     = 0.9
+rvdw                     = 0.8
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
@@ -206,7 +206,7 @@ annealing-time           =
 annealing-temp           = 
 
 ; GENERATE VELOCITIES FOR STARTUP RUN
-gen_vel                  = yes
+gen_vel                  = no
 gen_temp                 = 0.0
 gen_seed                 = 173529
 

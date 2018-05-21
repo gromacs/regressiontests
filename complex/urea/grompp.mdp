@@ -13,11 +13,11 @@ include                  =
 define                   = 
 
 ; RUN CONTROL PARAMETERS
-integrator               = steep
+integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
-dt                       = 0.002
-nsteps                   = 20
+dt                       = 0.0005
+nsteps                   = 10
 ; For exact run continuation or redoing part of a run
 init_step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -66,11 +66,11 @@ compressed-x-precision   = 200
 ; default, all atoms will be written.
 compressed-x-grps        = 
 ; Selection of energy groups
-energygrps               = URE	SOL
+energygrps               =
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (Verlet: particle based cut-offs, group: using charge groups)
-cutoff-scheme            = Group
+cutoff-scheme            = Verlet
 ; nblist update frequency
 nstlist                  = 10
 ; ns algorithm (simple or grid)
@@ -150,7 +150,7 @@ sa-surface-tension       = -1
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
-tcoupl                   = Berendsen
+tcoupl                   = No
 nsttcouple               = -1
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
