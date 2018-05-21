@@ -70,7 +70,7 @@ energygrps               = PEG
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (Verlet: particle based cut-offs, group: using charge groups)
-cutoff-scheme            = group
+cutoff-scheme            = verlet
 ; nblist update frequency
 nstlist                  = 5
 ; ns algorithm (simple or grid)
@@ -89,7 +89,7 @@ nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
-coulombtype              = Shift
+coulombtype              = cut-off
 coulomb-modifier         = Potential-shift-Verlet
 rcoulomb_switch          = 0.0
 rcoulomb                 = 1.2
