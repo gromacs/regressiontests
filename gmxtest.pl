@@ -81,7 +81,7 @@ my $max_mpi_ranks_filename = "max-mpi-ranks";
 
 # List of all the generic subdirectories of tests; pdb2gmx and essentialdynamics are treated
 # separately.
-my @all_dirs = ('simple', 'complex', 'kernel', 'freeenergy', 'rotation', 'extra');
+my @all_dirs = ('simple', 'complex', 'freeenergy', 'rotation', 'extra');
 
 sub specify_number_of_pme_ranks {
     my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
@@ -669,11 +669,6 @@ sub test_case {
         my $local_gpu_id = $gpu_id;
         # With tunepme Coul-Sr/Recip isn't reproducible
         my $local_mdparams = $mdparams . " -notunepme";
-        if ($dir =~ /nb_kernel.*CSTab/) {
-            # All group-kernel test cases with cubic splines need
-            # tables for their interactions.
-            $local_mdparams .= " -table $input_dir/../table -tablep $input_dir/../tablep";
-        }
         my $part = "";
         if ( -f "$input_dir/continue.cpt" ) {
             $local_mdparams .= " -cpi $input_dir/continue -noappend";
