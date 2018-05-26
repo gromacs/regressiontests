@@ -17,7 +17,7 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0.0
 dt                       = 0.002
-nsteps                   = 10
+nsteps                   = 5
 ; For exact run continuation or redoing part of a run
 init_step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -71,7 +71,7 @@ energygrps               =
 ; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
 cutoff-scheme            = Verlet
 ; nblist update frequency
-nstlist                  = 10
+nstlist                  = 5
 ; ns algorithm (simple or grid)
 ns_type                  = grid
 ; Periodic boundary conditions: xyz, no, xy
