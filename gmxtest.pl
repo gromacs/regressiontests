@@ -314,7 +314,6 @@ sub check_xvg {
     my $refx = shift;
     my $kkk  = shift;
     my $ndx = shift;
-    my $pdb2gmx_test_names = shift;
 
     my $nerr = 0;
     if ((-f $refx) && (-f $kkk)) {
@@ -336,8 +335,6 @@ sub check_xvg {
 	    my $x1 = $tmp[$ndx];
 	    my $x2 = $tmp2[$ndx];
             my $error;
-            my $hasPdb2gmx_test_name = defined $pdb2gmx_test_names && defined $$pdb2gmx_test_names[$n];
-            print XML "<testcase name=\"$$pdb2gmx_test_names[$n]\">\n" if ($xml && $hasPdb2gmx_test_name);
             my $tol;
             if ($x1+$x2==0) { 
               $error = abs($x1-$x2);
@@ -352,13 +349,8 @@ sub check_xvg {
             	$header = 1;
             	print("Here follows a list of the lines in $refx and $kkk which did not\npass the comparison test within tolerance $etol_rel\nIndex  Reference   This test       Error  Description\n");
                 }
-                printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$x1,$x2, $error, 
-            	   $hasPdb2gmx_test_name ? $$pdb2gmx_test_names[$n] : 'unknown');
-                printf(XML "<error message=\"Reference: %g Result: %g Error: %g\"/>\n",$x1,$x2, $error) 
-            	if ($xml && $hasPdb2gmx_test_name);
-                
+                printf("%4d  %10g  %10g  %10g  %s\n",$n+1,$x1,$x2, $error, 'unknown');
             }
-            print XML "</testcase>\n" if ($xml && $hasPdb2gmx_test_name);
             $n++;
 	}
         while (my $line2=<KKK>) {#KKK has more lines
@@ -1544,130 +1536,8 @@ sub test_essentialdynamics {
   return $nerror;
 }
 
-sub test_pdb2gmx {
-    my $logfn = "pdb2gmx.log";
-
-    chdir("pdb2gmx");
-    open (LOG,">$logfn") || die("FAILED: Opening $logfn for writing");
-    my $npdb_dir = 0;
-    my @pdb_dirs = ();
-    my $ntest    = 0;
-    my $nerror   = 0;
-    my @pdb2gmx_test_names;
-    my %forcefields = ( "old" => [ "gromos43a1", "oplsaa", "gromos53a6" ],
-                        "new" => [ "amber99sb-ildn", "charmm27" ] );
-    my %watermodels = ( "gromos43a1" => [ "spc", "spce" ],
-                        "oplsaa" => [ "tip3p", "tip4p", "tip5p" ],
-                        "gromos53a6" => [ "spc", "spce" ],
-                        "amber99sb-ildn" => [ "tip3p" ],
-                        "charmm27" => [ "tips3p" ] );
-    my %vsites      = ( "gromos43a1" => [ "none", "h" ],
-                        "oplsaa" => [ "none", "h" ],
-                        "gromos53a6" => [ "none", "h" ],
-                        "amber99sb-ildn" => [ "none" ],
-                        "charmm27" => [ "none" ] );
-    # Funny construction to maintain order of outputs
-    my @tests;
-    foreach my $cat ( "old", "new" ) {
-        foreach my $pdb ( glob("*.pdb") ) {
-            my $pdir = "pdb-$pdb";
-            my @kkk  = split('\.',$pdir);
-            my $dir  = $kkk[0];
-            foreach my $ff ( @{$forcefields{$cat}} ) {
-                foreach my $dd ( @{$vsites{$ff}} ) {
-                    foreach my $ww ( @{$watermodels{$ff}} ) {
-                        $tests[1+$#tests] = "$pdb|$dir|$ff|$dd|$ww";
-                    }
-                }
-            }
-        }
-    }
-
-    foreach my $test ( @tests ) {
-        (my $pdb, my $dir, my $ff, my $dd, my $ww) = split('\|', $test);
-        $pdb_dirs[$npdb_dir++] = $dir;
-        foreach my $newdir ( $dir, $ff, $dd, $ww ) {
-            mkdir($newdir);
-            chdir($newdir);
-        }
-        $ntest++;
-        push @pdb2gmx_test_names, "$pdb with $ff using vsite=$dd and water=$ww";
-        my $line = "";
-        print(LOG "****************************************************\n");
-        print(LOG "** PDB = $pdb FF = $ff VSITE = $dd WATER = $ww\n");
-        printf(LOG "** Working directory = %s\n", getcwd());
-        print(LOG "****************************************************\n");
-        print(LOG "****************************************************\n");
-        print(LOG "**  Running pdb2gmx\n");
-        print(LOG "****************************************************\n");
-        open(PIPE,"$progs{'pdb2gmx'} -f ../../../../$pdb -ff $ff -ignh -vsite $dd -water $ww -o conf.g96 2>&1 |");
-        print LOG while <PIPE>;
-        close PIPE;
-        print(LOG "****************************************************\n");
-        print(LOG "**  Running editconf\n");
-        print(LOG "****************************************************\n");
-        open(PIPE,"$progs{'editconf'} -o b4em.g96 -box 5 5 5 -c -f conf.g96 2>&1 |");
-        print LOG while <PIPE>;
-        close PIPE;
-        print(LOG "****************************************************\n");
-        print(LOG "**  Running grompp\n");
-        print(LOG "****************************************************\n");
-        open(PIPE,"$progs{'grompp'} -maxwarn 3 -f ../../../../em -c b4em.g96 2>&1 |");
-        print LOG while <PIPE>;
-        close PIPE;
-        print(LOG "****************************************************\n");
-        print(LOG "**  Running mdrun\n");
-        print(LOG "****************************************************\n");
-        open(PIPE,$mdprefix->($mpi_ranks)." $progs{'mdrun'} $mdparams 2>&1 |");
-        print LOG while <PIPE>;
-        close PIPE;
-        for(my $k=0; $k < 4; $k++) {
-            chdir("..");
-        }
-    }
-    close LOG;
-
-    my $only_energies_filename = 'ener.log';
-    my $nsuccess = find_in_file('Potential Energy',$logfn,$only_energies_filename);
-
-    if ( $nsuccess != $ntest ) {
-	print "Error not all $ntest pdb2gmx tests have been done successfully\n";
-	print "Only $nsuccess energies in the log file\n";
-	$nerror = 1;
-    }
-    else {
-	my $reflog = "${ref}.log";
-	if (! -f $reflog) {
-	    print "No file $reflog. You are not really testing pdb2gmx\n";
-	    copy($only_energies_filename, $reflog);
-	}
-	else {
-	    print XML "<testsuite name=\"pdb2gmx\">\n" if ($xml);
-	    $nerror = check_xvg($reflog,$only_energies_filename,3,\@pdb2gmx_test_names);
-	    print XML "</testsuite>\n" if ($xml);
-	    if ( $nerror != 0 ) {
-		print "There were $nerror/$ntest differences in final energy with the reference file\n";
-	    }
-	}
-    }
-    if (0 == $nerror) {
-	print "All $ntest pdb2gmx tests PASSED\n";
-	remove_tree(@pdb_dirs);
-	unlink($logfn,$only_energies_filename);
-    }
-    else {
-	print "pdb2gmx tests FAILED\n";
-    }
-    chdir("..");
-    return $nerror;
-}
-
 sub clean_all {
     map { cleandirs("$_") } @all_dirs;
-    chdir("pdb2gmx");
-    unlink("pdb2gmx.log");
-    remove_tree(glob "pdb-*");
-    chdir("..");
     cleandirs('essentialdynamics')
 }
 
@@ -1679,7 +1549,7 @@ Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [ -npme n ]
                     [ -suffix xxx ] [ -reprod ] [ -mpirun mpirun_command ]
                     [ -mdrun mdrun_command ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
-                    [ $dirs | pdb2gmx | all ]
+                    [ $dirs | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
     exit 1;
@@ -1709,7 +1579,7 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         push @work, "test_dirs('$arg')";
     }
     elsif ($arg eq 'pdb2gmx' ) {
-	push @work, "test_pdb2gmx()";
+	die "pdb2gmx testing is now done in the ctest testing in the source repository"
     }
     elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
         push @work, "test_normal_modes()";
@@ -1722,7 +1592,6 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
 #    }
     elsif ($arg eq 'all' ) {
         map { push @work, "test_dirs('$_')" } @all_dirs;
-	push @work, "test_pdb2gmx()";
 	push @work, "test_normal_modes()";
 	push @work, "test_essentialdynamics()";
 	#push @work, "test_tools()";
@@ -1733,7 +1602,6 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
     elsif ($arg eq 'refclean' ) {
         map { push @work, "refcleandir('$_')" } @all_dirs;
-	push @work, "unlink('pdb2gmx/reference_s.log','pdb2gmx/reference_d.log')";
     }
     elsif ($arg eq 'dist' ) {
 	push @work, "clean_all()";
