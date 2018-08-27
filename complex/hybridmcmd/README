@@ -1,0 +1,8 @@
+Hybrid Monte Carlo
+
+The implementation of the hybrid Monte Carlo sampler consists of the
+three classes HybridMCMDVelocities (provides initial velocities for
+NVE runs), MetropolisStepMehlig (implements the Metropolis criterion),
+and AcceptOrRewind (updates the simulation state). This short simulation
+of alanine dipeptide in vacuum tests whether the three classes interact
+correctly and whether they are embedded correctly in the main MD loop.
