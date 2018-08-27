@@ -1,0 +1,4 @@
+Hybrid Monte Carlo
+
+This test checks whether the hybrid Monte Carlo implementation
+is compatible with domain decomposition.

@@ -1,0 +1,78 @@
+        :-) GROMACS - gmx grompp, 2019-dev-20180823-2410d67d9-dirty (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar    Aldert van Buuren   Rudi van Drunen     Anton Feenstra  
+  Gerrit Groenhof    Aleksei Iupinov   Christoph Junghans   Anca Hamuraru   
+ Vincent Hindriksen Dimitrios Karkoulis    Peter Kasson        Jiri Kraus    
+  Carsten Kutzner      Per Larsson      Justin A. Lemkul    Viveca Lindahl  
+  Magnus Lundborg   Pieter Meulenhoff    Erik Marklund      Teemu Murtola   
+    Szilard Pall       Sander Pronk      Roland Schulz     Alexey Shvetsov  
+   Michael Shirts     Alfons Sijbers     Peter Tieleman    Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2017, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx grompp, version 2019-dev-20180823-2410d67d9-dirty
+Executable:   /tmp/gerrit/AVX_256/build/bin/gmx
+Data prefix:  /tmp/gerrit/AVX_256 (source tree)
+Working dir:  /nethome/swingber/Internship/gerrit/gromacs/tests/regressiontests/complex/hybridmcmd
+Command line:
+  gmx grompp
+
+Ignoring obsolete mdp entry 'gb-algorithm'
+Ignoring obsolete mdp entry 'nstgbradii'
+Ignoring obsolete mdp entry 'rgbradii'
+Ignoring obsolete mdp entry 'gb-epsilon-solvent'
+Ignoring obsolete mdp entry 'gb-saltconc'
+Ignoring obsolete mdp entry 'gb-obc-alpha'
+Ignoring obsolete mdp entry 'gb-obc-beta'
+Ignoring obsolete mdp entry 'gb-obc-gamma'
+Ignoring obsolete mdp entry 'gb-dielectric-offset'
+Ignoring obsolete mdp entry 'sa-algorithm'
+Ignoring obsolete mdp entry 'sa-surface-tension'
+
+NOTE 1 [file grompp.mdp]:
+  In hybrid Monte Carlo simulations, dynamic load balancing and PME tuning
+  are turned off.
+
+
+NOTE 2 [file grompp.mdp]:
+  The current implementation of hybrid Monte Carlo only supports pure MD
+  simulation. It does not support any type of enhanced sampling simulation
+  (replica exchange, simulated tempering/expanded ensemble, FEP, pull
+  code/umbrella sampling, ...) yet.
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+Generating 1-4 interactions: fudge = 0.5
+Generated 2211 of the 2211 1-4 parameter combinations
+Excluding 3 bonded neighbours molecule type 'ALANINEDIPEPTIDE'
+turning H bonds into constraints...
+Removing all charge groups because cutoff-scheme=Verlet
+Analysing residue names:
+There are:     3    Protein residues
+Analysing Protein...
+Number of degrees of freedom in T-Coupling group System is 51.00
+
+NOTE 3 [file grompp.mdp]:
+  NVE simulation: will use the initial temperature of 159.468 K for
+  determining the Verlet buffer size
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 159.468 K
+Calculated rlist for 1x1 atom pair-list as 1.000 nm, buffer size 0.000 nm
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+This run will generate roughly 0 Mb of data
+
+There were 3 notes

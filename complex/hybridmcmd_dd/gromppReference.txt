@@ -1,0 +1,120 @@
+        :-) GROMACS - gmx grompp, 2019-dev-20180823-2410d67d9-dirty (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar    Aldert van Buuren   Rudi van Drunen     Anton Feenstra  
+  Gerrit Groenhof    Aleksei Iupinov   Christoph Junghans   Anca Hamuraru   
+ Vincent Hindriksen Dimitrios Karkoulis    Peter Kasson        Jiri Kraus    
+  Carsten Kutzner      Per Larsson      Justin A. Lemkul    Viveca Lindahl  
+  Magnus Lundborg   Pieter Meulenhoff    Erik Marklund      Teemu Murtola   
+    Szilard Pall       Sander Pronk      Roland Schulz     Alexey Shvetsov  
+   Michael Shirts     Alfons Sijbers     Peter Tieleman    Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2017, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx grompp, version 2019-dev-20180823-2410d67d9-dirty
+Executable:   /tmp/gerrit/AVX_256/build/bin/gmx
+Data prefix:  /tmp/gerrit/AVX_256 (source tree)
+Working dir:  /nethome/swingber/Internship/gerrit/gromacs/tests/regressiontests/complex/hybridmcmd_dd
+Command line:
+  gmx grompp -maxwarn 6
+
+Ignoring obsolete mdp entry 'optimize_fft'
+Ignoring obsolete mdp entry 'rlistlong'
+Ignoring obsolete mdp entry 'nstcalclr'
+Ignoring obsolete mdp entry 'gb_algorithm'
+Ignoring obsolete mdp entry 'nstgbradii'
+Ignoring obsolete mdp entry 'rgbradii'
+Ignoring obsolete mdp entry 'gb-epsilon-solvent'
+Ignoring obsolete mdp entry 'gb_saltconc'
+Ignoring obsolete mdp entry 'gb-obc-alpha'
+Ignoring obsolete mdp entry 'gb-obc-beta'
+Ignoring obsolete mdp entry 'gb-obc-gamma'
+Ignoring obsolete mdp entry 'gb-dielectric-offset'
+Ignoring obsolete mdp entry 'sa-algorithm'
+Ignoring obsolete mdp entry 'sa-surface-tension'
+Replacing old mdp entry 'verlet-buffer-drift' by 'verlet-buffer-tolerance'
+Replacing old mdp entry 'nstxtcout' by 'nstxout-compressed'
+Replacing old mdp entry 'xtc_precision' by 'compressed-x-precision'
+
+NOTE 1 [file grompp.mdp]:
+  The group cutoff scheme is deprecated since GROMACS 5.0 and will be
+  removed in a future release when all interaction forms are supported for
+  the verlet scheme. The verlet scheme already scales better, and it is
+  compatible with GPUs and other accelerators.
+
+
+NOTE 2 [file grompp.mdp]:
+  In hybrid Monte Carlo simulations, dynamic load balancing and PME tuning
+  are turned off.
+
+
+NOTE 3 [file grompp.mdp]:
+  The current implementation of hybrid Monte Carlo only supports pure MD
+  simulation. It does not support any type of enhanced sampling simulation
+  (replica exchange, simulated tempering/expanded ensemble, FEP, pull
+  code/umbrella sampling, ...) yet.
+
+
+WARNING 1 [file grompp.mdp]:
+  coulombtype = Switch is only for testing purposes and can lead to serious
+  artifacts, advice: use coulombtype = Reaction-Field-zero
+
+
+NOTE 4 [file grompp.mdp]:
+  The switch/shift interaction settings are just for compatibility; you
+  will get better performance from applying potential modifiers to your
+  interactions!
+
+
+
+NOTE 5 [file grompp.mdp]:
+  For energy conservation with switch/shift potentials, rlist should be 0.1
+  to 0.3 nm larger than rcoulomb.
+
+
+NOTE 6 [file grompp.mdp]:
+  You are using a cut-off for VdW interactions with NVE, for good energy
+  conservation use vdwtype = Shift (possibly with DispCorr)
+
+Generated 330891 of the 330891 non-bonded parameter combinations
+Generating 1-4 interactions: fudge = 0.5
+Generated 330891 of the 330891 1-4 parameter combinations
+Excluding 2 bonded neighbours molecule type 'SOL'
+turning all bonds into constraints...
+Velocities were taken from a Maxwell distribution at 0 K
+Analysing residue names:
+There are:   216      Water residues
+Number of degrees of freedom in T-Coupling group System is 1296.00
+
+WARNING 2 [file grompp.mdp]:
+  You are not using center of mass motion removal (mdp option comm-mode),
+  numerical rounding errors can lead to build up of kinetic energy of the
+  center of mass
+
+Largest charge group radii for Van der Waals: 0.039, 0.039 nm
+Largest charge group radii for Coulomb:       0.084, 0.084 nm
+
+WARNING 3 [file grompp.mdp]:
+  The sum of the two largest charge group radii (0.168872) is larger than
+  rlist (0.800000) - rcoulomb (0.800000).
+  With exact cut-offs, better performance can be obtained with
+  cutoff-scheme = Verlet, because it does not use charge groups at all.
+
+This run will generate roughly 0 Mb of data
+
+There were 6 notes
+
+There were 3 warnings
