@@ -1782,7 +1782,9 @@ elsif (!$did_clean) {
 # Now do the work, if there is any
 my $nerror = 0;
 map {
-    $nerror += eval $_;
+    if (defined $_) {
+        $nerror += eval $_;
+    }
     if ('' ne $@) {
         die "$@"
     }
