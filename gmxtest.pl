@@ -1068,7 +1068,7 @@ sub compare_xvg {
   for(my $i = 0; ($i<=$#ref); $i++) {
     my @r = split(' ', $ref[$i]);
     my @t = split(' ', $test[$i]);
-    die("FAILED: test $i = $t[1]  ref $i = $r[1]") if (abs($r[1]-$t[1])/$r[1] > $rel_toler);
+    die("FAILED: test $i = $t[1] $i = $r[1]") if ($r[1] != 0 && abs($r[1]-$t[1])/$r[1] > $rel_toler);
   }
 }
 
