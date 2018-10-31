@@ -1,3 +1,30 @@
-     7         1676.63
-     8         3677.71
-     9         3740.35
+# This file was created Wed Oct 31 11:50:44 2018
+# Created by:
+#  :-) GROMACS - gmx nmeig, 2019-beta2-dev-20181031-c935507a1-dirty (double precision) (-:
+# 
+# Executable:   /Users/spoel/software-release-2019/bin/gmx_mpi_d
+# Data prefix:  /Users/spoel/software-release-2019
+# Working dir:  /Users/spoel/GG/regressiontests/normal_modes/sw-dimer
+# Command line:
+#   gmx_mpi_d nmeig -f nm -s topol.tpr -debug 2 -first 7
+# gmx nmeig is part of G R O M A C S:
+#
+# Gravel Rubs Often Many Awfully Cauterized Sores
+#
+@    title "Eigenfrequencies"
+@    xaxis  label "Eigenvector index"
+@    yaxis  label "Wavenumber [cm\S-1\N]"
+@TYPE xy
+@ subtitle "mass weighted"
+     7               0
+     8         90.5862
+     9         186.379
+    10         216.162
+    11         291.978
+    12         535.718
+    13         792.002
+    14         1317.95
+    15         2239.28
+    16         2986.17
+    17         3715.28
+    18         4189.26

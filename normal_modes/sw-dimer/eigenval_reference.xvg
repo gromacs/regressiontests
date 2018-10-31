@@ -1,3 +1,30 @@
-     7         99741.3
-     8          479906
-     9          496394
+# This file was created Wed Oct 31 11:50:44 2018
+# Created by:
+#  :-) GROMACS - gmx nmeig, 2019-beta2-dev-20181031-c935507a1-dirty (double precision) (-:
+# 
+# Executable:   /Users/spoel/software-release-2019/bin/gmx_mpi_d
+# Data prefix:  /Users/spoel/software-release-2019
+# Working dir:  /Users/spoel/GG/regressiontests/normal_modes/sw-dimer
+# Command line:
+#   gmx_mpi_d nmeig -f nm -s topol.tpr -debug 2 -first 7
+# gmx nmeig is part of G R O M A C S:
+#
+# Giant Rising Ordinary Mutants for A Clerical Setup
+#
+@    title "Eigenvalues"
+@    xaxis  label "Eigenvalue index"
+@    yaxis  label "Eigenvalue [Gromacs units]"
+@TYPE xy
+@ subtitle "mass weighted"
+     7        -38.3304
+     8         291.156
+     9         1232.52
+    10         1657.91
+    11         3024.83
+    12         10182.9
+    13         22256.3
+    14         61630.8
+    15          177917
+    16          316396
+    17          489761
+    18          622695
