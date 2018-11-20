@@ -44,10 +44,10 @@ ld-seed                  = -1
 
 ; ENERGY MINIMIZATION OPTIONS
 ; Force tolerance and initial step-size
-emtol                    = 0.1
-emstep                   = 0.01
+emtol                    = 0.01
+emstep                   = 0.0001
 ; Max number of iterations in relax-shells
-niter                    = 20
+niter                    = 200
 ; Step size (ps^2) for minimization of flexible constraints
 fcstep                   = 0
 ; Frequency of steepest descents steps when doing CG
