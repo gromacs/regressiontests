@@ -44,10 +44,10 @@ ld-seed                  = -1
 
 ; ENERGY MINIMIZATION OPTIONS
 ; Force tolerance and initial step-size
-emtol                    = 0.1
-emstep                   = 0.01
+emtol                    = 0.01
+emstep                   = 0.0001
 ; Max number of iterations in relax-shells
-niter                    = 20
+niter                    = 200
 ; Step size (ps^2) for minimization of flexible constraints
 fcstep                   = 0
 ; Frequency of steepest descents steps when doing CG
@@ -78,26 +78,26 @@ energygrps               =
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (Verlet: particle based cut-offs, group: using charge groups)
-cutoff-scheme            = Group
+cutoff-scheme            = Verlet
 ; nblist update frequency
-nstlist                  = 0
+nstlist                  = 1
 ; ns algorithm (simple or grid)
 ns-type                  = Grid
 ; Periodic boundary conditions: xyz, no, xy
-pbc                      = no
+pbc                      = xyz
 periodic-molecules       = no
 ; Allowed energy error due to the Verlet buffer in kJ/mol/ps per atom,
 ; a value of -1 means: use rlist
 verlet-buffer-tolerance  = 0.005
 ; nblist cut-off        
-rlist                    = 0
+rlist                    = 2
 ; long-range cut-off for switched potentials
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
 coulombtype              = Cut-off
 rcoulomb-switch          = 0
-rcoulomb                 = 0
+rcoulomb                 = 2
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
 epsilon-rf               = 0
@@ -105,7 +105,7 @@ epsilon-rf               = 0
 vdw-type                 = Cut-off
 ; cut-off lengths       
 rvdw-switch              = 0
-rvdw                     = 0
+rvdw                     = 2
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
