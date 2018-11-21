@@ -40,7 +40,7 @@ LJ	Geometric
    WO    15.99940       0.0     A   	0.0	0.0
    WH     1.00800       0.0     A	0.0	0.0
    WS     0.0           0.0     S   	0.0	0.0
-   WD	  0.0		0.0	D   	0.0	0.0
+   WD	  0.0		0.0	V   	0.0	0.0
 
 [ nonbond_params ]
 #ifdef RIGID
