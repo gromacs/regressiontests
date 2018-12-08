@@ -1064,39 +1064,6 @@ sub compare_xvg {
   }
 }
 
-sub test_normal_modes {
-  my $logfn = "normal_modes.log";
-  my $nerror = 0;
-
-# Only run this test in double precision
-  return if ($double == 0);
-  
-  chdir("normal_modes");
-  open(LOG,">$logfn")  || die("FAILED: Opening $logfn for writing");
-  foreach my $dir ( glob("*") ) {
-    if ( -d $dir) {
-      chdir $dir;
-      open(PIPE,"$progs{'grompp'} -c conf.g96 2>&1 |");
-      print LOG while <PIPE>;
-      close PIPE;
-      my $mtx = "nm.mtx";
-      open(PIPE,"$progs{'mdrun'} -mtx $mtx 2>&1 |");
-      print LOG while <PIPE>;
-      close PIPE;
-      open(PIPE,"$progs{'nmeig'} -f $mtx -first 7 -xvg no 2>&1 |");
-      print LOG while <PIPE>;
-      close PIPE;
-      my $rel_tol = 1e-3;
-      compare_xvg("eigenval_reference.xvg", "eigenval.xvg", $rel_tol);
-      compare_xvg("eigenfreq_reference.xvg", "eigenfreq.xvg", $rel_tol);
-      chdir "..";
-    }
-  }
-  close LOG;
-  chdir "..";
-  return $nerror;
-}
-
 # Compares the data entries of two .xvg files at column 'index'
 sub compare_xvg_column {
     my ( $refFile, $cmpFile, $index, $absTol ) = @_;
@@ -1580,9 +1547,6 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
     elsif ($arg eq 'pdb2gmx' ) {
 	die "pdb2gmx testing is now done in the ctest testing in the source repository"
-    }
-    elsif ($arg eq 'nm' || $arg eq 'normal-modes') {
-        push @work, "test_normal_modes()";
     }
     elsif ($arg eq 'ed' || $arg eq 'essentialdynamics') {
         push @work, "test_essentialdynamics()";
