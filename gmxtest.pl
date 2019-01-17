@@ -81,7 +81,7 @@ my $max_mpi_ranks_filename = "max-mpi-ranks";
 
 # List of all the generic subdirectories of tests; pdb2gmx and essentialdynamics are treated
 # separately.
-my @all_dirs = ('simple', 'complex', 'freeenergy', 'rotation', 'extra');
+my @all_dirs = ('complex', 'freeenergy', 'rotation', 'extra');
 
 sub specify_number_of_pme_ranks {
     my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
@@ -1544,6 +1544,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
     }
     elsif ($arg eq 'kernel' ) {
 	die "The group scheme kernels are no longer tested"
+    }
+    elsif ($arg eq 'simple' ) {
+	die "The coverage of the former simple tests have been ported to run from GoogleTest"
     }
     elsif ($arg eq 'ed' || $arg eq 'essentialdynamics') {
         push @work, "test_essentialdynamics()";
