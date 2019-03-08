@@ -1,13 +1,22 @@
 WARNING 1 [file topol.top, line 103]:
+  The GROMOS force fields have been parametrized with a physically
+  incorrect multiple-time-stepping scheme for a twin-range cut-off. When
+  used with a single-range cut-off (or a correct Trotter
+  multiple-time-stepping scheme), physical properties, such as the density,
+  might differ from the intended values. Check if molecules in your system
+  are affected by such issues before proceeding. Further information may be
+  available at https://redmine.gromacs.org/issues/2884.
+
+WARNING 2 [file topol.top, line 103]:
   The bond in molecule-type SOL between atoms 1 OW and 2 HW1 has an
   estimated oscillational period of 8.6e-03 ps, which is less than 5 times
   the time step of 2.0e-03 ps.
   Maybe you asked for fexible water.
 
-WARNING 2 [file ./grompp.mdp]:
+WARNING 3 [file ./grompp.mdp]:
   Can not exclude the lattice Coulomb energy between energy groups
 
-WARNING 3 [file ./grompp.mdp]:
+WARNING 4 [file ./grompp.mdp]:
   The sum of the two largest charge group radii (0.272388) is larger than
   rlist (0.990000) - rcoulomb (0.990000).
   With exact cut-offs, better performance can be obtained with
