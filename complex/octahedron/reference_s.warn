@@ -1,0 +1,9 @@
+WARNING 1 [file topol.top, line 27]:
+  The GROMOS force fields have been parametrized with a physically
+  incorrect multiple-time-stepping scheme for a twin-range cut-off. When
+  used with a single-range cut-off (or a correct Trotter
+  multiple-time-stepping scheme), physical properties, such as the density,
+  might differ from the intended values. Check if molecules in your system
+  are affected by such issues before proceeding. Further information may be
+  available at https://redmine.gromacs.org/issues/2884.
+
