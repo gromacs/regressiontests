@@ -66,7 +66,6 @@ my $mpirun    = 'mpirun';
 my $parse_cmd = '';
 my $gmx_cmd   = "gmx";
 my $mdrun_cmd = "";
-my $mdrun_supports_pme_on_gpus = 0;
 my %progs = ( 'grompp'   => '',
               'mdrun'    => '',
               'pdb2gmx'  => '',
@@ -135,12 +134,6 @@ sub setup_vars()
         $progs{"mdrun"} = $mdrun_cmd;
     }
     $ref = 'reference_' . ($double > 0 ? 'd' : 's');
-
-    # To figure out if PME GPU is supported, we search the mdrun help output for -pme
-    my $tmpFile = "pmeGpuCheck";
-    system("$progs{'mdrun'} -h > ${tmpFile}");
-    $mdrun_supports_pme_on_gpus = (find_in_file("-pme", $tmpFile) > 0);
-    unlink($tmpFile);
 
     # now do -tight or -relaxed stuff
     foreach my $var ( $etol_rel, $etol_abs, $ttol_rel, $ttol_abs, $virtol_rel, $virtol_abs, $ftol_rel, $ftol_abs, $ftol_sprod ) {
@@ -364,7 +357,7 @@ sub check_xvg {
 # Callback used only when mdrun has returned an error, so we can work
 # out how to try to call it so it works
 sub how_should_we_rerun_mdrun {
-    my ($tmpi_ranks_ref, $omp_threads_ref, $mpi_ranks_ref, $gpu_id_ref) = @_;
+    my ($tmpi_ranks_ref, $omp_threads_ref, $mpi_ranks_ref, $gpu_id_ref, $update_option_ref) = @_;
 
     # Is it because we are using too many cores, or trying to use -nt
     # with a reference build, or running a test that does not run in
@@ -429,6 +422,16 @@ sub how_should_we_rerun_mdrun {
             $rerun = 1;
             last;
         }
+        elsif ($line =~ "Update task on the GPU was required") {
+            # With the update calculation on the GPU it may happen that a
+            # specific run can not be performed due to limitations of the current
+            # feature set. So we detect this and redirect mdrun to try the same
+            # but with the update forced to run on the CPU.
+            print ("Mdrun was unable to use the GPU for update calculations, defaulting to CPU update.\n");
+            $$update_option_ref = "-update cpu";
+            $rerun = 1;
+            last;
+        }
     }
     return $rerun;
 }
@@ -436,7 +439,7 @@ sub how_should_we_rerun_mdrun {
 sub run_mdrun {
     # Copy all parameters by value, which is useful so we can modify
     # them if we need to, and have the changes local to this test
-    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
+    my ($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $update_option, $gpu_id, $mdprefix, $mdparams, $grompp_mdp) = @_;
     # Only one of tmpi_ranks or mpi_ranks may be greater than zero, but
     # this is checked for sanity after parsing user input.
 
@@ -530,14 +533,14 @@ sub run_mdrun {
             $nb_task_assignment_opt = "-nb cpu";
         }
         my $command = $mdprefix->($mpi_ranks)
-            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $nb_task_assignment_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
+            . " $progs{'mdrun'} $ntmpi_opt $npme_opt $pme_option $update_option $nb_task_assignment_opt $ntomp_opt $mdparams >mdrun.out 2>&1";
 
         #do_system using the special callback will return:
         #1 for known error: rerun
         #0 exit value was 0 (and thus this callback wasn't called)
         #-1 unknown error
         my $nerror = do_system($command, 0,
-                               sub { how_should_we_rerun_mdrun(\$tmpi_ranks, \$omp_threads, \$mpi_ranks, \$gpu_id) });
+                               sub { how_should_we_rerun_mdrun(\$tmpi_ranks, \$omp_threads, \$mpi_ranks, \$gpu_id, \$update_option) });
         if ($nerror > 0) {
             print "Retrying mdrun with better settings...\n";
         } else {
@@ -685,7 +688,11 @@ sub test_case {
         if ($test_name =~ /-pme-cpu/) {
             $pme_option = "-pme cpu";
         }
-        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $local_gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
+        my $update_option = "";
+        if ($test_name =~ /-update-cpu/) {
+            $update_option = "-update cpu";
+        }
+        $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $update_option, $local_gpu_id, $mdprefix, $local_mdparams, $grompp_mdp);
         if ($nerror != 0) {
             if ($parse_cmd eq '') {
                 push(@error_detail, ("mdrun.out", "md.log"));
@@ -902,6 +909,26 @@ sub test_systems {
 
                 my ($new_dir, $new_input_dir, $new_test_name);
                 prepare_run_with_different_task_decomposition($test_name, "pme-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
+                $$nn++;
+                $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
+            }
+        }
+
+        # If the test supported running the update on GPU and was run in a configuration
+        # that actually offloaded the calculation, rerun with forcing the update to run on
+        # the CPU to test both code pathways.
+        my $mdrun_ran_update_on_gpu = find_in_file("Updating coordinates.*on the GPU", "$dir/md.log") > 0;
+        my $specified_update_option = ($mdparams =~ /-update/);
+        if ($mdrun_ran_update_on_gpu)
+        {
+            if ($specified_update_option) {
+                print("Because you have set -update in the -mdparam string, the test\n" .
+                      "harness will not attempt to run update on both CPU and GPU.\n");
+            } else {
+                print("Re-running $test_name using CPU-based update\n");
+
+                my ($new_dir, $new_input_dir, $new_test_name);
+                prepare_run_with_different_task_decomposition($test_name, "update-cpu", \$new_dir, \$new_input_dir, \$new_test_name);
                 $$nn++;
                 $$npassed += test_case $new_dir, $new_input_dir, $new_test_name;
             }
@@ -1308,6 +1335,7 @@ sub run_single_ed_system {
   my $makeEdi_out = "make_edi.out";
   my $makeEdi_err = "make_edi.err";
   my $pme_option = "";
+  my $update_option = "";
 
   if ($verbose > 1) {
       print "Testing $dir . . .\n";
@@ -1331,7 +1359,7 @@ sub run_single_ed_system {
   # Make a short simulation with essential dynamics constraints:
   if ( $nerror == 0 ) { # If we already had errors, there is no use in going on ...
     unlink $edofn;  # delete old essential dynamics .xvg output file (if any)
-    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
+    $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $update_option, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
   }
 
   return $nerror;
