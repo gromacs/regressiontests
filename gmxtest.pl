@@ -82,6 +82,10 @@ my $max_mpi_ranks_filename = "max-mpi-ranks";
 # separately.
 my @all_dirs = ('complex', 'freeenergy', 'rotation', 'extra');
 
+# Return the command-line option specifying the number of separate
+# PME ranks to use, if appropriate (ie the .mdp file specifies a
+# form of PME and the user specified the number of separate PME ranks,
+# which can be zero). Otherwise, return an empty command-line string.
 sub specify_number_of_pme_ranks {
     my ($num_ranks, $npme_ranks, $grompp_mdp, $pp_ranks_ref) = @_;
     # Only try -npme if using some kind of PME, with enough ranks and
@@ -100,6 +104,48 @@ sub specify_number_of_pme_ranks {
         $$pp_ranks_ref = $num_ranks;
         return "";
     }
+}
+
+# Return the number of GPUs detected by mdrun in the md.log file
+sub find_number_of_gpus() {
+    my $number_of_gpus = 0;
+    # Note that tests for mdrun -cpi write a log file that has the
+    # second possible name.
+    my @possible_log_file_names = ("md.log", "md.part0002.log");
+    my $found_a_log_file = 0;
+    foreach my $logfile (@possible_log_file_names)
+    {
+        if (!open(FIN, "<", $logfile))
+        {
+            # Didn't find a log file with this name, try the next
+            # name.
+            next;
+        }
+
+        $found_a_log_file++;
+        while(my $line=<FIN>)
+        {
+            if ($line =~ /^\s+Number of GPUs detected: (.*)/) {
+                $number_of_gpus = $1;
+                last;
+            }
+            # If we have finished reading the header and haven't
+            # found a report of the number of GPUs, there's no
+            # point continuing to look.
+            if ($line =~ /^Started mdrun/)
+            {
+                last;
+            }
+        }
+        # No need to try any more log file names, one was already
+        # found.
+        last;
+    }
+    if ($found_a_log_file == 0)
+    {
+        print STDERR "Could not find any log files to open.\nAssuming 0 GPUs were detected.\n";
+    }
+    return $number_of_gpus;
 }
 
 sub setup_vars()
@@ -357,7 +403,7 @@ sub check_xvg {
 # Callback used only when mdrun has returned an error, so we can work
 # out how to try to call it so it works
 sub how_should_we_rerun_mdrun {
-    my ($tmpi_ranks_ref, $omp_threads_ref, $mpi_ranks_ref, $gpu_id_ref, $update_option_ref) = @_;
+    my ($tmpi_ranks_ref, $omp_threads_ref, $mpi_ranks_ref, $npme_ranks_ref, $gpu_id_ref, $update_option_ref) = @_;
 
     # Is it because we are using too many cores, or trying to use -nt
     # with a reference build, or running a test that does not run in
@@ -432,6 +478,52 @@ sub how_should_we_rerun_mdrun {
             $rerun = 1;
             last;
         }
+        elsif ($line =~ "There were .* GPU tasks found on.*, but .* GPU.*were available") {
+            # It can happen that we want to run set-ups where the original intent is to test
+            # that rank separation works between multiple PP and PME ranks and multiple GPUs.
+            # This can cause issues when running inputs without PME support, as the task separation
+            # might not be possible for the same configuration.
+            # In such cases, we change the settings to get the maximum number of GPUs as the
+            # number of ranks to use.
+            print ("Mdrun was not able to distribute the requested non-bonded tasks to the available GPUs.\n");
+            my $num_ranks = undef;
+            if ($$mpi_ranks_ref > 0) {
+                $num_ranks = $$mpi_ranks_ref;
+            } else {
+                $num_ranks = $$tmpi_ranks_ref;
+            }
+            my $num_gpus = find_number_of_gpus();
+            my $pp_ranks = undef;
+            my $grompp_mdp = "grompp.mdp";
+            my $npme_opt = specify_number_of_pme_ranks($num_ranks, $$npme_ranks_ref, $grompp_mdp, \$pp_ranks);
+            if ($npme_opt eq "" && $$npme_ranks_ref > 0)
+            {
+                if ($$mpi_ranks_ref > 0) {
+                    $$mpi_ranks_ref = $num_gpus;
+                } else {
+                    $$tmpi_ranks_ref = ${num_gpus};
+                }
+                $$npme_ranks_ref = 0;
+                $rerun = 1;
+                print ("Will try again with $num_ranks different tasks and without dedicated PME task.\n");
+            }
+            else
+            {
+                # We need to also take into account cases where the auto assignment fails
+                # and we need to provide a manual task assignment. But if we got a user provided
+                # task assignment we just tell them that it doesn't work that way.
+                if ($$gpu_id_ref)
+                {
+                    print ("Your gpu task assignment is not compatable, please adjust it!\n");
+                }
+                else
+                {
+                    $$gpu_id_ref = substr($$gpu_id_ref, 0, $num_gpus);
+                    print ("Will try again with following task assignment $$gpu_id_ref!\n");
+                }
+            }
+            last;
+        }
     }
     return $rerun;
 }
@@ -498,7 +590,7 @@ sub run_mdrun {
         if (0 < $tmpi_ranks) {
             $ntmpi_opt = "-ntmpi $tmpi_ranks";
         }
-        if (!find_in_file("cutoff[-_]scheme.*=.*group", $grompp_mdp) > 0 && $omp_threads > 0) {
+        if ($omp_threads > 0) {
             $ntomp_opt = "-ntomp $omp_threads";
         }
 
@@ -540,7 +632,7 @@ sub run_mdrun {
         #0 exit value was 0 (and thus this callback wasn't called)
         #-1 unknown error
         my $nerror = do_system($command, 0,
-                               sub { how_should_we_rerun_mdrun(\$tmpi_ranks, \$omp_threads, \$mpi_ranks, \$gpu_id, \$update_option) });
+                               sub { how_should_we_rerun_mdrun(\$tmpi_ranks, \$omp_threads, \$mpi_ranks, \$npme_ranks, \$gpu_id, \$update_option) });
         if ($nerror > 0) {
             print "Retrying mdrun with better settings...\n";
         } else {
