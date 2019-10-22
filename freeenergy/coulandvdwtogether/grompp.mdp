@@ -65,7 +65,7 @@ xtc_precision            = 1000
 ; select multiple groups. By default all atoms will be written.
 xtc-grps                 = 
 ; Selection of energy groups
-energygrps               = protein sol
+energygrps               = 
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
@@ -296,7 +296,7 @@ sc-power                 = 1
 sc-r-power               = 6
 sc-sigma                 = 0.3
 sc-coul                  = no
-separate-dhdl-file       = yes
+separate-dhdl-file       = no
 dhdl-derivatives         = yes
 dh_hist_size             = 0
 dh_hist_spacing          = 0.1
