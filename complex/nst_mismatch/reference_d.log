@@ -1,4 +1,4 @@
- :-) GROMACS - gmx mdrun, 2020-beta1-dev-20191029-c2e5f57-unknown (double precision) (-:
+ :-) GROMACS - gmx mdrun, 2020-rc1-dev-20191229-b22decb-unknown (double precision) (-:
 
                             GROMACS is written by:
      Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
@@ -26,16 +26,16 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2020-beta1-dev-20191029-c2e5f57-unknown (double precision)
+GROMACS:      gmx mdrun, version 2020-rc1-dev-20191229-b22decb-unknown (double precision)
 Executable:   /home/jenkins/workspace/Gromacs_OnDemand_workflow/gromacs/bin/gmx_d
 Data prefix:  /home/jenkins/workspace/Gromacs_OnDemand_workflow/gromacs (source tree)
 Working dir:  /mnt/workspace/Gromacs_OnDemand_workflow/regressiontests/complex/nst_mismatch
-Process ID:   11006
+Process ID:   9513
 Command line:
   gmx_d mdrun -notunepme
 
-GROMACS version:    2020-beta1-dev-20191029-c2e5f57-unknown
-GIT SHA1 hash:      c2e5f5788fb6415942a0c682f8ac801e45479d9c
+GROMACS version:    2020-rc1-dev-20191229-b22decb-unknown
+GIT SHA1 hash:      b22decb493fe3555cd99677808eacbbb89c5dcdd
 Branched from:      unknown
 Precision:          double
 Memory model:       64 bit
@@ -356,7 +356,7 @@ We have the following groups for center of mass motion removal:
 RMS relative constraint deviation after constraining: 0.00e+00
 Initial temperature: 278.035 K
 
-Started mdrun on rank 0 Tue Oct 29 14:10:35 2019
+Started mdrun on rank 0 Sun Dec 29 20:00:59 2019
 
            Step           Time
               0        0.00000
@@ -376,7 +376,7 @@ Started mdrun on rank 0 Tue Oct 29 14:10:35 2019
         LJ (SR)  Disper. corr.   Coulomb (SR)   Coul. recip.      Potential
     1.51869e+03   -1.08651e+02   -1.05632e+04    8.41354e+01   -9.06900e+03
     Kinetic En.   Total Energy  Conserved En.    Temperature Pres. DC (bar)
-    1.52880e+03   -7.54021e+03   -7.52812e+03    2.84411e+02   -2.80318e+02
+    1.52880e+03   -7.54020e+03   -7.52812e+03    2.84411e+02   -2.80318e+02
  Pressure (bar)
    -7.43481e+02
 
@@ -394,7 +394,7 @@ Started mdrun on rank 0 Tue Oct 29 14:10:35 2019
            Step           Time
              30        0.06000
 
-Writing checkpoint, step 30 at Tue Oct 29 14:10:36 2019
+Writing checkpoint, step 30 at Sun Dec 29 20:00:59 2019
 
 
    Energies (kJ/mol)
@@ -429,9 +429,9 @@ Writing checkpoint, step 30 at Tue Oct 29 14:10:36 2019
    -9.64508e+01    1.13613e+02    6.76635e+02
 
    Pressure (bar)
-   -1.33579e+03    4.53608e+02    5.52968e+02
+   -1.33579e+03    4.53608e+02    5.52969e+02
     4.53608e+02    4.51911e+02   -6.33906e+02
-    5.52968e+02   -6.33906e+02   -8.33008e+02
+    5.52969e+02   -6.33906e+02   -8.33008e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -473,28 +473,28 @@ On 1 MPI rank
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1    1          3       0.018          0.062   3.1
- Force                  1    1         31       0.462          1.571  79.7
- PME mesh               1    1         31       0.041          0.139   7.0
+ Neighbor search        1    1          3       0.018          0.061   3.3
+ Force                  1    1         31       0.444          1.511  80.1
+ PME mesh               1    1         31       0.054          0.185   9.8
  NB X/F buffer ops.     1    1         59       0.001          0.002   0.1
- Write traj.            1    1          8       0.048          0.165   8.4
- Update                 1    1         31       0.001          0.004   0.2
- Constraints            1    1         33       0.004          0.014   0.7
- Rest                                           0.004          0.015   0.7
+ Write traj.            1    1          8       0.027          0.092   4.9
+ Update                 1    1         31       0.001          0.003   0.2
+ Constraints            1    1         33       0.005          0.018   0.9
+ Rest                                           0.004          0.013   0.7
 -----------------------------------------------------------------------------
- Total                                          0.580          1.971 100.0
+ Total                                          0.555          1.886 100.0
 -----------------------------------------------------------------------------
  Breakdown of PME mesh computation
 -----------------------------------------------------------------------------
- PME spread             1    1         31       0.010          0.033   1.7
- PME gather             1    1         31       0.015          0.052   2.6
- PME 3D-FFT             1    1         62       0.011          0.038   1.9
- PME solve Elec         1    1         31       0.005          0.016   0.8
+ PME spread             1    1         31       0.016          0.053   2.8
+ PME gather             1    1         31       0.016          0.056   3.0
+ PME 3D-FFT             1    1         62       0.017          0.058   3.1
+ PME solve Elec         1    1         31       0.005          0.017   0.9
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:        0.580        0.580       99.9
+       Time:        0.554        0.555       99.9
                  (ns/day)    (hour/ns)
-Performance:        9.239        2.598
-Finished mdrun on rank 0 Tue Oct 29 14:10:36 2019
+Performance:        9.658        2.485
+Finished mdrun on rank 0 Sun Dec 29 20:00:59 2019
 
