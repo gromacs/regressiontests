@@ -19,3 +19,5 @@ topol.tpr
 grompp.err
 grompp.warn
 rot*.log
+make_edi.err
+sam.edi
