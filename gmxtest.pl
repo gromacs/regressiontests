@@ -414,7 +414,28 @@ sub how_should_we_rerun_mdrun {
     my $rerun = -1;
     foreach my $line (@lines) {
         if ($line =~ /There is no domain decomposition for/) {
-            my $new_mpi_ranks = 8;
+            my $new_mpi_ranks = 0;
+            if ($$mpi_ranks_ref == 8 or $$tmpi_ranks_ref == 8) {
+                my $this_num_ranks = undef;
+                if ($$mpi_ranks_ref > 0) {
+                    $this_num_ranks = $$mpi_ranks_ref;
+                } else {
+                    $this_num_ranks = $$tmpi_ranks_ref;
+                }
+                my $this_pp_ranks = undef;
+                my $this_grompp_mdp = "grompp.mdp";
+                my $this_npme_opt = specify_number_of_pme_ranks($this_num_ranks, $$npme_ranks_ref, $this_grompp_mdp, \$this_pp_ranks);
+                if ($this_npme_opt eq "") {
+                    $new_mpi_ranks = 2;
+                } else {
+                    #we have at least one pme rank, so we need to have more total ranks to ensure
+                    #that we use DD
+                    $new_mpi_ranks = 2 + $$npme_ranks_ref;
+                }
+            }
+            else {
+                $new_mpi_ranks = 8;
+            }
             if ($$mpi_ranks_ref > 0) {
                 $$mpi_ranks_ref = $new_mpi_ranks;
             } else {
