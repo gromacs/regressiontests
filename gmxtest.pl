@@ -28,6 +28,7 @@ my $mpi_ranks = 0;
 my $double   = 0;
 my $crosscompiling = 0;
 my $bluegene = 0;
+my $keep_files = 0;
 my $verbose  = 5;
 my $xml      = 0;
 # energy file comparision tolerance (potentials, not virials or pressure)
@@ -309,7 +310,7 @@ sub check_force($$)
         }
     }     
     close(FIN);
-    if ($nerr_force == 0) {
+    if ($nerr_force == 0 && !$keep_files) {
       unlink($cfor,$cfor2);
     }
     return $nerr_force;
@@ -342,7 +343,7 @@ sub check_virial($)
 	}
     }     
     close(VIN);
-    if ($nerr_vir == 0) {
+    if ($nerr_vir == 0 && !$keep_files) {
       unlink($cvir,$cvir2);
     }
     return $nerr_vir;
@@ -715,7 +716,7 @@ sub test_case {
                 print "\nThe GROMACS version being tested may be older than the reference version.\nPlease see the note at end of this output.\n";
                 $addversionnote = 1;
             }
-            if ($nerror == 0) {
+            if ($nerror == 0 && !$keep_files) {
                 unlink($tprout,$tprerr);
             }
         }
@@ -774,7 +775,7 @@ sub test_case {
             if ($nerror>0) {
                 print("Different warnings in $ref_warn and $grompp_warn\n");
                 push(@error_detail, ($grompp_err, $grompp_out));
-            } else {
+            } elsif (!$keep_files) {
                 unlink($grompp_warn);
             }
         }
@@ -847,7 +848,7 @@ sub test_case {
                 push(@error_detail, "checkvir.out ($nerr_vir errors)") if ($nerr_vir > 0);
 
                 $nerror |= $nerr_pot | $nerr_vir;
-                unlink($potout,$poterr) unless $nerr_pot;
+                unlink($potout,$poterr) unless ($nerr_pot || $keep_files);
             }
             my $reftrr = "$input_dir/${ref}.trr";
             if (! -f $reftrr ) {
@@ -943,7 +944,9 @@ sub test_case {
                 }
                 else {
                     print "PASSED\n";
-                    unlink("mdout.mdp");
+                    if (! $keep_files) {
+                        unlink("mdout.mdp");
+                    }
                 }
             }
         }
@@ -1471,7 +1474,9 @@ sub run_single_ed_system {
 
   # Make a short simulation with essential dynamics constraints:
   if ( $nerror == 0 ) { # If we already had errors, there is no use in going on ...
-    unlink $edofn;  # delete old essential dynamics .xvg output file (if any)
+    if (!$keep_files) {
+      unlink $edofn;  # delete old essential dynamics .xvg output file (if any)
+    }
     $nerror = run_mdrun($tmpi_ranks, $omp_threads, $mpi_ranks, $npme_ranks, $pme_option, $update_option, $gpu_id, $mdprefix, "-ei $edifn -eo $edofn", "grompp.mdp");
   }
 
@@ -1651,6 +1656,7 @@ Usage: ./gmxtest.pl [ -np N ] [ -nt 1 ] [ -npme n ]
                     [ -suffix xxx ] [ -reprod ] [ -mpirun mpirun_command ]
                     [ -mdrun mdrun_command ]
                     [ -crosscompile ] [ -relaxed ] [ -tight ] [ -mdparam xxx ]
+                    [ -keep ]
                     [ $dirs | all ]
 or:    ./gmxtest.pl clean | refclean | dist
 EOP
@@ -1736,6 +1742,9 @@ for ($kk=0; ($kk <= $#ARGV); $kk++) {
         $crosscompiling = 1;
 	$bluegene = 1;
 	print "Will test BlueGene. You should probably set '-mpirun runjob' if you have not already.\n";
+    }
+    elsif ($arg eq '-keep') {
+        $keep_files = 1;
     }
     elsif ($arg eq '-np' ) {
 	if ($kk <$#ARGV) {
