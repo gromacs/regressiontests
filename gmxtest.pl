@@ -7,8 +7,10 @@ use File::Basename;
 use File::Copy qw(copy);
 use List::Util qw[min max];
 
+my $srcdir = dirname(__FILE__);
+my $rundir = getcwd();
+$srcdir = $rundir unless ($srcdir ne '.');
 #change directory to script location
-chdir(dirname(__FILE__));
 use lib dirname(__FILE__);
 
 use gmxFile::Path qw(remove_tree);
@@ -676,6 +678,7 @@ sub test_case {
     my $success = 0;
 
     my $cwd = getcwd();
+    mkdir($dir) unless (-d $dir);
     chdir($dir);
     if ($verbose > 1) {
         print "Testing $test_name . . . ";
@@ -976,12 +979,12 @@ sub prepare_run_with_different_task_decomposition {
 }
 
 sub test_systems {
-    my ($npassed, $nn, @subdirs) = @_;
+    my ($npassed, $nn, $dirs, @subdirs) = @_;
     $$npassed = 0;
     $$nn = 0;
     foreach my $dir ( @subdirs ) {
         my $test_name = $dir;
-        my $input_dir = ".";
+        my $input_dir = "$srcdir/$dirs/$dir";
         $$nn++;
         # Run the test case
         $$npassed += test_case $dir, $input_dir, $test_name;
@@ -1088,12 +1091,15 @@ sub refcleandir {
 
 sub test_dirs {
     my $dirs = shift;
-    chdir($dirs);
+    chdir("$srcdir/$dirs");
     # glob all files, but retain only directories that match the regular expression
     my @subdirs = map { (-d $_ && $_ =~ $only_subdir) ? $_ : () } <*>;
+    chdir($rundir);
+    mkdir($dirs) unless (-d $dirs);
+    chdir($dirs);
     print XML "<testsuite name=\"$dirs\">\n" if ($xml);
     my ($nn, $npassed);
-    test_systems(\$npassed, \$nn, @subdirs);
+    test_systems(\$npassed, \$nn, $dirs, @subdirs);
     print XML "</testsuite>\n" if ($xml);
     my $nerror=0;
     if ($npassed < $nn) {
@@ -1452,25 +1458,28 @@ sub run_single_ed_system {
   my $makeEdi_err = "make_edi.err";
   my $pme_option = "";
   my $update_option = "";
+  my $input_dir = "$srcdir/essentialdynamics/$dir";
 
   if ($verbose > 1) {
       print "Testing $dir . . .\n";
   }
 
   # Make the .tpr file
-  $nerror += do_system("$progs{'grompp'} -maxwarn 1 >$grompp_out 2>$grompp_err");
+  $nerror += do_system("$progs{'grompp'} -f $input_dir/grompp.mdp -c $input_dir/conf -r $input_dir/conf -p $input_dir/topol -maxwarn 1 >$grompp_out 2>$grompp_err");
 
   if ($ediArgs) {
       # Make the essential dynamics .edi input file
       unlink $edifn;  # delete old .edi file (if any)
-      $nerror += do_system("echo $inArgs | $progs{'make_edi'} -f eigenvec.trr $ediArgs -o $edifn 1>$makeEdi_out 2>$makeEdi_err");
+      $nerror += do_system("echo $inArgs | $progs{'make_edi'} -f $input_dir/eigenvec.trr $ediArgs -o $edifn 1>$makeEdi_out 2>$makeEdi_err");
       # Check whether we get the expected .edi file
-      my $nerr = compare_textfiles($edifn, "sam_reference.edi");
+      my $nerr = compare_textfiles($edifn, "$input_dir/sam_reference.edi");
       if ( $nerr > 0 ) {
           $nerror += $nerr;
           printf("Essential dynamics '$dir' FAILED: Produced .edi file does not match the reference!\n");
       }
-  } 
+  } else {
+      $edifn = "$input_dir/$edifn";
+  }
 
   # Make a short simulation with essential dynamics constraints:
   if ( $nerror == 0 ) { # If we already had errors, there is no use in going on ...
@@ -1489,24 +1498,28 @@ sub test_essentialdynamics {
   my $retval = 0;
   my $ntest  = 0;
   my $edref  = "edsam_reference.xvg";
+  my $prefix = "$srcdir/essentialdynamics";
   my $dir = "";
 
-  chdir("essentialdynamics");
+  $dir = "essentialdynamics";
+  mkdir($dir) unless (-d $dir);
+  chdir $dir;
 
   # ----------------------------------------------------------------------------
   # Test fixed-step linear expansion along the first eigenvector. In this test,
   # the projection on EV 1 should increase by 0.0013 nm at every step.
   $dir = "linfix";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
   $retval = run_single_ed_system($dir, "-outfrq 1 -linfix 1 -linstep 0.0013", "0");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference. This
       # makes sense only if the system was successfully run, otherwise we will
       # get a huge bunch of errors.
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0   );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 0.05  );  # 1 = RMSD (nm), just making sure it does not diverge completely
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 2, 1.0e-6);  # 2 = EV1 projection (nm) LINFIX, last value is the tolerance
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 0.05  );  # 1 = RMSD (nm), just making sure it does not diverge completely
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 2, 1.0e-6);  # 2 = EV1 projection (nm) LINFIX, last value is the tolerance
   } else {
   	  $nerror++;
   }
@@ -1518,13 +1531,14 @@ sub test_essentialdynamics {
   # others rejected.
   $dir = "linacc";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
   $retval = run_single_ed_system($dir, "-outfrq 2 -linacc 1 -accdir +1", "0");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference:
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0   );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 0.005 );  # 1 = RMSD (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 2, 0.001 );  # 2 = EV projection (nm) LINACC, last value is the tolerance
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 0.005 );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 2, 0.001 );  # 2 = EV projection (nm) LINACC, last value is the tolerance
       $nerror += check_monotonicity("$dir.xvg",     2, +1, 5e-7  );  # EV 1 projection must increase monotonically
   } else {
       $nerror++;
@@ -1536,13 +1550,14 @@ sub test_essentialdynamics {
   # should increase by 0.002 nm per step in this test.
   $dir = "radfix";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
   $retval = run_single_ed_system($dir, "-outfrq 1 -radfix 1-2 -radstep 0.002", "0");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference:
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0   );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 0.05  );  # 1 = RMSD (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 4, 0.0   );  # 4 = RADFIX radius (nm), must match exactly
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0   );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 0.05  );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 4, 0.0   );  # 4 = RADFIX radius (nm), must match exactly
       $nerror += check_radius("$dir.xvg", 2, 3, 4, 1e-5, 0);         # RADFIX radius is calculated from columns 2-3, must match column 4
   } else {
       $nerror++;
@@ -1555,12 +1570,13 @@ sub test_essentialdynamics {
   # radius should increase monotonically.
   $dir = "radacc";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
   $retval = run_single_ed_system($dir, "-outfrq 3 -radacc 1-2", "0");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference:
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 0.05   );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 0.05   );  # 1 = RMSD (nm)
       $nerror += check_radius("$dir.xvg", 2, 3, 4, 1e-5, 0);          # RADACC radius is calculated from columns 2-3, must match column 4
       $nerror += check_monotonicity("$dir.xvg", 4, +1, 0.0);          # RADACC radius must increase monotonically
   } else {
@@ -1572,12 +1588,13 @@ sub test_essentialdynamics {
   # Test acceptance radius contraction along eigenvectors 1-2 towards target structure.
   $dir = "radcon";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
-  $retval = run_single_ed_system($dir, "-outfrq 1 -radcon 1-2 -tar target.pdb", "0 0");
+  $retval = run_single_ed_system($dir, "-outfrq 1 -radcon 1-2 -tar $prefix/$dir/target.pdb", "0 0");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference:
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 0.05   );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 0.05   );  # 1 = RMSD (nm)
       $nerror += check_radius("$dir.xvg", 2, 3, 4, 1e-5, 1);          # RADCON radius is calculated from columns 2-3, must match column 4
       $nerror += check_monotonicity("$dir.xvg", 4, -1, 0.0);          # RADCON radius must decrease monotonically towards zero.
   } else {
@@ -1591,18 +1608,19 @@ sub test_essentialdynamics {
   # using a small tolerance.
   $dir = "flooding1";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
   $retval = run_single_ed_system($dir, "", "");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference:
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 1e-5   );  # 1 = RMSD (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 2, 1e-5   );  # 2 = EV 1 projection (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 3, 1      );  # 3 = EV 1 V_fl (kJ/mol) 
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 4, 1      );  # 4 = EV 1 fl_forces (kJ/mol/nm) 
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 5, 1e-5   );  # 5 = EV 2 projection (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 6, 1      );  # 6 = EV 2 V_fl (kJ/mol) 
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 7, 1      );  # 7 = EV 2 fl_forces (kJ/mol/nm) 
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 1e-5   );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 2, 1e-5   );  # 2 = EV 1 projection (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 3, 1      );  # 3 = EV 1 V_fl (kJ/mol)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 4, 1      );  # 4 = EV 1 fl_forces (kJ/mol/nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 5, 1e-5   );  # 5 = EV 2 projection (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 6, 1      );  # 6 = EV 2 V_fl (kJ/mol)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 7, 1      );  # 7 = EV 2 fl_forces (kJ/mol/nm)
   } else {
       $nerror++;
   }
@@ -1613,18 +1631,19 @@ sub test_essentialdynamics {
   # over 50 time steps, therefore using larger tolerances.
   $dir = "flooding2";
   $ntest++;
+  mkdir($dir) unless (-d $dir);
   chdir $dir || die;
   $retval = run_single_ed_system($dir, "", "");
   if ( 0 == $retval ) {
       # Compare the essential dynamics output to the reference:
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 1, 0.05   );  # 1 = RMSD (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 2, 0.025  );  # 2 = EV 1 projection (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 3, 250    );  # 3 = EV 1 V_fl (kJ/mol) 
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 4, 1000   );  # 4 = EV 1 fl_forces (kJ/mol/nm) 
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 5, 0.025  );  # 5 = EV 2 projection (nm)
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 6, 250    );  # 6 = EV 2 V_fl (kJ/mol) 
-      $nerror += compare_xvg_column($edref, "$dir.xvg", 7, 1000   );  # 7 = EV 2 fl_forces (kJ/mol/nm) 
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 0, 0.0    );  # 0 = Time (ps), must match exacly!
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 1, 0.05   );  # 1 = RMSD (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 2, 0.025  );  # 2 = EV 1 projection (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 3, 250    );  # 3 = EV 1 V_fl (kJ/mol)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 4, 1000   );  # 4 = EV 1 fl_forces (kJ/mol/nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 5, 0.025  );  # 5 = EV 2 projection (nm)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 6, 250    );  # 6 = EV 2 V_fl (kJ/mol)
+      $nerror += compare_xvg_column("$prefix/$dir/$edref", "$dir.xvg", 7, 1000   );  # 7 = EV 2 fl_forces (kJ/mol/nm)
   } else {
       $nerror++;
   }
